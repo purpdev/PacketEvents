@@ -164,16 +164,44 @@ public class User implements IRegistryHolder {
         PacketEvents.getAPI().getProtocolManager().sendPacket(channel, wrapper);
     }
 
+    public void sendPacketSilently(Object buffer) {
+        PacketEvents.getAPI().getProtocolManager().sendPacketSilently(channel, buffer);
+    }
+
     public void sendPacketSilently(PacketWrapper<?> wrapper) {
         PacketEvents.getAPI().getProtocolManager().sendPacketSilently(channel, wrapper);
+    }
+
+    public void writePacket(Object buffer) {
+        PacketEvents.getAPI().getProtocolManager().writePacket(channel, buffer);
     }
 
     public void writePacket(PacketWrapper<?> wrapper) {
         PacketEvents.getAPI().getProtocolManager().writePacket(channel, wrapper);
     }
 
+    public void writePacketSilently(Object buffer) {
+        PacketEvents.getAPI().getProtocolManager().writePacketSilently(channel, buffer);
+    }
+
     public void writePacketSilently(PacketWrapper<?> wrapper) {
         PacketEvents.getAPI().getProtocolManager().writePacketSilently(channel, wrapper);
+    }
+
+    public void receivePacket(Object buffer) {
+        PacketEvents.getAPI().getProtocolManager().receivePacket(channel, buffer);
+    }
+
+    public void receivePacket(PacketWrapper<?> wrapper) {
+        PacketEvents.getAPI().getProtocolManager().receivePacket(channel, wrapper);
+    }
+
+    public void receivePacketSilently(Object buffer) {
+        PacketEvents.getAPI().getProtocolManager().receivePacketSilently(channel, buffer);
+    }
+
+    public void receivePacketSilently(PacketWrapper<?> wrapper) {
+        PacketEvents.getAPI().getProtocolManager().receivePacketSilently(channel, wrapper);
     }
 
     public void flushPackets() {
