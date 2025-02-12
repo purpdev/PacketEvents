@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.util;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 3D float Vector.
@@ -30,7 +31,7 @@ import java.util.Objects;
  * @author retrooper
  * @since 1.8
  */
-public class Vector3f {
+public class Vector3f implements Cloneable {
     /**
      * X (coordinate/angle/whatever you wish)
      */
@@ -204,6 +205,15 @@ public class Vector3f {
 
     public static Vector3f zero() {
         return new Vector3f();
+    }
+
+    @NotNull
+    public Vector3f clone() {
+        try {
+            return (Vector3f) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
     }
 }
 

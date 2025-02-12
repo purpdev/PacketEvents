@@ -28,6 +28,7 @@ import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 3D double Vector.
@@ -37,7 +38,7 @@ import java.util.Objects;
  * @author retrooper
  * @since 1.8
  */
-public class Vector3d {
+public class Vector3d implements Cloneable {
     /**
      * X (coordinate/angle/whatever you wish)
      */
@@ -269,5 +270,14 @@ public class Vector3d {
 
     public static Vector3d zero() {
         return new Vector3d();
+    }
+
+    @NotNull
+    public Vector3d clone() {
+        try {
+            return (Vector3d) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
     }
 }

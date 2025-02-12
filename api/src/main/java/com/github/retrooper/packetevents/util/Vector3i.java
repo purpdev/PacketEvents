@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 
 import java.util.Objects;
+import org.jetbrains.annotations.NotNull;
 
 /**
  * 3D int Vector.
@@ -33,7 +34,7 @@ import java.util.Objects;
  * @author retrooper
  * @since 1.7
  */
-public class Vector3i {
+public class Vector3i implements Cloneable {
     /**
      * X (coordinate/angle/whatever you wish)
      */
@@ -255,5 +256,14 @@ public class Vector3i {
 
     public static Vector3i zero() {
         return new Vector3i();
+    }
+
+    @NotNull
+    public Vector3i clone() {
+        try {
+            return (Vector3i) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new Error(e);
+        }
     }
 }
