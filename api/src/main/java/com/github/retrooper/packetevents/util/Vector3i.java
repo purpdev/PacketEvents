@@ -159,6 +159,10 @@ public class Vector3i implements Cloneable {
         return z;
     }
 
+    public boolean equals(Vector3i other) {
+        return this.x == other.x && this.y == other.y && this.z == other.z;
+    }
+
     /**
      * Is the object we are comparing to equal to us?
      * It must implement VectorInterface3i, VectorInterface3d, or VectorInterface3f

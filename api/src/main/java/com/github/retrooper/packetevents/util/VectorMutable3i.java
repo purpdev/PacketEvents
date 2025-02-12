@@ -158,6 +158,10 @@ public class VectorMutable3i implements VectorInterface3i {
         return z;
     }
 
+    public boolean equals(VectorMutable3i other) {
+        return this.x == other.x && this.y == other.y && this.z == other.z;
+    }
+
     /**
      * Is the object we are comparing to equal to us?
      * It must implement VectorInterface3i, VectorInterface3d, or VectorInterface3f
