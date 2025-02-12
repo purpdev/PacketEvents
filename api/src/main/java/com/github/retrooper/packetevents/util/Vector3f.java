@@ -35,15 +35,15 @@ public class Vector3f implements Cloneable {
     /**
      * X (coordinate/angle/whatever you wish)
      */
-    public final float x;
+    public float x;
     /**
      * Y (coordinate/angle/whatever you wish)
      */
-    public final float y;
+    public float y;
     /**
      * Z (coordinate/angle/whatever you wish)
      */
-    public final float z;
+    public float z;
 
     /**
      * Default constructor setting all coordinates/angles/values to their default values (=0).
@@ -205,6 +205,24 @@ public class Vector3f implements Cloneable {
 
     public static Vector3f zero() {
         return new Vector3f();
+    }
+
+    @NotNull
+    public Vector3f setX(float x) {
+        this.x = x;
+        return this;
+    }
+
+    @NotNull
+    public Vector3f setY(float y) {
+        this.y = y;
+        return this;
+    }
+
+    @NotNull
+    public Vector3f setZ(int z) {
+        this.z = z;
+        return this;
     }
 
     @NotNull

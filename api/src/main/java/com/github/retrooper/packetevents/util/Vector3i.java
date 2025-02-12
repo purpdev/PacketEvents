@@ -38,15 +38,15 @@ public class Vector3i implements Cloneable {
     /**
      * X (coordinate/angle/whatever you wish)
      */
-    public final int x;
+    public int x;
     /**
      * Y (coordinate/angle/whatever you wish)
      */
-    public final int y;
+    public int y;
     /**
      * Z (coordinate/angle/whatever you wish)
      */
-    public final int z;
+    public int z;
 
     /**
      * Default constructor setting all coordinates/angles/values to their default values (=0).
@@ -247,6 +247,24 @@ public class Vector3i implements Cloneable {
 
     public Vector3i withZ(int z) {
         return new Vector3i(this.x, this.y, z);
+    }
+
+    @NotNull
+    public Vector3i setX(int x) {
+        this.x = x;
+        return this;
+    }
+
+    @NotNull
+    public Vector3i setY(int y) {
+        this.y = y;
+        return this;
+    }
+
+    @NotNull
+    public Vector3i setZ(int z) {
+        this.z = z;
+        return this;
     }
 
     @Override

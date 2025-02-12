@@ -42,15 +42,15 @@ public class Vector3d implements Cloneable {
     /**
      * X (coordinate/angle/whatever you wish)
      */
-    public final double x;
+    public double x;
     /**
      * Y (coordinate/angle/whatever you wish)
      */
-    public final double y;
+    public double y;
     /**
      * Z (coordinate/angle/whatever you wish)
      */
-    public final double z;
+    public double z;
 
     /**
      * Default constructor setting all coordinates/angles/values to their default values (=0).
@@ -270,6 +270,24 @@ public class Vector3d implements Cloneable {
 
     public static Vector3d zero() {
         return new Vector3d();
+    }
+
+    @NotNull
+    public Vector3d setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    @NotNull
+    public Vector3d setY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    @NotNull
+    public Vector3d setZ(double z) {
+        this.z = z;
+        return this;
     }
 
     @NotNull
