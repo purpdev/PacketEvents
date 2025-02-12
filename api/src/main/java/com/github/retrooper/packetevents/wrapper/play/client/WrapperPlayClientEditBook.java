@@ -20,6 +20,7 @@ package com.github.retrooper.packetevents.wrapper.play.client;
 
 import com.github.retrooper.packetevents.event.PacketReceiveEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.Nullable;
@@ -40,8 +41,14 @@ public class WrapperPlayClientEditBook extends PacketWrapper<WrapperPlayClientEd
     private static final int MAX_PAGES = 100;
 
     private int slot;
-    private List<String> pages;
+
+    // >= 1.17.1
+    private @Nullable List<String> pages;
     private @Nullable String title;
+
+    // < 1.17.1
+    private @Nullable ItemStack itemStack;
+    private @Nullable Boolean signing;
 
     public WrapperPlayClientEditBook(PacketReceiveEvent event) {
         super(event);
@@ -56,39 +63,51 @@ public class WrapperPlayClientEditBook extends PacketWrapper<WrapperPlayClientEd
 
     @Override
     public void read() {
-        boolean modernLimits = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_2);
-        int pageLimit = modernLimits ? MAX_PAGES : MAX_PAGES_LEGACY;
-        int pageCharLimit = modernLimits ? PAGE_MAX_CHARS : PAGE_MAX_CHARS_LEGACY;
+        if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_17_1)) {
+            boolean modernLimits = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_2);
+            int pageLimit = modernLimits ? MAX_PAGES : MAX_PAGES_LEGACY;
+            int pageCharLimit = modernLimits ? PAGE_MAX_CHARS : PAGE_MAX_CHARS_LEGACY;
 
-        this.slot = this.readVarInt();
-        int pageCount = this.readVarInt();
-        if (pageCount > pageLimit) {
-            throw new IllegalStateException("Page count " + pageCount + " is larger than limit of " + pageLimit);
+            this.slot = this.readVarInt();
+            int pageCount = this.readVarInt();
+            if (pageCount > pageLimit) {
+                throw new IllegalStateException("Page count " + pageCount + " is larger than limit of " + pageLimit);
+            }
+            this.pages = new ArrayList<>(pageCount);
+            for (int i = 0; i < pageCount; i++) {
+                this.pages.add(this.readString(pageCharLimit));
+            }
+            this.title = this.readOptional(reader -> {
+                int titleLimit = modernLimits ? TITLE_MAX_CHARS : TITLE_MAX_CHARS_LEGACY;
+                return reader.readString(titleLimit);
+            });
+        } else {
+            this.itemStack = readItemStack();
+            this.signing = this.readBoolean();
+            this.slot = this.readVarInt();
         }
-        this.pages = new ArrayList<>(pageCount);
-        for (int i = 0; i < pageCount; i++) {
-            this.pages.add(this.readString(pageCharLimit));
-        }
-        this.title = this.readOptional(reader -> {
-            int titleLimit = modernLimits ? TITLE_MAX_CHARS : TITLE_MAX_CHARS_LEGACY;
-            return reader.readString(titleLimit);
-        });
     }
 
     @Override
     public void write() {
-        boolean modernLimits = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_2);
-        int pageCharLimit = modernLimits ? PAGE_MAX_CHARS : PAGE_MAX_CHARS_LEGACY;
+        if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_17_1)) {
+            boolean modernLimits = this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_2);
+            int pageCharLimit = modernLimits ? PAGE_MAX_CHARS : PAGE_MAX_CHARS_LEGACY;
 
-        this.writeVarInt(this.slot);
-        this.writeVarInt(this.pages.size());
-        for (String page : this.pages) {
-            this.writeString(page, pageCharLimit);
+            this.writeVarInt(this.slot);
+            this.writeVarInt(this.pages.size());
+            for (String page : this.pages) {
+                this.writeString(page, pageCharLimit);
+            }
+            this.writeOptional(this.title, (writer, innerTitle) -> {
+                int titleLimit = modernLimits ? TITLE_MAX_CHARS : TITLE_MAX_CHARS_LEGACY;
+                writer.writeString(innerTitle, titleLimit);
+            });
+        } else {
+            writeItemStack(itemStack);
+            writeBoolean(signing);
+            writeVarInt(slot);
         }
-        this.writeOptional(this.title, (writer, innerTitle) -> {
-            int titleLimit = modernLimits ? TITLE_MAX_CHARS : TITLE_MAX_CHARS_LEGACY;
-            writer.writeString(innerTitle, titleLimit);
-        });
     }
 
     @Override
@@ -96,6 +115,8 @@ public class WrapperPlayClientEditBook extends PacketWrapper<WrapperPlayClientEd
         this.slot = wrapper.slot;
         this.pages = wrapper.pages;
         this.title = wrapper.title;
+        this.itemStack = wrapper.itemStack;
+        this.signing = wrapper.signing;
     }
 
     public int getSlot() {
@@ -106,7 +127,7 @@ public class WrapperPlayClientEditBook extends PacketWrapper<WrapperPlayClientEd
         this.slot = slot;
     }
 
-    public List<String> getPages() {
+    public @Nullable List<String> getPages() {
         return pages;
     }
 
@@ -120,5 +141,13 @@ public class WrapperPlayClientEditBook extends PacketWrapper<WrapperPlayClientEd
 
     public void setTitle(@Nullable String title) {
         this.title = title;
+    }
+
+    public @Nullable ItemStack getItemStack() {
+        return itemStack;
+    }
+
+    public @Nullable Boolean getSigning() {
+        return signing;
     }
 }
