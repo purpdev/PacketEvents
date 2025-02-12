@@ -19,7 +19,6 @@
 package com.github.retrooper.packetevents.util;
 
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
-
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -29,26 +28,26 @@ import org.jetbrains.annotations.NotNull;
  * You can use this to represent an array if you really want.
  *
  * @author retrooper
- * @since 1.8
+ * @since 2.7.1
  */
-public class Vector3f implements Cloneable {
+public class VectorMutable3f implements VectorInterface3f {
     /**
      * X (coordinate/angle/whatever you wish)
      */
-    public final float x;
+    public float x;
     /**
      * Y (coordinate/angle/whatever you wish)
      */
-    public final float y;
+    public float y;
     /**
      * Z (coordinate/angle/whatever you wish)
      */
-    public final float z;
+    public float z;
 
     /**
      * Default constructor setting all coordinates/angles/values to their default values (=0).
      */
-    public Vector3f() {
+    public VectorMutable3f() {
         this.x = 0.0f;
         this.y = 0.0f;
         this.z = 0.0f;
@@ -61,7 +60,7 @@ public class Vector3f implements Cloneable {
      * @param y Y
      * @param z Z
      */
-    public Vector3f(float x, float y, float z) {
+    public VectorMutable3f(float x, float y, float z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -75,7 +74,7 @@ public class Vector3f implements Cloneable {
      *
      * @param array Array.
      */
-    public Vector3f(float[] array) {
+    public VectorMutable3f(float[] array) {
         if (array.length > 0) {
             x = array[0];
         } else {
@@ -140,63 +139,59 @@ public class Vector3f implements Cloneable {
         return Objects.hash(x, y, z);
     }
 
-    public Vector3f add(float x, float y, float z) {
-        return new Vector3f(this.x + x, this.y + y, this.z + z);
+    public VectorMutable3f add(float x, float y, float z) {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
     }
 
-    public Vector3f add(Vector3f other) {
+    public VectorMutable3f add(VectorMutable3f other) {
         return add(other.x, other.y, other.z);
     }
 
-    public Vector3f offset(BlockFace face) {
+    public VectorMutable3f offset(BlockFace face) {
         return add(face.getModX(), face.getModY(), face.getModZ());
     }
 
-    public Vector3f subtract(float x, float y, float z) {
-        return new Vector3f(this.x - x, this.y - y, this.z - z);
+    public VectorMutable3f subtract(float x, float y, float z) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 
-    public Vector3f subtract(Vector3f other) {
+    public VectorMutable3f subtract(VectorMutable3f other) {
         return subtract(other.x, other.y, other.z);
     }
 
-    public Vector3f multiply(float x, float y, float z) {
-        return new Vector3f(this.x * x, this.y * y, this.z * z);
+    public VectorMutable3f multiply(float x, float y, float z) {
+        this.x *= x;
+        this.y *= y;
+        this.z *= y;
+        return this;
     }
 
-    public Vector3f multiply(Vector3f other) {
+    public VectorMutable3f multiply(VectorMutable3f other) {
         return multiply(other.x, other.y, other.z);
     }
 
-    public Vector3f multiply(float value) {
+    public VectorMutable3f multiply(float value) {
         return multiply(value, value, value);
     }
 
-    public Vector3f crossProduct(Vector3f other) {
+    public VectorMutable3f crossProduct(VectorMutable3f other) {
         float newX = this.y * other.z - other.y * this.z;
         float newY = this.z * other.x - other.z * this.x;
         float newZ = this.x * other.y - other.x * this.y;
-        return new Vector3f(newX, newY, newZ);
+        this.x = newX;
+        this.y = newY;
+        this.z = newZ;
+        return this;
     }
 
-    public float dot(Vector3f other) {
+    public float dot(VectorMutable3f other) {
         return this.x * other.x + this.y * other.y + this.z * other.z;
-    }
-
-    public Vector3f with(Float x, Float y, Float z) {
-        return new Vector3f(x == null ? this.x : x, y == null ? this.y : y, z == null ? this.z : z);
-    }
-
-    public Vector3f withX(float x) {
-        return new Vector3f(x, this.y, this.z);
-    }
-
-    public Vector3f withY(float y) {
-        return new Vector3f(this.x, y, this.z);
-    }
-
-    public Vector3f withZ(float z) {
-        return new Vector3f(this.x, this.y, z);
     }
 
     @Override
@@ -204,14 +199,32 @@ public class Vector3f implements Cloneable {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
 
-    public static Vector3f zero() {
-        return new Vector3f();
+    public static VectorMutable3f zero() {
+        return new VectorMutable3f();
     }
 
     @NotNull
-    public Vector3f clone() {
+    public VectorMutable3f setX(float x) {
+        this.x = x;
+        return this;
+    }
+
+    @NotNull
+    public VectorMutable3f setY(float y) {
+        this.y = y;
+        return this;
+    }
+
+    @NotNull
+    public VectorMutable3f setZ(int z) {
+        this.z = z;
+        return this;
+    }
+
+    @NotNull
+    public VectorMutable3f clone() {
         try {
-            return (Vector3f) super.clone();
+            return (VectorMutable3f) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }

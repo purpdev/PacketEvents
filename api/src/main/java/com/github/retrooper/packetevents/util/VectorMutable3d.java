@@ -35,9 +35,9 @@ import org.jetbrains.annotations.NotNull;
  * You can use this to represent an array if you really want.
  *
  * @author retrooper
- * @since 1.8
+ * @since 2.7.1
  */
-public class VectorM3d implements VectorInterface3d {
+public class VectorMutable3d implements VectorInterface3d {
     /**
      * X (coordinate/angle/whatever you wish)
      */
@@ -54,7 +54,7 @@ public class VectorM3d implements VectorInterface3d {
     /**
      * Default constructor setting all coordinates/angles/values to their default values (=0).
      */
-    public VectorM3d() {
+    public VectorMutable3d() {
         this.x = 0.0;
         this.y = 0.0;
         this.z = 0.0;
@@ -67,7 +67,7 @@ public class VectorM3d implements VectorInterface3d {
      * @param y Y
      * @param z Z
      */
-    public VectorM3d(double x, double y, double z) {
+    public VectorMutable3d(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -81,7 +81,7 @@ public class VectorM3d implements VectorInterface3d {
      *
      * @param array Array.
      */
-    public VectorM3d(double[] array) {
+    public VectorMutable3d(double[] array) {
         if (array.length > 0) {
             x = array[0];
         } else {
@@ -106,28 +106,28 @@ public class VectorM3d implements VectorInterface3d {
         }
     }
 
-    public static VectorM3d read(PacketWrapper<?> wrapper) {
+    public static VectorMutable3d read(PacketWrapper<?> wrapper) {
         double x = wrapper.readDouble();
         double y = wrapper.readDouble();
         double z = wrapper.readDouble();
-        return new VectorM3d(x, y, z);
+        return new VectorMutable3d(x, y, z);
     }
 
-    public static void write(PacketWrapper<?> wrapper, VectorM3d vector) {
+    public static void write(PacketWrapper<?> wrapper, VectorMutable3d vector) {
         wrapper.writeDouble(vector.x);
         wrapper.writeDouble(vector.y);
         wrapper.writeDouble(vector.z);
     }
 
-    public static VectorM3d decode(NBT tag, ClientVersion version) {
+    public static VectorMutable3d decode(NBT tag, ClientVersion version) {
         NBTList<?> list = (NBTList<?>) tag;
         double x = ((NBTNumber) list.getTag(0)).getAsDouble();
         double y = ((NBTNumber) list.getTag(1)).getAsDouble();
         double z = ((NBTNumber) list.getTag(2)).getAsDouble();
-        return new VectorM3d(x, y, z);
+        return new VectorMutable3d(x, y, z);
     }
 
-    public static NBT encode(VectorM3d vector3d, ClientVersion version) {
+    public static NBT encode(VectorMutable3d vector3d, ClientVersion version) {
         NBTList<NBTDouble> list = new NBTList<>(NBTType.DOUBLE, 3);
         list.addTag(new NBTDouble(vector3d.x));
         list.addTag(new NBTDouble(vector3d.y));
@@ -152,7 +152,8 @@ public class VectorM3d implements VectorInterface3d {
 
     /**
      * Is the object we are comparing to equal to us?
-     * It must be of type Vector3d or Vector3i and all values must be equal to the values in this class.
+     * It must implement VectorInterface3i, VectorInterface3d, or VectorInterface3f
+     * and all values must be equal to the values in this class.
      *
      * @param obj Compared object.
      * @return Are they equal?
@@ -162,12 +163,12 @@ public class VectorM3d implements VectorInterface3d {
         if (obj instanceof VectorInterface3d) {
             VectorInterface3d vec = (VectorInterface3d) obj;
             return x == vec.getX() && y == vec.getY() && z == vec.getZ();
-        } else if (obj instanceof Vector3f) {
-            Vector3f vec = (Vector3f) obj;
-            return x == vec.x && y == vec.y && z == vec.z;
-        } else if (obj instanceof Vector3i) {
-            Vector3i vec = (Vector3i) obj;
-            return x == (double) vec.x && y == (double) vec.y && z == (double) vec.z;
+        } else if (obj instanceof VectorInterface3f) {
+            VectorInterface3f vec = (VectorInterface3f) obj;
+            return x == vec.getX() && y == vec.getY() && z == vec.getZ();
+        } else if (obj instanceof VectorInterface3i) {
+            VectorInterface3i vec = (VectorInterface3i) obj;
+            return x == (double) vec.getX() && y == (double) vec.getY() && z == (double) vec.getZ();
         }
         return false;
     }
@@ -177,48 +178,48 @@ public class VectorM3d implements VectorInterface3d {
         return Objects.hash(x, y, z);
     }
 
-    public VectorM3d add(double x, double y, double z) {
+    public VectorMutable3d add(double x, double y, double z) {
         this.x += x;
         this.y += y;
         this.z += z;
         return this;
     }
 
-    public VectorM3d add(VectorM3d other) {
+    public VectorMutable3d add(VectorMutable3d other) {
         return add(other.x, other.y, other.z);
     }
 
-    public VectorM3d offset(BlockFace face) {
+    public VectorMutable3d offset(BlockFace face) {
         return add(face.getModX(), face.getModY(), face.getModZ());
     }
 
-    public VectorM3d subtract(double x, double y, double z) {
+    public VectorMutable3d subtract(double x, double y, double z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
         return this;
     }
 
-    public VectorM3d subtract(VectorM3d other) {
+    public VectorMutable3d subtract(VectorMutable3d other) {
         return subtract(other.x, other.y, other.z);
     }
 
-    public VectorM3d multiply(double x, double y, double z) {
+    public VectorMutable3d multiply(double x, double y, double z) {
         this.x -= x;
         this.y -= y;
         this.z -= z;
         return this;
     }
 
-    public VectorM3d multiply(VectorM3d other) {
+    public VectorMutable3d multiply(VectorMutable3d other) {
         return multiply(other.x, other.y, other.z);
     }
 
-    public VectorM3d multiply(double value) {
+    public VectorMutable3d multiply(double value) {
         return multiply(value, value, value);
     }
 
-    public VectorM3d crossProduct(VectorM3d other) {
+    public VectorMutable3d crossProduct(VectorMutable3d other) {
         double newX = this.y * other.z - other.y * this.z;
         double newY = this.z * other.x - other.z * this.x;
         double newZ = this.x * other.y - other.x * this.y;
@@ -228,11 +229,11 @@ public class VectorM3d implements VectorInterface3d {
         return this;
     }
 
-    public double dot(VectorM3d other) {
+    public double dot(VectorMutable3d other) {
         return this.x * other.x + this.y * other.y + this.z * other.z;
     }
 
-    public double distance(VectorM3d other) {
+    public double distance(VectorMutable3d other) {
         return Math.sqrt(distanceSquared(other));
     }
 
@@ -244,7 +245,7 @@ public class VectorM3d implements VectorInterface3d {
         return (x * x) + (y * y) + (z * z);
     }
 
-    public VectorM3d normalize() {
+    public VectorMutable3d normalize() {
         double length = length();
         this.x /= length;
         this.y /= length;
@@ -252,7 +253,7 @@ public class VectorM3d implements VectorInterface3d {
         return this;
     }
 
-    public double distanceSquared(VectorM3d other) {
+    public double distanceSquared(VectorMutable3d other) {
         double distX = (x - other.x) * (x - other.x);
         double distY = (y - other.y) * (y - other.y);
         double distZ = (z - other.z) * (z - other.z);
@@ -268,24 +269,24 @@ public class VectorM3d implements VectorInterface3d {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
 
-    public static VectorM3d zero() {
-        return new VectorM3d();
+    public static VectorMutable3d zero() {
+        return new VectorMutable3d();
     }
 
     @NotNull
-    public VectorM3d setX(double x) {
+    public VectorMutable3d setX(double x) {
         this.x = x;
         return this;
     }
 
     @NotNull
-    public VectorM3d setY(double y) {
+    public VectorMutable3d setY(double y) {
         this.y = y;
         return this;
     }
 
     @NotNull
-    public VectorM3d setZ(double z) {
+    public VectorMutable3d setZ(double z) {
         this.z = z;
         return this;
     }
@@ -303,9 +304,9 @@ public class VectorM3d implements VectorInterface3d {
     }
 
     @NotNull
-    public VectorM3d clone() {
+    public VectorMutable3d clone() {
         try {
-            return (VectorM3d) super.clone();
+            return (VectorMutable3d) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }

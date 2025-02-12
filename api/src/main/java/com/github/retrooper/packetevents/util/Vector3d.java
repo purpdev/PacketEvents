@@ -153,7 +153,8 @@ public class Vector3d implements VectorInterface3d {
 
     /**
      * Is the object we are comparing to equal to us?
-     * It must be of type Vector3d or Vector3i and all values must be equal to the values in this class.
+     * It must implement VectorInterface3i, VectorInterface3d, or VectorInterface3f
+     * and all values must be equal to the values in this class.
      *
      * @param obj Compared object.
      * @return Are they equal?
@@ -163,12 +164,12 @@ public class Vector3d implements VectorInterface3d {
         if (obj instanceof VectorInterface3d) {
             VectorInterface3d vec = (VectorInterface3d) obj;
             return x == vec.getX() && y == vec.getY() && z == vec.getZ();
-        } else if (obj instanceof Vector3f) {
-            Vector3f vec = (Vector3f) obj;
-            return x == vec.x && y == vec.y && z == vec.z;
-        } else if (obj instanceof Vector3i) {
-            Vector3i vec = (Vector3i) obj;
-            return x == (double) vec.x && y == (double) vec.y && z == (double) vec.z;
+        } else if (obj instanceof VectorInterface3f) {
+            VectorInterface3f vec = (VectorInterface3f) obj;
+            return x == vec.getX() && y == vec.getY() && z == vec.getZ();
+        } else if (obj instanceof VectorInterface3i) {
+            VectorInterface3i vec = (VectorInterface3i) obj;
+            return x == (double) vec.getX() && y == (double) vec.getY() && z == (double) vec.getZ();
         }
         return false;
     }
