@@ -26,7 +26,6 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
-
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -38,24 +37,24 @@ import org.jetbrains.annotations.NotNull;
  * @author retrooper
  * @since 1.8
  */
-public class Vector3d implements VectorInterface3d {
+public class VectorM3d implements VectorInterface3d {
     /**
      * X (coordinate/angle/whatever you wish)
      */
-    public final double x;
+    public double x;
     /**
      * Y (coordinate/angle/whatever you wish)
      */
-    public final double y;
+    public double y;
     /**
      * Z (coordinate/angle/whatever you wish)
      */
-    public final double z;
+    public double z;
 
     /**
      * Default constructor setting all coordinates/angles/values to their default values (=0).
      */
-    public Vector3d() {
+    public VectorM3d() {
         this.x = 0.0;
         this.y = 0.0;
         this.z = 0.0;
@@ -68,7 +67,7 @@ public class Vector3d implements VectorInterface3d {
      * @param y Y
      * @param z Z
      */
-    public Vector3d(double x, double y, double z) {
+    public VectorM3d(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -82,7 +81,7 @@ public class Vector3d implements VectorInterface3d {
      *
      * @param array Array.
      */
-    public Vector3d(double[] array) {
+    public VectorM3d(double[] array) {
         if (array.length > 0) {
             x = array[0];
         } else {
@@ -107,28 +106,28 @@ public class Vector3d implements VectorInterface3d {
         }
     }
 
-    public static Vector3d read(PacketWrapper<?> wrapper) {
+    public static VectorM3d read(PacketWrapper<?> wrapper) {
         double x = wrapper.readDouble();
         double y = wrapper.readDouble();
         double z = wrapper.readDouble();
-        return new Vector3d(x, y, z);
+        return new VectorM3d(x, y, z);
     }
 
-    public static void write(PacketWrapper<?> wrapper, Vector3d vector) {
+    public static void write(PacketWrapper<?> wrapper, VectorM3d vector) {
         wrapper.writeDouble(vector.x);
         wrapper.writeDouble(vector.y);
         wrapper.writeDouble(vector.z);
     }
 
-    public static Vector3d decode(NBT tag, ClientVersion version) {
+    public static VectorM3d decode(NBT tag, ClientVersion version) {
         NBTList<?> list = (NBTList<?>) tag;
         double x = ((NBTNumber) list.getTag(0)).getAsDouble();
         double y = ((NBTNumber) list.getTag(1)).getAsDouble();
         double z = ((NBTNumber) list.getTag(2)).getAsDouble();
-        return new Vector3d(x, y, z);
+        return new VectorM3d(x, y, z);
     }
 
-    public static NBT encode(Vector3d vector3d, ClientVersion version) {
+    public static NBT encode(VectorM3d vector3d, ClientVersion version) {
         NBTList<NBTDouble> list = new NBTList<>(NBTType.DOUBLE, 3);
         list.addTag(new NBTDouble(vector3d.x));
         list.addTag(new NBTDouble(vector3d.y));
@@ -178,66 +177,62 @@ public class Vector3d implements VectorInterface3d {
         return Objects.hash(x, y, z);
     }
 
-    public Vector3d add(double x, double y, double z) {
-        return new Vector3d(this.x + x, this.y + y, this.z + z);
+    public VectorM3d add(double x, double y, double z) {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
     }
 
-    public Vector3d add(Vector3d other) {
+    public VectorM3d add(VectorM3d other) {
         return add(other.x, other.y, other.z);
     }
 
-    public Vector3d offset(BlockFace face) {
+    public VectorM3d offset(BlockFace face) {
         return add(face.getModX(), face.getModY(), face.getModZ());
     }
 
-    public Vector3d subtract(double x, double y, double z) {
-        return new Vector3d(this.x - x, this.y - y, this.z - z);
+    public VectorM3d subtract(double x, double y, double z) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 
-    public Vector3d subtract(Vector3d other) {
+    public VectorM3d subtract(VectorM3d other) {
         return subtract(other.x, other.y, other.z);
     }
 
-    public Vector3d multiply(double x, double y, double z) {
-        return new Vector3d(this.x * x, this.y * y, this.z * z);
+    public VectorM3d multiply(double x, double y, double z) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 
-    public Vector3d multiply(Vector3d other) {
+    public VectorM3d multiply(VectorM3d other) {
         return multiply(other.x, other.y, other.z);
     }
 
-    public Vector3d multiply(double value) {
+    public VectorM3d multiply(double value) {
         return multiply(value, value, value);
     }
 
-    public Vector3d crossProduct(Vector3d other) {
+    public VectorM3d crossProduct(VectorM3d other) {
         double newX = this.y * other.z - other.y * this.z;
         double newY = this.z * other.x - other.z * this.x;
         double newZ = this.x * other.y - other.x * this.y;
-        return new Vector3d(newX, newY, newZ);
+        this.x = newX;
+        this.y = newY;
+        this.z = newZ;
+        return this;
     }
 
-    public double dot(Vector3d other) {
+    public double dot(VectorM3d other) {
         return this.x * other.x + this.y * other.y + this.z * other.z;
     }
 
-    public Vector3d with(Double x, Double y, Double z) {
-        return new Vector3d(x == null ? this.x : x, y == null ? this.y : y, z == null ? this.z : z);
-    }
-
-    public Vector3d withX(double x) {
-        return new Vector3d(x, this.y, this.z);
-    }
-
-    public Vector3d withY(double y) {
-        return new Vector3d(this.x, y, this.z);
-    }
-
-    public Vector3d withZ(double z) {
-        return new Vector3d(this.x, this.y, z);
-    }
-
-    public double distance(Vector3d other) {
+    public double distance(VectorM3d other) {
         return Math.sqrt(distanceSquared(other));
     }
 
@@ -249,13 +244,15 @@ public class Vector3d implements VectorInterface3d {
         return (x * x) + (y * y) + (z * z);
     }
 
-    public Vector3d normalize() {
+    public VectorM3d normalize() {
         double length = length();
-
-        return new Vector3d(x / length, y / length, z / length);
+        this.x /= length;
+        this.y /= length;
+        this.z /= length;
+        return this;
     }
 
-    public double distanceSquared(Vector3d other) {
+    public double distanceSquared(VectorM3d other) {
         double distX = (x - other.x) * (x - other.x);
         double distY = (y - other.y) * (y - other.y);
         double distZ = (z - other.z) * (z - other.z);
@@ -271,8 +268,26 @@ public class Vector3d implements VectorInterface3d {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
 
-    public static Vector3d zero() {
-        return new Vector3d();
+    public static VectorM3d zero() {
+        return new VectorM3d();
+    }
+
+    @NotNull
+    public VectorM3d setX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    @NotNull
+    public VectorM3d setY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    @NotNull
+    public VectorM3d setZ(double z) {
+        this.z = z;
+        return this;
     }
 
     public int getBlockX() {
@@ -288,9 +303,9 @@ public class Vector3d implements VectorInterface3d {
     }
 
     @NotNull
-    public Vector3d clone() {
+    public VectorM3d clone() {
         try {
-            return (Vector3d) super.clone();
+            return (VectorM3d) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }
