@@ -195,7 +195,10 @@ public class VectorMutable3i implements VectorInterface3i {
     }
 
     public VectorMutable3i add(int x, int y, int z) {
-        return new VectorMutable3i(this.x + x, this.y + y, this.z + z);
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
     }
 
     public VectorMutable3i add(VectorMutable3i other) {
@@ -207,7 +210,10 @@ public class VectorMutable3i implements VectorInterface3i {
     }
 
     public VectorMutable3i subtract(int x, int y, int z) {
-        return new VectorMutable3i(this.x - x, this.y - y, this.z - z);
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 
     public VectorMutable3i subtract(VectorMutable3i other) {
@@ -215,7 +221,10 @@ public class VectorMutable3i implements VectorInterface3i {
     }
 
     public VectorMutable3i multiply(int x, int y, int z) {
-        return new VectorMutable3i(this.x * x, this.y * y, this.z * z);
+        this.x *= x;
+        this.y *= y;
+        this.z *= z;
+        return this;
     }
 
     public VectorMutable3i multiply(VectorMutable3i other) {
@@ -227,10 +236,12 @@ public class VectorMutable3i implements VectorInterface3i {
     }
 
     public VectorMutable3i crossProduct(VectorMutable3i other) {
-        int newX = this.y * other.z - other.y * this.z;
-        int newY = this.z * other.x - other.z * this.x;
-        int newZ = this.x * other.y - other.x * this.y;
-        return new VectorMutable3i(newX, newY, newZ);
+        int oldX = this.x;
+        int oldY = this.y;
+        this.x = this.y * other.z - other.y * this.z;
+        this.y = this.z * other.x - other.z * oldX;
+        this.z = oldX * other.y - this.x * oldY;
+        return this;
     }
 
     public int dot(VectorMutable3i other) {

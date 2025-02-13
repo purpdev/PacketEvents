@@ -19,14 +19,12 @@
 package com.github.retrooper.packetevents.util;
 
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
-import com.github.retrooper.packetevents.protocol.nbt.NBTDouble;
 import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.nbt.NBTNumber;
-import com.github.retrooper.packetevents.protocol.nbt.NBTType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
 
@@ -107,35 +105,6 @@ public class Vector3d implements VectorInterface3d {
         }
     }
 
-    public static Vector3d read(PacketWrapper<?> wrapper) {
-        double x = wrapper.readDouble();
-        double y = wrapper.readDouble();
-        double z = wrapper.readDouble();
-        return new Vector3d(x, y, z);
-    }
-
-    public static void write(PacketWrapper<?> wrapper, Vector3d vector) {
-        wrapper.writeDouble(vector.x);
-        wrapper.writeDouble(vector.y);
-        wrapper.writeDouble(vector.z);
-    }
-
-    public static Vector3d decode(NBT tag, ClientVersion version) {
-        NBTList<?> list = (NBTList<?>) tag;
-        double x = ((NBTNumber) list.getTag(0)).getAsDouble();
-        double y = ((NBTNumber) list.getTag(1)).getAsDouble();
-        double z = ((NBTNumber) list.getTag(2)).getAsDouble();
-        return new Vector3d(x, y, z);
-    }
-
-    public static NBT encode(Vector3d vector3d, ClientVersion version) {
-        NBTList<NBTDouble> list = new NBTList<>(NBTType.DOUBLE, 3);
-        list.addTag(new NBTDouble(vector3d.x));
-        list.addTag(new NBTDouble(vector3d.y));
-        list.addTag(new NBTDouble(vector3d.z));
-        return list;
-    }
-
     @Override
     public double getX() {
         return x;
@@ -183,90 +152,109 @@ public class Vector3d implements VectorInterface3d {
         return Objects.hash(x, y, z);
     }
 
+    @Override
     public Vector3d add(double x, double y, double z) {
         return new Vector3d(this.x + x, this.y + y, this.z + z);
     }
 
-    public Vector3d add(Vector3d other) {
-        return add(other.x, other.y, other.z);
+    @Override
+    public Vector3d add(VectorInterface3i other) {
+        return add(other.getX(), other.getY(), other.getZ());
     }
 
+    @Override
     public Vector3d offset(BlockFace face) {
         return add(face.getModX(), face.getModY(), face.getModZ());
     }
 
+    @Override
     public Vector3d subtract(double x, double y, double z) {
         return new Vector3d(this.x - x, this.y - y, this.z - z);
     }
 
-    public Vector3d subtract(Vector3d other) {
-        return subtract(other.x, other.y, other.z);
+    @Override
+    public Vector3d subtract(VectorInterface3d other) {
+        return subtract(other.getX(), other.getY(), other.getZ());
     }
 
+    @Override
     public Vector3d multiply(double x, double y, double z) {
         return new Vector3d(this.x * x, this.y * y, this.z * z);
     }
 
-    public Vector3d multiply(Vector3d other) {
-        return multiply(other.x, other.y, other.z);
+    @Override
+    public Vector3d multiply(VectorInterface3d other) {
+        return multiply(other.getX(), other.getY(), other.getZ());
     }
 
+    @Override
     public Vector3d multiply(double value) {
         return multiply(value, value, value);
     }
 
-    public Vector3d crossProduct(Vector3d other) {
-        double newX = this.y * other.z - other.y * this.z;
-        double newY = this.z * other.x - other.z * this.x;
-        double newZ = this.x * other.y - other.x * this.y;
+    @Override
+    public Vector3d crossProduct(VectorInterface3d other) {
+        double newX = this.y * other.getZ() - other.getY() * this.z;
+        double newY = this.z * other.getX() - other.getZ() * this.x;
+        double newZ = this.x * other.getY() - other.getX() * this.y;
         return new Vector3d(newX, newY, newZ);
     }
 
-    public double dot(Vector3d other) {
-        return this.x * other.x + this.y * other.y + this.z * other.z;
+    @Override
+    public double dot(VectorInterface3d other) {
+        return this.x * other.getX() + this.y * other.getY() + this.z * other.getZ();
     }
 
+    @Override
     public Vector3d with(Double x, Double y, Double z) {
         return new Vector3d(x == null ? this.x : x, y == null ? this.y : y, z == null ? this.z : z);
     }
 
+    @Override
     public Vector3d withX(double x) {
         return new Vector3d(x, this.y, this.z);
     }
 
+    @Override
     public Vector3d withY(double y) {
         return new Vector3d(this.x, y, this.z);
     }
 
+    @Override
     public Vector3d withZ(double z) {
         return new Vector3d(this.x, this.y, z);
     }
 
-    public double distance(Vector3d other) {
+    @Override
+    public double distance(VectorInterface3d other) {
         return Math.sqrt(distanceSquared(other));
     }
 
+    @Override
     public double length() {
         return Math.sqrt(lengthSquared());
     }
 
+    @Override
     public double lengthSquared() {
         return (x * x) + (y * y) + (z * z);
     }
 
+    @Override
     public Vector3d normalize() {
         double length = length();
-
         return new Vector3d(x / length, y / length, z / length);
     }
 
-    public double distanceSquared(Vector3d other) {
-        double distX = (x - other.x) * (x - other.x);
-        double distY = (y - other.y) * (y - other.y);
-        double distZ = (z - other.z) * (z - other.z);
+    @Override
+    public double distanceSquared(VectorInterface3d other) {
+        double distX = (x - other.getX()) * (x - other.getX());
+        double distY = (y - other.getY()) * (y - other.getY());
+        double distZ = (z - other.getZ()) * (z - other.getZ());
         return distX + distY + distZ;
     }
 
+    @Override
     public Vector3i toVector3i() {
         return new Vector3i((int) x, (int) y, (int) z);
     }
@@ -276,18 +264,17 @@ public class Vector3d implements VectorInterface3d {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
 
-    public static Vector3d zero() {
-        return new Vector3d();
-    }
-
+    @Override
     public int getBlockX() {
         return MathUtil.floor(x);
     }
 
+    @Override
     public int getBlockY() {
         return MathUtil.floor(y);
     }
 
+    @Override
     public int getBlockZ() {
         return MathUtil.floor(z);
     }
@@ -299,5 +286,32 @@ public class Vector3d implements VectorInterface3d {
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }
+    }
+
+    public static Vector3d read(PacketWrapper<?> wrapper) {
+        double x = wrapper.readDouble();
+        double y = wrapper.readDouble();
+        double z = wrapper.readDouble();
+        return new Vector3d(x, y, z);
+    }
+
+    public static void write(PacketWrapper<?> wrapper, VectorInterface3d vector) {
+        VectorInterface3d.write(wrapper, vector);
+    }
+
+    public static Vector3d decode(NBT tag, ClientVersion version) {
+        NBTList<?> list = (NBTList<?>) tag;
+        double x = ((NBTNumber) list.getTag(0)).getAsDouble();
+        double y = ((NBTNumber) list.getTag(1)).getAsDouble();
+        double z = ((NBTNumber) list.getTag(2)).getAsDouble();
+        return new Vector3d(x, y, z);
+    }
+
+    public static NBT encode(VectorInterface3d vector3d, ClientVersion version) {
+        return VectorInterface3d.encode(vector3d, version);
+    }
+
+    public static Vector3d zero() {
+        return new Vector3d();
     }
 }

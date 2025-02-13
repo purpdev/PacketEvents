@@ -185,12 +185,11 @@ public class VectorMutable3f implements VectorInterface3f {
     }
 
     public VectorMutable3f crossProduct(VectorMutable3f other) {
-        float newX = this.y * other.z - other.y * this.z;
-        float newY = this.z * other.x - other.z * this.x;
-        float newZ = this.x * other.y - other.x * this.y;
-        this.x = newX;
-        this.y = newY;
-        this.z = newZ;
+        float oldX = this.x;
+        float oldY = this.y;
+        this.x = this.y * other.z - other.y * this.z;
+        this.y = this.z * other.x - other.z * oldX;
+        this.z = oldX * other.y - this.x * oldY;
         return this;
     }
 

@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
  * @author retrooper
  * @since 1.7
  */
-public class Vector3i implements Cloneable {
+public class Vector3i implements VectorInterface3i {
     /**
      * X (coordinate/angle/whatever you wish)
      */
