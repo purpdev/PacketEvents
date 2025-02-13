@@ -351,10 +351,10 @@ public class WrapperPlayServerJoinGame extends PacketWrapper<WrapperPlayServerJo
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_20)) {
             portalCooldown = readVarInt();
             if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_20_5)) {
-                enforcesSecureChat = readBoolean();
                 if (this.serverVersion.isNewerThanOrEquals(ServerVersion.V_1_21_2)) {
                     this.seaLevel = this.readVarInt();
                 }
+                this.enforcesSecureChat = this.readBoolean();
             }
         }
     }
