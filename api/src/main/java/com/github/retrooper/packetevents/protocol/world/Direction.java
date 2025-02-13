@@ -46,10 +46,14 @@ public enum Direction {
     }
 
     private static final Direction[] HORIZONTAL_VALUES = {NORTH, SOUTH, WEST, EAST};
-    public static final Direction[] VALUES = values(); // Cache the values array
+    private static final Direction[] VALUES = values(); // Cache the values array
 
     public static Direction getByHorizontalIndex(int index) {
         return HORIZONTAL_VALUES[index % HORIZONTAL_VALUES.length];
+    }
+
+    public static Direction getByIndex(int enumOrdinal) {
+        return VALUES[enumOrdinal];
     }
 
     public Vector3i getVector() {
