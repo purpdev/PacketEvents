@@ -64,7 +64,7 @@ public class PacketEventsPlugin extends JavaPlugin {
                 if (event.getPacketType() == PacketType.Play.Client.INTERACT_ENTITY) {
                     WrapperPlayClientInteractEntity interaction = new WrapperPlayClientInteractEntity(event);
                     if (interaction.getAction() == WrapperPlayClientInteractEntity.InteractAction.ATTACK) {
-                        Player player = (Player) event.getPlayer();
+                        Player player = event.getPlayer();
                         WrapperPlayServerBlockChange blockChange = new WrapperPlayServerBlockChange(SpigotConversionUtil
                                 .fromBukkitLocation(player.getLocation()).getPosition().toVector3i().subtract(0, 1, 0),
                                 StateTypes.COAL_BLOCK.createBlockState().getGlobalId());
@@ -72,7 +72,7 @@ public class PacketEventsPlugin extends JavaPlugin {
                         event.getUser().sendPacket(blockChange);
                     }
                 }
-            }
+            }   
 
             @Override
             public void onPacketPlaySend(PacketPlaySendEvent event) {
