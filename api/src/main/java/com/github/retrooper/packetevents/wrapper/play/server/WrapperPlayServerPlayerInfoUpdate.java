@@ -127,7 +127,7 @@ public class WrapperPlayServerPlayerInfoUpdate extends PacketWrapper<WrapperPlay
             return profile.getUUID();
         }
 
-        public UserProfile getGameProfile() {
+        public UserProfile getUserProfile() {
             return profile;
         }
 
