@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 import static com.github.retrooper.packetevents.util.adventure.AdventureIndexUtil.indexValueOrThrow;
 
@@ -68,6 +69,7 @@ public class WrappedBlockState {
     private static final byte AIR_MAPPING_INDEX = 0;
     private static final byte LEGACY_MAPPING_INDEX = 1;
     private static final byte HIGHEST_MAPPING_INDEX;
+    private static final boolean PRELOAD_BLOCK_STATE_MAPPINGS = Boolean.getBoolean("packetevents.mappings.preload");
 
     static {
         // all versions where block state mappings were changed TODO UPDATE
@@ -168,7 +170,7 @@ public class WrappedBlockState {
 
     private static byte loadMappings(ClientVersion version) {
         byte mappingsIndex = getMappingsIndex(version);
-        if (BY_ID[mappingsIndex].isEmpty()) {
+        if (!PRELOAD_BLOCK_STATE_MAPPINGS && BY_ID[mappingsIndex].isEmpty()) {
             loadMappings0(version, mappingsIndex); // try to load mappings
         }
         return mappingsIndex;
@@ -194,7 +196,7 @@ public class WrappedBlockState {
         }
 
         double timeDiff = (System.nanoTime() - start) / 1_000_000d;
-        PacketEvents.getAPI().getLogger().info("Finished loading mappings for "
+        PacketEvents.getAPI().getLogger().info("Finished loading block mappings for "
                 + version + "/" + mappingsIndex + " in " + timeDiff + "ms");
     }
 
@@ -435,10 +437,12 @@ public class WrappedBlockState {
                 byte mappingIndex = getMappingsIndex(version);
                 SequentialNBTReader.List list = (SequentialNBTReader.List) versionEntry.getValue();
 
-                // search for target version
-                if (mappingIndex != targetMappingIndex) {
-                    list.skip();
-                    continue;
+                if (targetMappingIndex != (byte) -1) {
+                    // search for target version
+                    if (mappingIndex != targetMappingIndex) {
+                        list.skip();
+                        continue;
+                    }
                 }
 
                 Map<Integer, WrappedBlockState> stateByIdMap = new HashMap<>();
@@ -532,7 +536,9 @@ public class WrappedBlockState {
                 INTO_STRING[mappingIndex] = stateToStringMap;
                 DEFAULT_STATES[mappingIndex] = stateTypeToBlockStateMap;
 
-                break; // only read one version, then exit
+                if (targetMappingIndex != (byte) -1) {
+                    break; // only read one version, then exit
+                }
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load modern block mappings", e);
@@ -1530,7 +1536,25 @@ public class WrappedBlockState {
     }
 
     @ApiStatus.Internal
-    public static void ensureLoad() { /**/ }
+    public static void ensureLoad() {
+        if (!PRELOAD_BLOCK_STATE_MAPPINGS) {
+            return;
+        }
+        Logger logger = PacketEvents.getAPI().getLogger();
+        logger.info("Preloading block mappings...");
+        long start = System.nanoTime();
+
+        STATE_DATA_CACHE = new HashMap<>();
+        try {
+            loadLegacy();
+            loadModern((byte) -1);
+        } finally {
+            STATE_DATA_CACHE = null;
+        }
+
+        double timeDiff = (System.nanoTime() - start) / 1_000_000d;
+        logger.info("Finish preloading block mappings in " + timeDiff + "ms");
+    }
 
     private static final class StateCacheValue {
 
