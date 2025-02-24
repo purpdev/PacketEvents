@@ -102,18 +102,6 @@ public class WrappedBlockState {
     private static final Map<WrappedBlockState, Integer>[] INTO_ID = new Map[HIGHEST_MAPPING_INDEX + 1];
     private static final Map<StateType, WrappedBlockState>[] DEFAULT_STATES = new Map[HIGHEST_MAPPING_INDEX + 1];
 
-    // Try to reduce memory footprint by re-using hashmaps when they are equal
-    // We do this by setting the key to the NBTCompound of the data and the value to the data
-    // this.data = cache.computeIfAbsent(dataContent, (key) -> { // NBTCompound to data });
-    // This will get an equal value if present, otherwise it will compute the value
-    // Once this is done, we remove this cache to save memory
-    // A HashMap is used instead of another data type because a hashmap is o(1)
-    //
-    // 6160 total combinations, last updated with 1.20.5
-    // This brings total memory usage from 62 MB to 34 MB, a 28 MB reduction
-    // Using a HashMap reduces memory usage to less than a megabyte, I can't get precise numbers because it is hard to see on a heapdump
-    private static Map<Map<StateValue, Object>, StateCacheValue> STATE_DATA_CACHE;
-
     private static final Map<String, String> STRING_UPDATER = new HashMap<>();
 
     static {
@@ -183,16 +171,10 @@ public class WrappedBlockState {
         PacketEvents.getAPI().getLogger().info("Loading block mappings for " + version + "/" + mappingsIndex + "...");
         long start = System.nanoTime();
 
-        // rebuild the state data cache
-        loadStateDataCache();
-        try {
-            if (mappingsIndex == LEGACY_MAPPING_INDEX) {
-                loadLegacy();
-            } else {
-                loadModern(mappingsIndex);
-            }
-        } finally {
-            STATE_DATA_CACHE = null;
+        if (mappingsIndex == LEGACY_MAPPING_INDEX) {
+            loadLegacy(buildStateDataCache());
+        } else {
+            loadModern(buildStateDataCache(), mappingsIndex);
         }
 
         double timeDiff = (System.nanoTime() - start) / 1_000_000d;
@@ -200,17 +182,29 @@ public class WrappedBlockState {
                 + version + "/" + mappingsIndex + " in " + timeDiff + "ms");
     }
 
-    private static void loadStateDataCache() {
-        STATE_DATA_CACHE = new HashMap<>();
+    private static Map<Map<StateValue, Object>, StateCacheValue> buildStateDataCache() {
+        // Try to reduce memory footprint by re-using hashmaps when they are equal
+        // We do this by setting the key to the NBTCompound of the data and the value to the data
+        // this.data = cache.computeIfAbsent(dataContent, (key) -> { // NBTCompound to data });
+        // This will get an equal value if present, otherwise it will compute the value
+        // Once this is done, we remove this cache to save memory
+        // A HashMap is used instead of another data type because a hashmap is o(1)
+        //
+        // 6160 total combinations, last updated with 1.20.5
+        // This brings total memory usage from 62 MB to 34 MB, a 28 MB reduction
+        // Using a HashMap reduces memory usage to less than a megabyte, I can't get precise numbers because it is hard to see on a heapdump
+
+        Map<Map<StateValue, Object>, StateCacheValue> cache = new HashMap<>();
         for (byte i = 0; i < HIGHEST_MAPPING_INDEX; i++) {
             Map<Integer, WrappedBlockState> map = BY_ID[i];
             if (map == null) {
                 continue; // not loaded yet
             }
             for (WrappedBlockState state : map.values()) {
-                STATE_DATA_CACHE.computeIfAbsent(state.data, StateCacheValue::new);
+                cache.computeIfAbsent(state.data, StateCacheValue::new);
             }
         }
+        return cache;
     }
 
     public static WrappedBlockState decode(NBT nbt, ClientVersion version) {
@@ -344,7 +338,7 @@ public class WrappedBlockState {
         return MAPPING_INDEXES[version.ordinal()];
     }
 
-    private static void loadLegacy() {
+    private static void loadLegacy(Map<Map<StateValue, Object>, StateCacheValue> cache) {
         Map<Integer, WrappedBlockState> stateByIdMap = new HashMap<>();
         Map<WrappedBlockState, Integer> stateToIdMap = new HashMap<>();
         Map<String, WrappedBlockState> stateByStringMap = new HashMap<>();
@@ -396,12 +390,12 @@ public class WrappedBlockState {
                             }
                             dataMap.put(state, state.getParser().apply(v.toString().toUpperCase(Locale.ROOT)));
                         }
-                        stateCache = STATE_DATA_CACHE.computeIfAbsent(dataMap, StateCacheValue::new);
+                        stateCache = cache.computeIfAbsent(dataMap, StateCacheValue::new);
                     } else {
                         stateCache = StateCacheValue.EMPTY;
                     }
 
-                    String fullString = entry.getKey() + stateCache.string;
+                    String fullString = entry.getKey() + stateCache.getString();
                     WrappedBlockState state = new WrappedBlockState(type, stateCache.map, combinedID, LEGACY_MAPPING_INDEX);
 
                     stateByIdMap.put(combinedID, state);
@@ -428,7 +422,7 @@ public class WrappedBlockState {
         }
     }
 
-    private static void loadModern(byte targetMappingIndex) {
+    private static void loadModern(Map<Map<StateValue, Object>, StateCacheValue> cache, byte targetMappingIndex) {
         try (final SequentialNBTReader.Compound compound = MappingHelper.decompress("mappings/block/modern_block_mappings")) {
             compound.skipOne(); // Skip version
 
@@ -508,12 +502,12 @@ public class WrappedBlockState {
                                 }
                                 dataMap.put(state, state.getParser().apply(v.toString().toUpperCase(Locale.ROOT)));
                             }
-                            stateCache = STATE_DATA_CACHE.computeIfAbsent(dataMap, StateCacheValue::new);
+                            stateCache = cache.computeIfAbsent(dataMap, StateCacheValue::new);
                         } else {
                             stateCache = StateCacheValue.EMPTY;
                         }
 
-                        String fullString = typeString + stateCache.string;
+                        String fullString = typeString + stateCache.getString();
                         WrappedBlockState state = new WrappedBlockState(type, stateCache.map, id, mappingIndex);
 
                         if (defaultIdx == index) {
@@ -1544,12 +1538,10 @@ public class WrappedBlockState {
         logger.info("Preloading block mappings...");
         long start = System.nanoTime();
 
-        STATE_DATA_CACHE = new HashMap<>();
-        try {
-            loadLegacy();
-            loadModern((byte) -1);
-        } finally {
-            STATE_DATA_CACHE = null;
+        {
+            Map<Map<StateValue, Object>, StateCacheValue> cache = new HashMap<>();
+            loadLegacy(cache);
+            loadModern(cache, (byte) -1);
         }
 
         double timeDiff = (System.nanoTime() - start) / 1_000_000d;
@@ -1561,16 +1553,21 @@ public class WrappedBlockState {
         public static final StateCacheValue EMPTY = new StateCacheValue(Collections.emptyMap());
 
         private final Map<StateValue, Object> map;
-        private final String string;
+        private String string;
 
         public StateCacheValue(Map<StateValue, Object> map) {
             this.map = map;
+        }
 
-            StringBuilder builder = new StringBuilder();
-            for (Map.Entry<StateValue, Object> entry : map.entrySet()) {
-                builder.append(entry.getKey()).append('=').append(entry.getValue()).append(',');
+        public String getString() {
+            if (this.string == null) {
+                StringBuilder builder = new StringBuilder();
+                for (Map.Entry<StateValue, Object> entry : this.map.entrySet()) {
+                    builder.append(entry.getKey()).append('=').append(entry.getValue()).append(',');
+                }
+                this.string = builder.length() == 0 ? "" : '[' + builder.substring(0, builder.length() - 1) + ']';
             }
-            this.string = builder.length() == 0 ? "" : '[' + builder.substring(0, builder.length() - 1) + ']';
+            return this.string;
         }
     }
 }
