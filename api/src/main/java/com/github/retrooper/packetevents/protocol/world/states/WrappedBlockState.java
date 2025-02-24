@@ -5,10 +5,8 @@ import com.github.retrooper.packetevents.protocol.nbt.NBT;
 import com.github.retrooper.packetevents.protocol.nbt.NBTByte;
 import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.nbt.NBTInt;
-import com.github.retrooper.packetevents.protocol.nbt.NBTLimiter;
 import com.github.retrooper.packetevents.protocol.nbt.NBTNumber;
 import com.github.retrooper.packetevents.protocol.nbt.NBTString;
-import com.github.retrooper.packetevents.protocol.nbt.serializer.DefaultNBTSerializer;
 import com.github.retrooper.packetevents.protocol.nbt.serializer.SequentialNBTReader;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
@@ -38,15 +36,13 @@ import com.github.retrooper.packetevents.protocol.world.states.enums.West;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateValue;
-import com.github.retrooper.packetevents.util.BinaryNBTCompound;
 import com.github.retrooper.packetevents.util.mappings.MappingHelper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
-import java.util.AbstractMap;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Locale;
@@ -69,7 +65,8 @@ import static com.github.retrooper.packetevents.util.adventure.AdventureIndexUti
 public class WrappedBlockState {
 
     private static final byte[] MAPPING_INDEXES;
-    private static final byte LEGACY_MAPPING_INDEX = 0;
+    private static final byte AIR_MAPPING_INDEX = 0;
+    private static final byte LEGACY_MAPPING_INDEX = 1;
     private static final byte HIGHEST_MAPPING_INDEX;
 
     static {
@@ -95,35 +92,44 @@ public class WrappedBlockState {
         HIGHEST_MAPPING_INDEX = MAPPING_INDEXES[versions.length - 1];
     }
 
-    private static final WrappedBlockState AIR = new WrappedBlockState(StateTypes.AIR, new EnumMap<>(StateValue.class), 0, (byte) 0);
+    private static final WrappedBlockState AIR = new WrappedBlockState(StateTypes.AIR,
+            new EnumMap<>(StateValue.class), 0, AIR_MAPPING_INDEX);
     private static final Map<String, WrappedBlockState>[] BY_STRING = new Map[HIGHEST_MAPPING_INDEX + 1];
     private static final Map<Integer, WrappedBlockState>[] BY_ID = new Map[HIGHEST_MAPPING_INDEX + 1];
     private static final Map<WrappedBlockState, String>[] INTO_STRING = new Map[HIGHEST_MAPPING_INDEX + 1];
     private static final Map<WrappedBlockState, Integer>[] INTO_ID = new Map[HIGHEST_MAPPING_INDEX + 1];
     private static final Map<StateType, WrappedBlockState>[] DEFAULT_STATES = new Map[HIGHEST_MAPPING_INDEX + 1];
 
+    // Try to reduce memory footprint by re-using hashmaps when they are equal
+    // We do this by setting the key to the NBTCompound of the data and the value to the data
+    // this.data = cache.computeIfAbsent(dataContent, (key) -> { // NBTCompound to data });
+    // This will get an equal value if present, otherwise it will compute the value
+    // Once this is done, we remove this cache to save memory
+    // A HashMap is used instead of another data type because a hashmap is o(1)
+    //
+    // 6160 total combinations, last updated with 1.20.5
+    // This brings total memory usage from 62 MB to 34 MB, a 28 MB reduction
+    // Using a HashMap reduces memory usage to less than a megabyte, I can't get precise numbers because it is hard to see on a heapdump
+    private static Map<Map<StateValue, Object>, StateCacheValue> STATE_DATA_CACHE;
+
     private static final Map<String, String> STRING_UPDATER = new HashMap<>();
 
     static {
         STRING_UPDATER.put("grass_path", "dirt_path"); // 1.16 -> 1.17
 
-        // Try to reduce memory footprint by re-using hashmaps when they are equal
-        // We do this by setting the key to the NBTCompound of the data and the value to the data
-        // this.data = cache.computeIfAbsent(dataContent, (key) -> { // NBTCompound to data });
-        // This will get an equal value if present, otherwise it will compute the value
-        // Once this is done, we remove this cache to save memory
-        // A HashMap is used instead of another data type because a hashmap is o(1)
-        //
-        // 6160 total combinations, last updated with 1.20.5
-        // This brings total memory usage from 62 MB to 34 MB, a 28 MB reduction
-        // Using a HashMap reduces memory usage to less than a megabyte, I can't get precise numbers because it is hard to see on a heapdump
-        Map<BinaryNBTCompound, Map.Entry<Map<StateValue, Object>, String>> cache = new HashMap<>(6160, 70);
+        Arrays.fill(BY_STRING, Collections.emptyMap());
+        Arrays.fill(BY_ID, Collections.emptyMap());
+        Arrays.fill(INTO_STRING, Collections.emptyMap());
+        Arrays.fill(INTO_ID, Collections.emptyMap());
+        Arrays.fill(DEFAULT_STATES, Collections.emptyMap());
 
-        loadLegacy(cache);
-        loadModern(cache);
-
-        cache.clear();
-        cache = null;
+        // because AIR is a constant, preload all data for this into a separate mapping index
+        String airName = AIR.getType().getMapped().getName().getKey();
+        BY_STRING[AIR_MAPPING_INDEX] = Collections.singletonMap(airName, AIR);
+        BY_ID[AIR_MAPPING_INDEX] = Collections.singletonMap(AIR.getGlobalId(), AIR);
+        INTO_STRING[AIR_MAPPING_INDEX] = Collections.singletonMap(AIR, airName);
+        INTO_ID[AIR_MAPPING_INDEX] = Collections.singletonMap(AIR, AIR.getGlobalId());
+        DEFAULT_STATES[AIR_MAPPING_INDEX] = Collections.singletonMap(AIR.getType(), AIR);
     }
 
     int globalID;
@@ -162,8 +168,47 @@ public class WrappedBlockState {
 
     private static byte loadMappings(ClientVersion version) {
         byte mappingsIndex = getMappingsIndex(version);
-        // TODO implement lazy loading
+        if (BY_ID[mappingsIndex].isEmpty()) {
+            loadMappings0(version, mappingsIndex); // try to load mappings
+        }
         return mappingsIndex;
+    }
+
+    private static synchronized void loadMappings0(ClientVersion version, byte mappingsIndex) {
+        if (!BY_ID[mappingsIndex].isEmpty()) {
+            return; // already loaded
+        }
+        PacketEvents.getAPI().getLogger().info("Loading block mappings for " + version + "/" + mappingsIndex + "...");
+        long start = System.nanoTime();
+
+        // rebuild the state data cache
+        loadStateDataCache();
+        try {
+            if (mappingsIndex == LEGACY_MAPPING_INDEX) {
+                loadLegacy();
+            } else {
+                loadModern(mappingsIndex);
+            }
+        } finally {
+            STATE_DATA_CACHE = null;
+        }
+
+        double timeDiff = (System.nanoTime() - start) / 1_000_000d;
+        PacketEvents.getAPI().getLogger().info("Finished loading mappings for "
+                + version + "/" + mappingsIndex + " in " + timeDiff + "ms");
+    }
+
+    private static void loadStateDataCache() {
+        STATE_DATA_CACHE = new HashMap<>();
+        for (byte i = 0; i < HIGHEST_MAPPING_INDEX; i++) {
+            Map<Integer, WrappedBlockState> map = BY_ID[i];
+            if (map == null) {
+                continue; // not loaded yet
+            }
+            for (WrappedBlockState state : map.values()) {
+                STATE_DATA_CACHE.computeIfAbsent(state.data, StateCacheValue::new);
+            }
+        }
     }
 
     public static WrappedBlockState decode(NBT nbt, ClientVersion version) {
@@ -297,7 +342,7 @@ public class WrappedBlockState {
         return MAPPING_INDEXES[version.ordinal()];
     }
 
-    private static void loadLegacy(Map<BinaryNBTCompound, Map.Entry<Map<StateValue, Object>, String>> cache) {
+    private static void loadLegacy() {
         Map<Integer, WrappedBlockState> stateByIdMap = new HashMap<>();
         Map<WrappedBlockState, Integer> stateToIdMap = new HashMap<>();
         Map<String, WrappedBlockState> stateByStringMap = new HashMap<>();
@@ -318,31 +363,23 @@ public class WrappedBlockState {
                 }
 
                 for (Map.Entry<String, NBT> element : inner) {
-                    String[] ids = element.getKey().split(":");
-                    int id = Integer.parseInt(ids[0]);
-                    int data = Integer.parseInt(ids[1]);
+                    String elementName = element.getKey();
+                    int idIndex = elementName.indexOf(':');
+                    int id = Integer.parseInt(elementName.substring(0, idIndex));
+                    int data = Integer.parseInt(elementName.substring(idIndex + 1));
                     int combinedID = (id << 4) | data;
 
                     SequentialNBTReader.Compound dataContent = (SequentialNBTReader.Compound) element.getValue();
-                    Map.Entry<Map<StateValue, Object>, String> dataEntry = cache.computeIfAbsent(new BinaryNBTCompound(dataContent.readFullyAsBytes()), (bin) -> {
-                        NBTCompound key;
-                        try (ByteArrayInputStream stream = new ByteArrayInputStream(bin.getData()); DataInputStream in = new DataInputStream(stream)) {
-                            key = (NBTCompound) DefaultNBTSerializer.INSTANCE.deserializeTag(NBTLimiter.noop(), in, false);
-                        } catch (IOException e) {
-                            throw new RuntimeException("Failed to load legacy block mappings", e);
-                        }
-
-                        StringBuilder dataStringBuilder = new StringBuilder();
-                        Map<StateValue, Object> dataMap = new HashMap<>(key.size());
-
-                        for (Map.Entry<String, NBT> props : key.getTags().entrySet()) {
+                    StateCacheValue stateCache;
+                    if (dataContent.hasNext()) { // only try to read if there is data available
+                        Map<StateValue, Object> dataMap = new HashMap<>(3);
+                        for (Map.Entry<String, NBT> props : dataContent) {
                             StateValue state = StateValue.byName(props.getKey());
                             if (state == null) {
                                 PacketEvents.getAPI().getLogger().warning("Could not find value for " + props.getKey());
                                 continue;
                             }
 
-                            dataStringBuilder.append(props.getKey()).append("=");
                             NBT value = props.getValue();
                             Object v;
                             if (value instanceof NBTByte) {
@@ -353,26 +390,17 @@ public class WrappedBlockState {
                                 v = ((NBTString) value).getValue();
                             } else {
                                 PacketEvents.getAPI().getLogger().warning("Unknown NBT type in legacy mapping: " + value.getClass().getSimpleName());
-                                dataStringBuilder = new StringBuilder(dataStringBuilder.substring(0, dataStringBuilder.length() - props.getKey().length() - 1));
                                 continue;
                             }
-
-                            dataStringBuilder.append(v).append(",");
                             dataMap.put(state, state.getParser().apply(v.toString().toUpperCase(Locale.ROOT)));
                         }
+                        stateCache = STATE_DATA_CACHE.computeIfAbsent(dataMap, StateCacheValue::new);
+                    } else {
+                        stateCache = StateCacheValue.EMPTY;
+                    }
 
-                        String dataString;
-                        if (dataStringBuilder.length() == 0) {
-                            dataString = "";
-                        } else {
-                            dataString = "[" + dataStringBuilder.substring(0, dataStringBuilder.length() - 1) + "]";
-                        }
-
-                        return new AbstractMap.SimpleEntry<>(dataMap, dataString);
-                    });
-
-                    String fullString = entry.getKey() + dataEntry.getValue();
-                    WrappedBlockState state = new WrappedBlockState(type, dataEntry.getKey(), combinedID, LEGACY_MAPPING_INDEX);
+                    String fullString = entry.getKey() + stateCache.string;
+                    WrappedBlockState state = new WrappedBlockState(type, stateCache.map, combinedID, LEGACY_MAPPING_INDEX);
 
                     stateByIdMap.put(combinedID, state);
                     stateToStringMap.put(state, fullString);
@@ -398,7 +426,7 @@ public class WrappedBlockState {
         }
     }
 
-    private static void loadModern(Map<BinaryNBTCompound, Map.Entry<Map<StateValue, Object>, String>> cache) {
+    private static void loadModern(byte targetMappingIndex) {
         try (final SequentialNBTReader.Compound compound = MappingHelper.decompress("mappings/block/modern_block_mappings")) {
             compound.skipOne(); // Skip version
 
@@ -406,6 +434,12 @@ public class WrappedBlockState {
                 ClientVersion version = ClientVersion.valueOf(versionEntry.getKey());
                 byte mappingIndex = getMappingsIndex(version);
                 SequentialNBTReader.List list = (SequentialNBTReader.List) versionEntry.getValue();
+
+                // search for target version
+                if (mappingIndex != targetMappingIndex) {
+                    list.skip();
+                    continue;
+                }
 
                 Map<Integer, WrappedBlockState> stateByIdMap = new HashMap<>();
                 Map<WrappedBlockState, Integer> stateToIdMap = new HashMap<>();
@@ -446,25 +480,16 @@ public class WrappedBlockState {
                     int index = 0;
                     for (NBT nbt : ((SequentialNBTReader.List) next.getValue())) {
                         SequentialNBTReader.Compound dataContent = (SequentialNBTReader.Compound) nbt;
-                        Map.Entry<Map<StateValue, Object>, String> dataEntry = cache.computeIfAbsent(new BinaryNBTCompound(dataContent.readFullyAsBytes()), (bin) -> {
-                            NBTCompound key;
-                            try (ByteArrayInputStream stream = new ByteArrayInputStream(bin.getData()); DataInputStream in = new DataInputStream(stream)) {
-                                key = (NBTCompound) DefaultNBTSerializer.INSTANCE.deserializeTag(NBTLimiter.noop(), in, false);
-                            } catch (IOException ex) {
-                                throw new RuntimeException("Failed to load legacy block mappings", ex);
-                            }
-
-                            StringBuilder dataStringBuilder = new StringBuilder();
-                            Map<StateValue, Object> dataMap = new HashMap<>(key.size());
-
-                            for (Map.Entry<String, NBT> props : key.getTags().entrySet()) {
+                        StateCacheValue stateCache;
+                        if (dataContent.hasNext()) { // only try to read if there is data available
+                            Map<StateValue, Object> dataMap = new HashMap<>(3);
+                            for (Map.Entry<String, NBT> props : dataContent) {
                                 StateValue state = StateValue.byName(props.getKey());
                                 if (state == null) {
                                     PacketEvents.getAPI().getLogger().warning("Could not find value for " + props.getKey());
                                     continue;
                                 }
 
-                                dataStringBuilder.append(props.getKey()).append("=");
                                 NBT value = props.getValue();
                                 Object v;
                                 if (value instanceof NBTByte) {
@@ -475,26 +500,17 @@ public class WrappedBlockState {
                                     v = ((NBTString) value).getValue();
                                 } else {
                                     PacketEvents.getAPI().getLogger().warning("Unknown NBT typeString in modern mapping: " + value.getClass().getSimpleName());
-                                    dataStringBuilder = new StringBuilder(dataStringBuilder.substring(0, dataStringBuilder.length() - props.getKey().length() - 1));
                                     continue;
                                 }
-
-                                dataStringBuilder.append(v).append(",");
                                 dataMap.put(state, state.getParser().apply(v.toString().toUpperCase(Locale.ROOT)));
                             }
+                            stateCache = STATE_DATA_CACHE.computeIfAbsent(dataMap, StateCacheValue::new);
+                        } else {
+                            stateCache = StateCacheValue.EMPTY;
+                        }
 
-                            String dataString;
-                            if (dataStringBuilder.length() == 0) {
-                                dataString = "";
-                            } else {
-                                dataString = "[" + dataStringBuilder.substring(0, dataStringBuilder.length() - 1) + "]";
-                            }
-
-                            return new AbstractMap.SimpleEntry<>(dataMap, dataString);
-                        });
-
-                        String fullString = typeString + dataEntry.getValue();
-                        WrappedBlockState state = new WrappedBlockState(type, dataEntry.getKey(), id, mappingIndex);
+                        String fullString = typeString + stateCache.string;
+                        WrappedBlockState state = new WrappedBlockState(type, stateCache.map, id, mappingIndex);
 
                         if (defaultIdx == index) {
                             stateTypeToBlockStateMap.put(type, state);
@@ -515,6 +531,8 @@ public class WrappedBlockState {
                 BY_STRING[mappingIndex] = stateByStringMap;
                 INTO_STRING[mappingIndex] = stateToStringMap;
                 DEFAULT_STATES[mappingIndex] = stateTypeToBlockStateMap;
+
+                break; // only read one version, then exit
             }
         } catch (IOException e) {
             throw new RuntimeException("Failed to load modern block mappings", e);
@@ -1513,4 +1531,22 @@ public class WrappedBlockState {
 
     @ApiStatus.Internal
     public static void ensureLoad() { /**/ }
+
+    private static final class StateCacheValue {
+
+        public static final StateCacheValue EMPTY = new StateCacheValue(Collections.emptyMap());
+
+        private final Map<StateValue, Object> map;
+        private final String string;
+
+        public StateCacheValue(Map<StateValue, Object> map) {
+            this.map = map;
+
+            StringBuilder builder = new StringBuilder();
+            for (Map.Entry<StateValue, Object> entry : map.entrySet()) {
+                builder.append(entry.getKey()).append('=').append(entry.getValue()).append(',');
+            }
+            this.string = builder.length() == 0 ? "" : '[' + builder.substring(0, builder.length() - 1) + ']';
+        }
+    }
 }
