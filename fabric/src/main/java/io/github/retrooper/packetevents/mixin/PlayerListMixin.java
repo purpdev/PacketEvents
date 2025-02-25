@@ -46,8 +46,8 @@ public class PlayerListMixin {
             at = @At("HEAD")
     )
     private void preNewPlayerPlace(
-        Connection connection, ServerPlayer player,
-        CommonListenerCookie cookie, CallbackInfo ci
+            Connection connection, ServerPlayer player,
+            CommonListenerCookie cookie, CallbackInfo ci
     ) {
         PacketEvents.getAPI().getInjector().setPlayer(connection.channel, player);
     }
