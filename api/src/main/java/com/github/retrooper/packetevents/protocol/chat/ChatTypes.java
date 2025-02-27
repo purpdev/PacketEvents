@@ -31,8 +31,7 @@ import static com.github.retrooper.packetevents.protocol.chat.ChatTypeDecoration
 
 public final class ChatTypes {
 
-    private static final VersionedRegistry<ChatType> REGISTRY = new VersionedRegistry<>(
-            "chat_type", "chat/chat_type_mappings");
+    private static final VersionedRegistry<ChatType> REGISTRY = new VersionedRegistry<>("chat_type");
 
     private ChatTypes() {
     }

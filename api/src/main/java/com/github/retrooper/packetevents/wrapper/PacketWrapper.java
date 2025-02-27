@@ -967,16 +967,14 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 if (type == null) {
                     throw new IllegalStateException("Unknown entity metadata type id: " + typeID + " version " + serverVersion.toClientVersion());
                 }
-                Object value = type.getDataDeserializer().apply(this);
-                list.add(new EntityData(index, type, value));
+                list.add(new EntityData(index, type, type.read(this)));
             }
         } else {
             for (byte data = readByte(); data != Byte.MAX_VALUE; data = readByte()) {
                 int typeID = (data & 0xE0) >> 5;
                 int index = data & 0x1F;
                 EntityDataType<?> type = EntityDataTypes.getById(serverVersion.toClientVersion(), typeID);
-                Object value = type.getDataDeserializer().apply(this);
-                EntityData entityData = new EntityData(index, type, value);
+                EntityData entityData = new EntityData(index, type, type.read(this));
                 list.add(entityData);
             }
         }
@@ -996,7 +994,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 } else {
                     writeByte(entityData.getType().getId(serverVersion.toClientVersion()));
                 }
-                entityData.getType().getDataSerializer().accept(this, entityData.getValue());
+                ((EntityDataType<? super Object>) entityData.getType()).write(this, entityData.getValue());
             }
             writeByte(255); // End of metadata array
         } else {
@@ -1005,7 +1003,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 int index = entityData.getIndex();
                 int data = (typeID << 5 | index & 31) & 255;
                 writeByte(data);
-                entityData.getType().getDataSerializer().accept(this, entityData.getValue());
+                ((EntityDataType<? super Object>) entityData.getType()).write(this, entityData.getValue());
             }
             writeByte(127); // End of metadata array
         }
@@ -1434,6 +1432,18 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         }
     }
 
+    public <R> Optional<R> readJavaOptional(Reader<R> reader) {
+        return this.readBoolean() ? Optional.of(reader.apply(this)) : Optional.empty();
+    }
+
+    public <V> void writeJavaOptional(Optional<V> value, Writer<V> writer) {
+        if (value.isPresent()) {
+            this.writeBoolean(true);
+            writer.accept(this, value.get());
+        } else {
+            this.writeBoolean(false);
+        }
+    }
 
     public <K, C extends Collection<K>> C readCollection(IntFunction<C> function, Reader<K> reader) {
         int size = this.readVarInt();

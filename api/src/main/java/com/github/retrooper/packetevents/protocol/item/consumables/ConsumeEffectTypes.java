@@ -30,8 +30,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 public final class ConsumeEffectTypes {
 
-    private static final VersionedRegistry<ConsumeEffectType<?>> REGISTRY = new VersionedRegistry<>(
-            "consume_effect_type", "item/consume_effect_type_mappings");
+    private static final VersionedRegistry<ConsumeEffectType<?>> REGISTRY = new VersionedRegistry<>("consume_effect_type");
 
     private ConsumeEffectTypes() {
     }

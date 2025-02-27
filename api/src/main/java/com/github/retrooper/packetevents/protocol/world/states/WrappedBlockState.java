@@ -350,7 +350,7 @@ public class WrappedBlockState {
         try (final SequentialNBTReader.Compound compound = MappingHelper.decompress(MAPPINGS_ASSETS_LEGACY)) {
             compound.skipOne(); // Skip version
 
-            for (Map.Entry<String, NBT> entry : (SequentialNBTReader.Compound) compound.next()) {
+            for (Map.Entry<String, NBT> entry : (SequentialNBTReader.Compound) compound.next().getValue()) {
                 SequentialNBTReader.Compound inner = (SequentialNBTReader.Compound) entry.getValue();
 
                 StateType type = StateTypes.getByName(entry.getKey());

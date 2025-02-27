@@ -48,7 +48,7 @@ public final class EnchantmentTypes {
         ENCHANTMENT_DATA = new HashMap<>();
         try (SequentialNBTReader.Compound dataTag = MappingHelper.decompress("mappings/data/enchantment")) {
             dataTag.skipOne(); // skip version
-            for (Map.Entry<String, NBT> entry : (SequentialNBTReader.Compound) dataTag.next()) {
+            for (Map.Entry<String, NBT> entry : (SequentialNBTReader.Compound) dataTag.next().getValue()) {
                 ResourceLocation enchantKey = new ResourceLocation(entry.getKey());
                 ENCHANTMENT_DATA.put(enchantKey, ((SequentialNBTReader.Compound) entry.getValue()).readFully());
             }
@@ -57,8 +57,7 @@ public final class EnchantmentTypes {
         }
     }
 
-    private static final VersionedRegistry<EnchantmentType> REGISTRY = new VersionedRegistry<>(
-            "enchantment", "enchantment/enchantment_type_mappings");
+    private static final VersionedRegistry<EnchantmentType> REGISTRY = new VersionedRegistry<>("enchantment");
 
     @ApiStatus.Internal
     public static EnchantmentType define(String key) {

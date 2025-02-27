@@ -24,9 +24,9 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
 
-public class DamageTypes {
-    private static final VersionedRegistry<DamageType> REGISTRY = new VersionedRegistry<>("damage_type",
-            "damage/damagetype_mappings");
+public final class DamageTypes {
+
+    private static final VersionedRegistry<DamageType> REGISTRY = new VersionedRegistry<>("damage_type");
 
     private DamageTypes() {
     }

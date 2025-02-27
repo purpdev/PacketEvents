@@ -29,8 +29,7 @@ import java.util.OptionalLong;
 
 public final class DimensionTypes {
 
-    private static final VersionedRegistry<DimensionType> REGISTRY = new VersionedRegistry<>(
-            "dimension_type", "world/dimension_type_mappings");
+    private static final VersionedRegistry<DimensionType> REGISTRY = new VersionedRegistry<>("dimension_type");
 
     private DimensionTypes() {
     }

@@ -25,8 +25,7 @@ import java.util.Collection;
 
 public final class BlockEntityTypes {
 
-    private static final VersionedRegistry<BlockEntityType> REGISTRY = new VersionedRegistry<>(
-            "block_entity_type", "block/block_entity_type_mappings");
+    private static final VersionedRegistry<BlockEntityType> REGISTRY = new VersionedRegistry<>("block_entity_type");
 
     private BlockEntityTypes() {
     }

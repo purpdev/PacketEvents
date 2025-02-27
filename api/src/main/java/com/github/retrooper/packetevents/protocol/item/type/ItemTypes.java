@@ -1540,7 +1540,7 @@ public class ItemTypes {
         String path = "mappings/item_base_components/" + version.name();
         try (SequentialNBTReader.Compound compound = MappingHelper.decompress(path)) {
             compound.skipOne(); // skip version
-            SequentialNBTReader.Compound items = (SequentialNBTReader.Compound) compound.next();
+            SequentialNBTReader.Compound items = (SequentialNBTReader.Compound) compound.next().getValue();
             StaticComponentMap defaults = parseComponents(
                     version, null, (SequentialNBTReader.Compound) items.next().getValue()).build();
 
