@@ -62,4 +62,9 @@ public class ByteBufAllocationOperatorImpl implements ByteBufAllocationOperator 
     public Object compositeBuffer(int maxNumComponents) {
         return Unpooled.compositeBuffer(maxNumComponents);
     }
+
+    @Override
+    public Object emptyBuffer() {
+        return Unpooled.EMPTY_BUFFER;
+    }
 }

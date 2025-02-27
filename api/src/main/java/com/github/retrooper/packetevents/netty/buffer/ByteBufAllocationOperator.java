@@ -31,4 +31,6 @@ public interface ByteBufAllocationOperator {
 
     Object compositeBuffer();
     Object compositeBuffer(int maxNumComponents);
+
+    Object emptyBuffer();
 }

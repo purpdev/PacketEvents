@@ -52,4 +52,8 @@ public class UnpooledByteBufAllocationHelper {
     public static Object compositeBuffer(int maxNumComponents) {
         return PacketEvents.getAPI().getNettyManager().getByteBufAllocationOperator().compositeBuffer(maxNumComponents);
     }
+
+    public static Object emptyBuffer() {
+        return PacketEvents.getAPI().getNettyManager().getByteBufAllocationOperator().emptyBuffer();
+    }
 }
