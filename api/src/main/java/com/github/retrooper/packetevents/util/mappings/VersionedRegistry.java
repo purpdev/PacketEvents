@@ -38,6 +38,10 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     private final Map<String, T> typeMap = new HashMap<>();
     private final Map<Byte, Map<Integer, T>> typeIdMap = new HashMap<>();
 
+    public VersionedRegistry(String registry) {
+        this(registry, "registries/" + registry);
+    }
+
     public VersionedRegistry(String registry, String mappingsPath) {
         this(new ResourceLocation(registry), mappingsPath);
     }
