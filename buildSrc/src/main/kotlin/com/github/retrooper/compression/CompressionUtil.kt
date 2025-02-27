@@ -22,6 +22,7 @@ import com.github.steveice10.opennbt.tag.io.NBTIO
 import com.github.steveice10.opennbt.tag.io.TagWriter
 import com.google.gson.Gson
 import com.google.gson.JsonArray
+import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import java.io.IOException
@@ -34,10 +35,10 @@ object CompressionUtil {
     val GSON: Gson = Gson()
     val TAG_WRITER: TagWriter = NBTIO.writer().named()
 
-    fun loadJson(path: Path): JsonObject {
+    fun loadJson(path: Path): JsonElement {
         try {
             path.bufferedReader().use {
-                return GSON.fromJson(it, JsonObject::class.java)
+                return GSON.fromJson(it, JsonElement::class.java)
             }
         } catch (e: IOException) {
             throw RuntimeException("Failed to load json file: $path", e)

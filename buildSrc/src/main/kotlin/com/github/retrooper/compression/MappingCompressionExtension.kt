@@ -20,6 +20,7 @@ package com.github.retrooper.compression
 import com.github.retrooper.compression.strategy.CompressionStrategy
 import org.gradle.api.Action
 import org.gradle.api.file.DirectoryProperty
+import java.io.File
 import kotlin.reflect.KClass
 
 abstract class MappingCompressionExtension {
@@ -47,8 +48,10 @@ class StrategySpec(
     private val strategy: KClass<out CompressionStrategy>
 ) {
 
-    fun compress(relativePath: String) {
-        extension.strategies[relativePath] = strategy.objectInstance ?: error("Invalid strategy class definition: $strategy")
+    fun compress(vararg path: String) {
+        val pathStr = path.joinToString(File.separator)
+        extension.strategies[pathStr] =
+            strategy.objectInstance ?: error("Invalid strategy class definition: $strategy")
     }
 
 }

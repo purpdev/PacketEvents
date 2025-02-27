@@ -1,0 +1,1277 @@
+{
+  "packetevents:default": {
+    "attribute_modifiers": "AAE=",
+    "enchantments": "AAE=",
+    "lore": "AA==",
+    "max_stack_size": "QA==",
+    "rarity": "AA==",
+    "repair_cost": "AA=="
+  },
+  "acacia_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "acacia_sign": {
+    "max_stack_size": "EA=="
+  },
+  "ancient_debris": {
+    "fire_resistant": ""
+  },
+  "bamboo_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "bamboo_sign": {
+    "max_stack_size": "EA=="
+  },
+  "barrel": {
+    "container": "AA=="
+  },
+  "barrier": {
+    "rarity": "Aw=="
+  },
+  "beacon": {
+    "rarity": "Ag=="
+  },
+  "bee_nest": {
+    "bees": "AA=="
+  },
+  "beehive": {
+    "bees": "AA=="
+  },
+  "birch_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "birch_sign": {
+    "max_stack_size": "EA=="
+  },
+  "black_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "black_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "black_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "blast_furnace": {
+    "container": "AA=="
+  },
+  "blue_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "blue_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "blue_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "brewing_stand": {
+    "container": "AA=="
+  },
+  "brown_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "brown_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "brown_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "cake": {
+    "max_stack_size": "AQ=="
+  },
+  "campfire": {
+    "container": "AA=="
+  },
+  "chain_command_block": {
+    "rarity": "Aw=="
+  },
+  "cherry_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "cherry_sign": {
+    "max_stack_size": "EA=="
+  },
+  "chest": {
+    "container": "AA=="
+  },
+  "chiseled_bookshelf": {
+    "container": "AA=="
+  },
+  "command_block": {
+    "rarity": "Aw=="
+  },
+  "conduit": {
+    "rarity": "Ag=="
+  },
+  "crafter": {
+    "container": "AA=="
+  },
+  "creeper_head": {
+    "rarity": "AQ=="
+  },
+  "crimson_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "crimson_sign": {
+    "max_stack_size": "EA=="
+  },
+  "cyan_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "cyan_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "cyan_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "dark_oak_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "dark_oak_sign": {
+    "max_stack_size": "EA=="
+  },
+  "decorated_pot": {
+    "pot_decorations": "BJkHmQeZB5kH"
+  },
+  "dispenser": {
+    "container": "AA=="
+  },
+  "dragon_egg": {
+    "rarity": "Aw=="
+  },
+  "dragon_head": {
+    "rarity": "AQ=="
+  },
+  "dropper": {
+    "container": "AA=="
+  },
+  "ender_chest": {
+    "container": "AA=="
+  },
+  "furnace": {
+    "container": "AA=="
+  },
+  "gray_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "gray_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "gray_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "green_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "green_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "green_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "heavy_core": {
+    "rarity": "Aw=="
+  },
+  "hopper": {
+    "container": "AA=="
+  },
+  "jigsaw": {
+    "rarity": "Aw=="
+  },
+  "jungle_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "jungle_sign": {
+    "max_stack_size": "EA=="
+  },
+  "light": {
+    "rarity": "Aw=="
+  },
+  "light_blue_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "light_blue_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "light_blue_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "light_gray_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "light_gray_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "light_gray_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "lime_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "lime_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "lime_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "magenta_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "magenta_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "magenta_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "mangrove_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "mangrove_sign": {
+    "max_stack_size": "EA=="
+  },
+  "netherite_block": {
+    "fire_resistant": ""
+  },
+  "oak_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "oak_sign": {
+    "max_stack_size": "EA=="
+  },
+  "orange_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "orange_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "orange_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "piglin_head": {
+    "rarity": "AQ=="
+  },
+  "pink_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "pink_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "pink_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "player_head": {
+    "rarity": "AQ=="
+  },
+  "purple_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "purple_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "purple_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "red_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "red_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "red_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "repeating_command_block": {
+    "rarity": "Aw=="
+  },
+  "shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "skeleton_skull": {
+    "rarity": "AQ=="
+  },
+  "smoker": {
+    "container": "AA=="
+  },
+  "soul_campfire": {
+    "container": "AA=="
+  },
+  "spruce_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "spruce_sign": {
+    "max_stack_size": "EA=="
+  },
+  "structure_block": {
+    "rarity": "Aw=="
+  },
+  "structure_void": {
+    "rarity": "Aw=="
+  },
+  "trapped_chest": {
+    "container": "AA=="
+  },
+  "warped_hanging_sign": {
+    "max_stack_size": "EA=="
+  },
+  "warped_sign": {
+    "max_stack_size": "EA=="
+  },
+  "white_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "white_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "white_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "wither_skeleton_skull": {
+    "rarity": "AQ=="
+  },
+  "yellow_banner": {
+    "banner_patterns": "AA==",
+    "max_stack_size": "EA=="
+  },
+  "yellow_bed": {
+    "max_stack_size": "AQ=="
+  },
+  "yellow_shulker_box": {
+    "container": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "zombie_head": {
+    "rarity": "AQ=="
+  },
+  "acacia_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "acacia_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "apple": {
+    "food": "BEAZmZoAP8zMzQAA"
+  },
+  "armor_stand": {
+    "max_stack_size": "EA=="
+  },
+  "axolotl_bucket": {
+    "bucket_entity_data": "CgA=",
+    "max_stack_size": "AQ=="
+  },
+  "baked_potato": {
+    "food": "BUDAAAAAP8zMzQAA"
+  },
+  "bamboo_chest_raft": {
+    "max_stack_size": "AQ=="
+  },
+  "bamboo_raft": {
+    "max_stack_size": "AQ=="
+  },
+  "beef": {
+    "food": "Az/mZmcAP8zMzQAA"
+  },
+  "beetroot": {
+    "food": "AT+ZmZoAP8zMzQAA"
+  },
+  "beetroot_soup": {
+    "food": "BkDmZmcAP8zMzQEBnwYAAAA=",
+    "max_stack_size": "AQ=="
+  },
+  "birch_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "birch_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "bow": {
+    "damage": "AA==",
+    "max_damage": "gAM=",
+    "max_stack_size": "AQ=="
+  },
+  "bread": {
+    "food": "BUDAAAAAP8zMzQAA"
+  },
+  "brush": {
+    "damage": "AA==",
+    "max_damage": "QA==",
+    "max_stack_size": "AQ=="
+  },
+  "bucket": {
+    "max_stack_size": "EA=="
+  },
+  "bundle": {
+    "bundle_contents": "AA==",
+    "max_stack_size": "AQ=="
+  },
+  "carrot": {
+    "food": "A0BmZmcAP8zMzQAA"
+  },
+  "carrot_on_a_stick": {
+    "damage": "AA==",
+    "max_damage": "GQ==",
+    "max_stack_size": "AQ=="
+  },
+  "chainmail_boots": {
+    "damage": "AA==",
+    "max_damage": "wwE=",
+    "max_stack_size": "AQ=="
+  },
+  "chainmail_chestplate": {
+    "damage": "AA==",
+    "max_damage": "8AE=",
+    "max_stack_size": "AQ=="
+  },
+  "chainmail_helmet": {
+    "damage": "AA==",
+    "max_damage": "pQE=",
+    "max_stack_size": "AQ=="
+  },
+  "chainmail_leggings": {
+    "damage": "AA==",
+    "max_damage": "4QE=",
+    "max_stack_size": "AQ=="
+  },
+  "cherry_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "cherry_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "chest_minecart": {
+    "max_stack_size": "AQ=="
+  },
+  "chicken": {
+    "food": "Aj+ZmZoAP8zMzQABEADYBAABAQA+mZma"
+  },
+  "chorus_fruit": {
+    "food": "BEAZmZoBP8zMzQAA"
+  },
+  "cod": {
+    "food": "Aj7MzM0AP8zMzQAA"
+  },
+  "cod_bucket": {
+    "bucket_entity_data": "CgA=",
+    "max_stack_size": "AQ=="
+  },
+  "command_block_minecart": {
+    "max_stack_size": "AQ==",
+    "rarity": "Aw=="
+  },
+  "cooked_beef": {
+    "food": "CEFMzM0AP8zMzQAA"
+  },
+  "cooked_chicken": {
+    "food": "BkDmZmcAP8zMzQAA"
+  },
+  "cooked_cod": {
+    "food": "BUDAAAAAP8zMzQAA"
+  },
+  "cooked_mutton": {
+    "food": "BkEZmZoAP8zMzQAA"
+  },
+  "cooked_porkchop": {
+    "food": "CEFMzM0AP8zMzQAA"
+  },
+  "cooked_rabbit": {
+    "food": "BUDAAAAAP8zMzQAA"
+  },
+  "cooked_salmon": {
+    "food": "BkEZmZoAP8zMzQAA"
+  },
+  "cookie": {
+    "food": "Aj7MzM0AP8zMzQAA"
+  },
+  "creeper_banner_pattern": {
+    "max_stack_size": "AQ==",
+    "rarity": "AQ=="
+  },
+  "crossbow": {
+    "charged_projectiles": "AA==",
+    "damage": "AA==",
+    "max_damage": "0QM=",
+    "max_stack_size": "AQ=="
+  },
+  "dark_oak_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "dark_oak_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "debug_stick": {
+    "debug_stick_state": "CgA=",
+    "enchantment_glint_override": "AQ==",
+    "max_stack_size": "AQ==",
+    "rarity": "Aw=="
+  },
+  "diamond_axe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAgAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "mQw=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAkbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZGlhbW9uZF90b29sAAEAABZtaW5lY3JhZnQ6bWluZWFibGUvYXhlAUEAAAABAT+AAAAB"
+  },
+  "diamond_boots": {
+    "damage": "AA==",
+    "max_damage": "rQM=",
+    "max_stack_size": "AQ=="
+  },
+  "diamond_chestplate": {
+    "damage": "AA==",
+    "max_damage": "kAQ=",
+    "max_stack_size": "AQ=="
+  },
+  "diamond_helmet": {
+    "damage": "AA==",
+    "max_damage": "6wI=",
+    "max_stack_size": "AQ=="
+  },
+  "diamond_hoe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZQAAAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZAAAAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "mQw=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAkbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZGlhbW9uZF90b29sAAEAABZtaW5lY3JhZnQ6bWluZWFibGUvaG9lAUEAAAABAT+AAAAB"
+  },
+  "diamond_horse_armor": {
+    "max_stack_size": "AQ=="
+  },
+  "diamond_leggings": {
+    "damage": "AA==",
+    "max_damage": "7wM=",
+    "max_stack_size": "AQ=="
+  },
+  "diamond_pickaxe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAQAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAGZmZgAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "mQw=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAkbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZGlhbW9uZF90b29sAAEAABptaW5lY3JhZnQ6bWluZWFibGUvcGlja2F4ZQFBAAAAAQE/gAAAAQ=="
+  },
+  "diamond_shovel": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUASAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "mQw=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAkbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZGlhbW9uZF90b29sAAEAABltaW5lY3JhZnQ6bWluZWFibGUvc2hvdmVsAUEAAAABAT+AAAAB"
+  },
+  "diamond_sword": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAYAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMADMzNAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "mQw=",
+    "max_stack_size": "AQ==",
+    "tool": "AgJ6AUFwAAABAQAZbWluZWNyYWZ0OnN3b3JkX2VmZmljaWVudAE/wAAAAD+AAAAC"
+  },
+  "dragon_breath": {
+    "rarity": "AQ=="
+  },
+  "dried_kelp": {
+    "food": "AT8ZmZoAP0zMzQAA"
+  },
+  "egg": {
+    "max_stack_size": "EA=="
+  },
+  "elytra": {
+    "damage": "AA==",
+    "max_damage": "sAM=",
+    "max_stack_size": "AQ==",
+    "rarity": "AQ=="
+  },
+  "enchanted_book": {
+    "enchantment_glint_override": "AQ==",
+    "max_stack_size": "AQ==",
+    "rarity": "AQ==",
+    "stored_enchantments": "AAE="
+  },
+  "enchanted_golden_apple": {
+    "enchantment_glint_override": "AQ==",
+    "food": "BEEZmZoBP8zMzQAECQGQAwABAQA/gAAACgDwLgABAQA/gAAACwDwLgABAQA/gAAAFQPgEgABAQA/gAAA",
+    "rarity": "Aw=="
+  },
+  "end_crystal": {
+    "enchantment_glint_override": "AQ==",
+    "rarity": "Ag=="
+  },
+  "ender_pearl": {
+    "max_stack_size": "EA=="
+  },
+  "experience_bottle": {
+    "enchantment_glint_override": "AQ==",
+    "rarity": "AQ=="
+  },
+  "filled_map": {
+    "map_color": "AEZALg==",
+    "map_decorations": "CgA="
+  },
+  "firework_rocket": {
+    "fireworks": "AQA="
+  },
+  "fishing_rod": {
+    "damage": "AA==",
+    "max_damage": "QA==",
+    "max_stack_size": "AQ=="
+  },
+  "flint_and_steel": {
+    "damage": "AA==",
+    "max_damage": "QA==",
+    "max_stack_size": "AQ=="
+  },
+  "flow_banner_pattern": {
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "flower_banner_pattern": {
+    "max_stack_size": "AQ=="
+  },
+  "furnace_minecart": {
+    "max_stack_size": "AQ=="
+  },
+  "globe_banner_pattern": {
+    "max_stack_size": "AQ=="
+  },
+  "glow_berries": {
+    "food": "Aj7MzM0AP8zMzQAA"
+  },
+  "goat_horn": {
+    "max_stack_size": "AQ=="
+  },
+  "golden_apple": {
+    "food": "BEEZmZoBP8zMzQACCQFkAAEBAD+AAAAVAOASAAEBAD+AAAA=",
+    "rarity": "Ag=="
+  },
+  "golden_axe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAYAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "IA==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZ29sZF90b29sAAEAABZtaW5lY3JhZnQ6bWluZWFibGUvYXhlAUFAAAABAT+AAAAB"
+  },
+  "golden_boots": {
+    "damage": "AA==",
+    "max_damage": "Ww==",
+    "max_stack_size": "AQ=="
+  },
+  "golden_carrot": {
+    "food": "BkFmZmcAP8zMzQAA"
+  },
+  "golden_chestplate": {
+    "damage": "AA==",
+    "max_damage": "cA==",
+    "max_stack_size": "AQ=="
+  },
+  "golden_helmet": {
+    "damage": "AA==",
+    "max_damage": "TQ==",
+    "max_stack_size": "AQ=="
+  },
+  "golden_hoe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZQAAAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "IA==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZ29sZF90b29sAAEAABZtaW5lY3JhZnQ6bWluZWFibGUvaG9lAUFAAAABAT+AAAAB"
+  },
+  "golden_horse_armor": {
+    "max_stack_size": "AQ=="
+  },
+  "golden_leggings": {
+    "damage": "AA==",
+    "max_damage": "aQ==",
+    "max_stack_size": "AQ=="
+  },
+  "golden_pickaxe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZT/wAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAGZmZgAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "IA==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZ29sZF90b29sAAEAABptaW5lY3JhZnQ6bWluZWFibGUvcGlja2F4ZQFBQAAAAQE/gAAAAQ=="
+  },
+  "golden_shovel": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZT/4AAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "IA==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfZ29sZF90b29sAAEAABltaW5lY3JhZnQ6bWluZWFibGUvc2hvdmVsAUFAAAABAT+AAAAB"
+  },
+  "golden_sword": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAIAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMADMzNAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "IA==",
+    "max_stack_size": "AQ==",
+    "tool": "AgJ6AUFwAAABAQAZbWluZWNyYWZ0OnN3b3JkX2VmZmljaWVudAE/wAAAAD+AAAAC"
+  },
+  "guster_banner_pattern": {
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "heart_of_the_sea": {
+    "rarity": "AQ=="
+  },
+  "honey_bottle": {
+    "food": "Bj+ZmZoAP8zMzQAA",
+    "max_stack_size": "EA=="
+  },
+  "hopper_minecart": {
+    "max_stack_size": "AQ=="
+  },
+  "iron_axe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAgAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIzMzAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "+gE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfaXJvbl90b29sAAEAABZtaW5lY3JhZnQ6bWluZWFibGUvYXhlAUDAAAABAT+AAAAB"
+  },
+  "iron_boots": {
+    "damage": "AA==",
+    "max_damage": "wwE=",
+    "max_stack_size": "AQ=="
+  },
+  "iron_chestplate": {
+    "damage": "AA==",
+    "max_damage": "8AE=",
+    "max_stack_size": "AQ=="
+  },
+  "iron_helmet": {
+    "damage": "AA==",
+    "max_damage": "pQE=",
+    "max_stack_size": "AQ=="
+  },
+  "iron_hoe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZQAAAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZL/wAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "+gE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfaXJvbl90b29sAAEAABZtaW5lY3JhZnQ6bWluZWFibGUvaG9lAUDAAAABAT+AAAAB"
+  },
+  "iron_horse_armor": {
+    "max_stack_size": "AQ=="
+  },
+  "iron_leggings": {
+    "damage": "AA==",
+    "max_damage": "4QE=",
+    "max_stack_size": "AQ=="
+  },
+  "iron_pickaxe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAIAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAGZmZgAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "+gE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfaXJvbl90b29sAAEAABptaW5lY3JhZnQ6bWluZWFibGUvcGlja2F4ZQFAwAAAAQE/gAAAAQ=="
+  },
+  "iron_shovel": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAMAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "+gE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAhbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfaXJvbl90b29sAAEAABltaW5lY3JhZnQ6bWluZWFibGUvc2hvdmVsAUDAAAABAT+AAAAB"
+  },
+  "iron_sword": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAUAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMADMzNAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "+gE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgJ6AUFwAAABAQAZbWluZWNyYWZ0OnN3b3JkX2VmZmljaWVudAE/wAAAAD+AAAAC"
+  },
+  "jungle_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "jungle_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "knowledge_book": {
+    "max_stack_size": "AQ==",
+    "rarity": "Aw==",
+    "recipes": "CQAAAAAA"
+  },
+  "lava_bucket": {
+    "max_stack_size": "AQ=="
+  },
+  "leather_boots": {
+    "damage": "AA==",
+    "max_damage": "QQ==",
+    "max_stack_size": "AQ=="
+  },
+  "leather_chestplate": {
+    "damage": "AA==",
+    "max_damage": "UA==",
+    "max_stack_size": "AQ=="
+  },
+  "leather_helmet": {
+    "damage": "AA==",
+    "max_damage": "Nw==",
+    "max_stack_size": "AQ=="
+  },
+  "leather_horse_armor": {
+    "max_stack_size": "AQ=="
+  },
+  "leather_leggings": {
+    "damage": "AA==",
+    "max_damage": "Sw==",
+    "max_stack_size": "AQ=="
+  },
+  "lingering_potion": {
+    "max_stack_size": "AQ==",
+    "potion_contents": "AAAA"
+  },
+  "mace": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAUAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMALMzNAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "9AM=",
+    "max_stack_size": "AQ==",
+    "rarity": "Aw==",
+    "tool": "AD+AAAAC"
+  },
+  "mangrove_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "mangrove_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "melon_slice": {
+    "food": "Aj+ZmZoAP8zMzQAA"
+  },
+  "milk_bucket": {
+    "max_stack_size": "AQ=="
+  },
+  "minecart": {
+    "max_stack_size": "AQ=="
+  },
+  "mojang_banner_pattern": {
+    "max_stack_size": "AQ==",
+    "rarity": "Aw=="
+  },
+  "mushroom_stew": {
+    "food": "BkDmZmcAP8zMzQEBnwYAAAA=",
+    "max_stack_size": "AQ=="
+  },
+  "music_disc_11": {
+    "jukebox_playable": "AAxtaW5lY3JhZnQ6MTEB",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_13": {
+    "jukebox_playable": "AAxtaW5lY3JhZnQ6MTMB",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_5": {
+    "jukebox_playable": "AAttaW5lY3JhZnQ6NQE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_blocks": {
+    "jukebox_playable": "ABBtaW5lY3JhZnQ6YmxvY2tzAQ==",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_cat": {
+    "jukebox_playable": "AA1taW5lY3JhZnQ6Y2F0AQ==",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_chirp": {
+    "jukebox_playable": "AA9taW5lY3JhZnQ6Y2hpcnAB",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_creator": {
+    "jukebox_playable": "ABFtaW5lY3JhZnQ6Y3JlYXRvcgE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_creator_music_box": {
+    "jukebox_playable": "ABttaW5lY3JhZnQ6Y3JlYXRvcl9tdXNpY19ib3gB",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_far": {
+    "jukebox_playable": "AA1taW5lY3JhZnQ6ZmFyAQ==",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_mall": {
+    "jukebox_playable": "AA5taW5lY3JhZnQ6bWFsbAE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_mellohi": {
+    "jukebox_playable": "ABFtaW5lY3JhZnQ6bWVsbG9oaQE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_otherside": {
+    "jukebox_playable": "ABNtaW5lY3JhZnQ6b3RoZXJzaWRlAQ==",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_pigstep": {
+    "jukebox_playable": "ABFtaW5lY3JhZnQ6cGlnc3RlcAE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_precipice": {
+    "jukebox_playable": "ABNtaW5lY3JhZnQ6cHJlY2lwaWNlAQ==",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_relic": {
+    "jukebox_playable": "AA9taW5lY3JhZnQ6cmVsaWMB",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_stal": {
+    "jukebox_playable": "AA5taW5lY3JhZnQ6c3RhbAE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_strad": {
+    "jukebox_playable": "AA9taW5lY3JhZnQ6c3RyYWQB",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_wait": {
+    "jukebox_playable": "AA5taW5lY3JhZnQ6d2FpdAE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "music_disc_ward": {
+    "jukebox_playable": "AA5taW5lY3JhZnQ6d2FyZAE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Ag=="
+  },
+  "mutton": {
+    "food": "Aj+ZmZoAP8zMzQAA"
+  },
+  "nether_star": {
+    "enchantment_glint_override": "AQ==",
+    "rarity": "AQ=="
+  },
+  "netherite_axe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAiAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "7w8=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAmbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfbmV0aGVyaXRlX3Rvb2wAAQAAFm1pbmVjcmFmdDptaW5lYWJsZS9heGUBQRAAAAEBP4AAAAE="
+  },
+  "netherite_boots": {
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "4QM=",
+    "max_stack_size": "AQ=="
+  },
+  "netherite_chestplate": {
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "0AQ=",
+    "max_stack_size": "AQ=="
+  },
+  "netherite_helmet": {
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "lwM=",
+    "max_stack_size": "AQ=="
+  },
+  "netherite_hoe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZQAAAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZAAAAAAAAAAAAAEB",
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "7w8=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAmbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfbmV0aGVyaXRlX3Rvb2wAAQAAFm1pbmVjcmFmdDptaW5lYWJsZS9ob2UBQRAAAAEBP4AAAAE="
+  },
+  "netherite_ingot": {
+    "fire_resistant": ""
+  },
+  "netherite_leggings": {
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "qwQ=",
+    "max_stack_size": "AQ=="
+  },
+  "netherite_pickaxe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAUAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAGZmZgAAAAAAEB",
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "7w8=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAmbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfbmV0aGVyaXRlX3Rvb2wAAQAAGm1pbmVjcmFmdDptaW5lYWJsZS9waWNrYXhlAUEQAAABAT+AAAAB"
+  },
+  "netherite_scrap": {
+    "fire_resistant": ""
+  },
+  "netherite_shovel": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAWAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "7w8=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAmbWluZWNyYWZ0OmluY29ycmVjdF9mb3JfbmV0aGVyaXRlX3Rvb2wAAQAAGW1pbmVjcmFmdDptaW5lYWJsZS9zaG92ZWwBQRAAAAEBP4AAAAE="
+  },
+  "netherite_sword": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAcAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMADMzNAAAAAAAEB",
+    "damage": "AA==",
+    "fire_resistant": "",
+    "max_damage": "7w8=",
+    "max_stack_size": "AQ==",
+    "tool": "AgJ6AUFwAAABAQAZbWluZWNyYWZ0OnN3b3JkX2VmZmljaWVudAE/wAAAAD+AAAAC"
+  },
+  "oak_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "oak_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "ominous_bottle": {
+    "food": "AT5MzM0AP8zMzQAA",
+    "ominous_bottle_amplifier": "AA=="
+  },
+  "piglin_banner_pattern": {
+    "max_stack_size": "AQ==",
+    "rarity": "AQ=="
+  },
+  "poisonous_potato": {
+    "food": "Aj+ZmZoAP8zMzQABEgBkAAEBAD8ZmZo="
+  },
+  "porkchop": {
+    "food": "Az/mZmcAP8zMzQAA"
+  },
+  "potato": {
+    "food": "AT8ZmZoAP8zMzQAA"
+  },
+  "potion": {
+    "max_stack_size": "AQ==",
+    "potion_contents": "AAAA"
+  },
+  "powder_snow_bucket": {
+    "max_stack_size": "AQ=="
+  },
+  "pufferfish": {
+    "food": "AT5MzM0AP8zMzQADEgGwCQABAQA/gAAAEAKsAgABAQA/gAAACACsAgABAQA/gAAA"
+  },
+  "pufferfish_bucket": {
+    "bucket_entity_data": "CgA=",
+    "max_stack_size": "AQ=="
+  },
+  "pumpkin_pie": {
+    "food": "CECZmZoAP8zMzQAA"
+  },
+  "rabbit": {
+    "food": "Az/mZmcAP8zMzQAA"
+  },
+  "rabbit_stew": {
+    "food": "CkFAAAAAP8zMzQEBnwYAAAA=",
+    "max_stack_size": "AQ=="
+  },
+  "rotten_flesh": {
+    "food": "BD9MzM0AP8zMzQABEADYBAABAQA/TMzN"
+  },
+  "saddle": {
+    "max_stack_size": "AQ=="
+  },
+  "salmon": {
+    "food": "Aj7MzM0AP8zMzQAA"
+  },
+  "salmon_bucket": {
+    "bucket_entity_data": "CgA=",
+    "max_stack_size": "AQ=="
+  },
+  "shears": {
+    "damage": "AA==",
+    "max_damage": "7gE=",
+    "max_stack_size": "AQ==",
+    "tool": "BAJ6AUFwAAABAQAQbWluZWNyYWZ0OmxlYXZlcwFBcAAAAAAObWluZWNyYWZ0Ondvb2wBQKAAAAADvQK+AgFAAAAAAD+AAAAB"
+  },
+  "shield": {
+    "banner_patterns": "AA==",
+    "damage": "AA==",
+    "max_damage": "0AI=",
+    "max_stack_size": "AQ=="
+  },
+  "skull_banner_pattern": {
+    "max_stack_size": "AQ==",
+    "rarity": "AQ=="
+  },
+  "snowball": {
+    "max_stack_size": "EA=="
+  },
+  "spider_eye": {
+    "food": "AkBMzM0AP8zMzQABEgBkAAEBAD+AAAA="
+  },
+  "splash_potion": {
+    "max_stack_size": "AQ==",
+    "potion_contents": "AAAA"
+  },
+  "spruce_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "spruce_chest_boat": {
+    "max_stack_size": "AQ=="
+  },
+  "spyglass": {
+    "max_stack_size": "AQ=="
+  },
+  "stone_axe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAgAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAJmZmgAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "gwE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAibWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfc3RvbmVfdG9vbAABAAAWbWluZWNyYWZ0Om1pbmVhYmxlL2F4ZQFAgAAAAQE/gAAAAQ=="
+  },
+  "stone_hoe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZQAAAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAAAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "gwE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAibWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfc3RvbmVfdG9vbAABAAAWbWluZWNyYWZ0Om1pbmVhYmxlL2hvZQFAgAAAAQE/gAAAAQ=="
+  },
+  "stone_pickaxe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAAAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAGZmZgAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "gwE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAibWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfc3RvbmVfdG9vbAABAAAabWluZWNyYWZ0Om1pbmVhYmxlL3BpY2theGUBQIAAAAEBP4AAAAE="
+  },
+  "stone_shovel": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAEAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "gwE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgAibWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfc3RvbmVfdG9vbAABAAAZbWluZWNyYWZ0Om1pbmVhYmxlL3Nob3ZlbAFAgAAAAQE/gAAAAQ=="
+  },
+  "stone_sword": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAQAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMADMzNAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "gwE=",
+    "max_stack_size": "AQ==",
+    "tool": "AgJ6AUFwAAABAQAZbWluZWNyYWZ0OnN3b3JkX2VmZmljaWVudAE/wAAAAD+AAAAC"
+  },
+  "suspicious_stew": {
+    "food": "BkDmZmcBP8zMzQEBnwYAAAA=",
+    "max_stack_size": "AQ==",
+    "suspicious_stew_effects": "AA=="
+  },
+  "sweet_berries": {
+    "food": "Aj7MzM0AP8zMzQAA"
+  },
+  "tadpole_bucket": {
+    "bucket_entity_data": "CgA=",
+    "max_stack_size": "AQ=="
+  },
+  "tipped_arrow": {
+    "potion_contents": "AAAA"
+  },
+  "tnt_minecart": {
+    "max_stack_size": "AQ=="
+  },
+  "totem_of_undying": {
+    "max_stack_size": "AQ==",
+    "rarity": "AQ=="
+  },
+  "trident": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAgAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAHMzNAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "+gE=",
+    "max_stack_size": "AQ==",
+    "rarity": "Aw==",
+    "tool": "AD+AAAAC"
+  },
+  "tropical_fish": {
+    "food": "AT5MzM0AP8zMzQAA"
+  },
+  "tropical_fish_bucket": {
+    "bucket_entity_data": "CgA=",
+    "max_stack_size": "AQ=="
+  },
+  "turtle_helmet": {
+    "damage": "AA==",
+    "max_damage": "kwI=",
+    "max_stack_size": "AQ=="
+  },
+  "warped_fungus_on_a_stick": {
+    "damage": "AA==",
+    "max_damage": "ZA==",
+    "max_stack_size": "AQ=="
+  },
+  "water_bucket": {
+    "max_stack_size": "AQ=="
+  },
+  "wolf_armor": {
+    "damage": "AA==",
+    "max_damage": "QA==",
+    "max_stack_size": "AQ=="
+  },
+  "wooden_axe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAYAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAJmZmgAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "Ow==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAjbWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfd29vZGVuX3Rvb2wAAQAAFm1pbmVjcmFmdDptaW5lYWJsZS9heGUBQAAAAAEBP4AAAAE="
+  },
+  "wooden_hoe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZQAAAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "Ow==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAjbWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfd29vZGVuX3Rvb2wAAQAAFm1pbmVjcmFmdDptaW5lYWJsZS9ob2UBQAAAAAEBP4AAAAE="
+  },
+  "wooden_pickaxe": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZT/wAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAGZmZgAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "Ow==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAjbWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfd29vZGVuX3Rvb2wAAQAAGm1pbmVjcmFmdDptaW5lYWJsZS9waWNrYXhlAUAAAAABAT+AAAAB"
+  },
+  "wooden_shovel": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZT/4AAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMAIAAAAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "Ow==",
+    "max_stack_size": "AQ==",
+    "tool": "AgAjbWluZWNyYWZ0OmluY29ycmVjdF9mb3Jfd29vZGVuX3Rvb2wAAQAAGW1pbmVjcmFmdDptaW5lYWJsZS9zaG92ZWwBQAAAAAEBP4AAAAE="
+  },
+  "wooden_sword": {
+    "attribute_modifiers": "AgIcbWluZWNyYWZ0OmJhc2VfYXR0YWNrX2RhbWFnZUAIAAAAAAAAAAEEG21pbmVjcmFmdDpiYXNlX2F0dGFja19zcGVlZMADMzNAAAAAAAEB",
+    "damage": "AA==",
+    "max_damage": "Ow==",
+    "max_stack_size": "AQ==",
+    "tool": "AgJ6AUFwAAABAQAZbWluZWNyYWZ0OnN3b3JkX2VmZmljaWVudAE/wAAAAD+AAAAC"
+  },
+  "writable_book": {
+    "max_stack_size": "AQ==",
+    "writable_book_content": "AA=="
+  },
+  "written_book": {
+    "enchantment_glint_override": "AQ==",
+    "max_stack_size": "EA=="
+  }
+}
