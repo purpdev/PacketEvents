@@ -1,0 +1,35 @@
+{
+  "V_1_20": [
+    "chat",
+    "emote_command",
+    "msg_command_incoming",
+    "msg_command_outgoing",
+    "say_command",
+    "team_msg_command_incoming",
+    "team_msg_command_outgoing"
+  ],
+  "V_1_19_1": [
+    "chat",
+    "say_command",
+    "msg_command_incoming",
+    "msg_command_outgoing",
+    "team_msg_command_incoming",
+    "team_msg_command_outgoing",
+    "emote_command"
+  ],
+  "V_1_19": [
+    "chat",
+    "system",
+    "game_info",
+    "say_command",
+    "msg_command",
+    "team_msg_command",
+    "emote_command",
+    "raw"
+  ],
+  "V_1_18_2": [
+    "chat",
+    "system",
+    "game_info"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "V_1_21_2": [
+    "crafting_building_blocks",
+    "crafting_redstone",
+    "crafting_equipment",
+    "crafting_misc",
+    "furnace_food",
+    "furnace_blocks",
+    "furnace_misc",
+    "blast_furnace_blocks",
+    "blast_furnace_misc",
+    "smoker_food",
+    "stonecutter",
+    "smithing",
+    "campfire"
+  ]
+}

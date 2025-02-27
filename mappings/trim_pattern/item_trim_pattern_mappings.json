@@ -1,0 +1,53 @@
+{
+  "V_1_20_5": [
+    "coast",
+    "dune",
+    "eye",
+    "host",
+    "raiser",
+    "rib",
+    "sentry",
+    "shaper",
+    "silence",
+    "snout",
+    "spire",
+    "tide",
+    "vex",
+    "ward",
+    "wayfinder",
+    "wild",
+    "bolt",
+    "flow"
+  ],
+  "V_1_20": [
+    "coast",
+    "dune",
+    "eye",
+    "host",
+    "raiser",
+    "rib",
+    "sentry",
+    "shaper",
+    "silence",
+    "snout",
+    "spire",
+    "tide",
+    "vex",
+    "ward",
+    "wayfinder",
+    "wild"
+  ],
+  "V_1_19_4": [
+    "coast",
+    "dune",
+    "eye",
+    "rib",
+    "sentry",
+    "snout",
+    "spire",
+    "tide",
+    "vex",
+    "ward",
+    "wild"
+  ]
+}

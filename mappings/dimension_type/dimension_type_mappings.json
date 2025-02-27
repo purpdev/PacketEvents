@@ -1,0 +1,19 @@
+{
+  "V_1_19": {
+    "overworld": 0,
+    "the_nether": 1,
+    "the_end": 2,
+    "overworld_caves": 3
+  },
+  "V_1_16": {
+    "overworld": 0,
+    "overworld_caves": 1,
+    "the_nether": 2,
+    "the_end": 3
+  },
+  "V_1_7_10": {
+    "overworld": 0,
+    "the_nether": -1,
+    "the_end": 1
+  }
+}
