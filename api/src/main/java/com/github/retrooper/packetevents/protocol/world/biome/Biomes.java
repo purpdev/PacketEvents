@@ -33,8 +33,7 @@ import java.util.Map;
 
 public final class Biomes {
 
-    private static final VersionedRegistry<Biome> REGISTRY = new VersionedRegistry<>(
-            "worldgen/biome", "world/biome_mappings");
+    private static final VersionedRegistry<Biome> REGISTRY = new VersionedRegistry<>("worldgen/biome");
 
     // load data from file, biomes are too complex to define in code here
     private static final Map<ResourceLocation, NBTCompound> BIOME_DATA;

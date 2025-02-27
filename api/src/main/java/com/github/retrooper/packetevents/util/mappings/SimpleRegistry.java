@@ -87,6 +87,11 @@ public final class SimpleRegistry<T extends MappedEntity> implements IRegistry<T
     }
 
     @Override
+    public int size() {
+        return this.typeMap.size();
+    }
+
+    @Override
     public ResourceLocation getRegistryKey() {
         return this.registryKey;
     }

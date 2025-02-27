@@ -51,6 +51,8 @@ public interface IRegistry<T extends MappedEntity> extends BiFunction<ClientVers
      */
     Collection<T> getEntries();
 
+    int size();
+
     ResourceLocation getRegistryKey();
 
     @Override

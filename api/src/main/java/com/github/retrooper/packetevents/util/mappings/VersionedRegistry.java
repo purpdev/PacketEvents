@@ -96,6 +96,11 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     }
 
     @Override
+    public int size() {
+        return this.typeMap.size();
+    }
+
+    @Override
     public ResourceLocation getRegistryKey() {
         return this.registryKey;
     }

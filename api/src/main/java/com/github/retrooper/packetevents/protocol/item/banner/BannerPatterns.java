@@ -27,8 +27,7 @@ import java.util.Collection;
 
 public final class BannerPatterns {
 
-    private static final VersionedRegistry<BannerPattern> REGISTRY = new VersionedRegistry<>(
-            "banner_pattern", "item/item_banner_pattern_mappings");
+    private static final VersionedRegistry<BannerPattern> REGISTRY = new VersionedRegistry<>("banner_pattern");
 
     private BannerPatterns() {
     }
