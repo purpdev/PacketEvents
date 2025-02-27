@@ -41,12 +41,9 @@ public final class Biomes {
 
     static {
         BIOME_DATA = new HashMap<>();
-        try (SequentialNBTReader.Compound dataTag = MappingHelper.decompress("mappings/world/biome_data")) {
-            while (dataTag.hasNext()) {
-                Map.Entry<String, NBT> entry = dataTag.next();
-                if (entry.getKey().equals("version")) {
-                    continue; // skip version field
-                }
+        try (SequentialNBTReader.Compound dataTag = MappingHelper.decompress("mappings/data/worldgen/biome")) {
+            dataTag.skipOne(); // skip version
+            for (Map.Entry<String, NBT> entry : (SequentialNBTReader.Compound) dataTag.next()) {
                 ResourceLocation biomeKey = new ResourceLocation(entry.getKey());
                 BIOME_DATA.put(biomeKey, ((SequentialNBTReader.Compound) entry.getValue()).readFully());
             }

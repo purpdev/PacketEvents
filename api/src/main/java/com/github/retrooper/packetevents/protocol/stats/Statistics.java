@@ -44,8 +44,9 @@ public class Statistics {
 
         if (version.isOlderThan(ServerVersion.V_1_12_2)) {
 
-            try (final SequentialNBTReader.Compound mapping = MappingHelper.decompress("mappings/stats/statistics")) {
-                mapping.skipOne(); //Skip version
+            try (final SequentialNBTReader.Compound rootMapping = MappingHelper.decompress("mappings/data/statistics")) {
+                rootMapping.skipOne(); //Skip version
+                SequentialNBTReader.Compound mapping = (SequentialNBTReader.Compound) rootMapping.next();
 
                 if (version.isOlderThanOrEquals(ServerVersion.V_1_8_3)) {
                     mapping.skipOne(); // Skip to version 1.8
