@@ -27,10 +27,12 @@ import java.util.Collection;
 
 import static com.github.retrooper.packetevents.resources.ResourceLocation.minecraft;
 
-public class MapDecorationTypes {
+public final class MapDecorationTypes {
 
-    private static final VersionedRegistry<MapDecorationType> REGISTRY =
-            new VersionedRegistry<>("map_decoration_type", "item/item_map_decoration_type_mappings");
+    private static final VersionedRegistry<MapDecorationType> REGISTRY = new VersionedRegistry<>("map_decoration_type");
+
+    private MapDecorationTypes() {
+    }
 
     public static MapDecorationType define(String key, boolean showOnItemFrame, boolean trackCount) {
         return define(key, minecraft(key), showOnItemFrame, trackCount);
@@ -102,6 +104,10 @@ public class MapDecorationTypes {
                 return false;
             }
         });
+    }
+
+    public static VersionedRegistry<MapDecorationType> getRegistry() {
+        return REGISTRY;
     }
 
     public static @Nullable MapDecorationType getByName(String name) {

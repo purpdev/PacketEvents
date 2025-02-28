@@ -45,10 +45,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ItemTypes {
+public final class ItemTypes {
 
-    private static final VersionedRegistry<ItemType> REGISTRY = new VersionedRegistry<>(
-            "item", "item/item_type_mappings");
+    private static final VersionedRegistry<ItemType> REGISTRY = new VersionedRegistry<>("item");
     private static final Map<StateType, ItemType> HELD_TO_PLACED_MAP = new HashMap<>();
 
     // <editor-fold desc="item type definitions" defaultstate="collapsed">
@@ -1502,6 +1501,9 @@ public class ItemTypes {
     public static final ItemType POTTERY_SHARD_SKULL = builder("POTTERY_SHARD_SKULL").setMaxAmount(64).build();
 
     // </editor-fold>
+
+    private ItemTypes() {
+    }
 
     @SuppressWarnings("unchecked")
     private static StaticComponentMap.Builder parseComponents(

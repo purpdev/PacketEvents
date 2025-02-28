@@ -21,16 +21,11 @@ package com.github.retrooper.packetevents.protocol.potion;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Potion types are the individually applied potion effects.<br>
@@ -38,46 +33,29 @@ import java.util.Map;
  * <p>
  * For potions brewable in survival, see {@link Potions}.
  */
-public class PotionTypes {
+public final class PotionTypes {
 
-    private static final Map<String, PotionType> POTION_TYPE_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, PotionType>> POTION_TYPE_ID_MAP = new HashMap<>();
+    private static final VersionedRegistry<PotionType> REGISTRY = new VersionedRegistry<>("mob_effect");
 
-    // initial mappings based upon https://minecraft.wiki/w/Effect#History
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("entity/entity_effect_mappings");
-
-    @Deprecated
-    public static PotionType define(String key, int ignoredId) {
-        return define(key);
+    private PotionTypes() {
     }
 
-    public static PotionType define(String key) {
-        TypesBuilderData data = TYPES_BUILDER.define(key);
-        PotionType potionType = new PotionType() {
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
+    public static VersionedRegistry<PotionType> getRegistry() {
+        return REGISTRY;
+    }
 
-            @Override
-            public int getId(ClientVersion version) {
-                return MappingHelper.getId(version, TYPES_BUILDER, data);
-            }
+    @Deprecated
+    public static PotionType define(String name, int ignoredId) {
+        return define(name);
+    }
 
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof PotionType) {
-                    return this.getName().equals(((PotionType) obj).getName());
-                }
-                return false;
-            }
-        };
-        MappingHelper.registerMapping(TYPES_BUILDER, POTION_TYPE_MAP, POTION_TYPE_ID_MAP, potionType);
-        return potionType;
+    @ApiStatus.Internal
+    public static PotionType define(String name) {
+        return REGISTRY.define(name, StaticPotionType::new);
     }
 
     public static @Nullable PotionType getByName(String name) {
-        return POTION_TYPE_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
     @Deprecated
@@ -85,20 +63,21 @@ public class PotionTypes {
         return getById(id, PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
     }
 
+    @Deprecated
     public static @Nullable PotionType getById(int id, ServerVersion version) {
         return getById(id, version.toClientVersion());
     }
 
-    public static @Nullable PotionType getById(ClientVersion version, int id) {
-        return getById(id, version);
-    }
-
+    @Deprecated
     public static @Nullable PotionType getById(int id, ClientVersion version) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, PotionType> idMap = POTION_TYPE_ID_MAP.get((byte) index);
-        return idMap.get(id);
+        return getById(version, id);
     }
 
+    public static @Nullable PotionType getById(ClientVersion version, int id) {
+        return REGISTRY.getById(version, id);
+    }
+
+    // initial mappings based upon https://minecraft.wiki/w/Effect#History
     // Added in b1.8
     public static final PotionType SPEED = define("speed");
     public static final PotionType SLOWNESS = define("slowness");
@@ -156,13 +135,14 @@ public class PotionTypes {
 
     /**
      * Returns an immutable view of the potion types.
+     *
      * @return Potion Types
      */
     public static Collection<PotionType> values() {
-        return Collections.unmodifiableCollection(POTION_TYPE_MAP.values());
+        return REGISTRY.getEntries();
     }
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
     }
 }

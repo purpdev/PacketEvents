@@ -26,8 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class PaintingVariants {
 
-    private static final VersionedRegistry<PaintingVariant> REGISTRY = new VersionedRegistry<>(
-            "painting_variant", "entity/painting_mappings");
+    private static final VersionedRegistry<PaintingVariant> REGISTRY = new VersionedRegistry<>("painting_variant");
 
     private PaintingVariants() {
     }

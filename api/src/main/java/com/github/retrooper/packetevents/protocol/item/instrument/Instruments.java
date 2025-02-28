@@ -27,8 +27,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 public final class Instruments {
 
-    private static final VersionedRegistry<Instrument> REGISTRY = new VersionedRegistry<>(
-            "instrument", "item/item_instrument_mappings");
+    private static final VersionedRegistry<Instrument> REGISTRY = new VersionedRegistry<>("instrument");
 
     private Instruments() {
     }

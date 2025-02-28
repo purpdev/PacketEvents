@@ -29,9 +29,9 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
-public class JukeboxSongs {
-    private static final VersionedRegistry<IJukeboxSong> REGISTRY = new VersionedRegistry<>("jukebox_song",
-            "item/item_jukebox_song_mappings");
+public final class JukeboxSongs {
+
+    private static final VersionedRegistry<IJukeboxSong> REGISTRY = new VersionedRegistry<>("jukebox_song");
 
     private JukeboxSongs() {
     }
