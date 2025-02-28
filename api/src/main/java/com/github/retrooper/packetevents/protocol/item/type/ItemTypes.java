@@ -1520,9 +1520,7 @@ public final class ItemTypes {
         // TODO release buffer helper
         // allocate a buffer once and use it for parsing everything
         Object byteBuf = UnpooledByteBufAllocationHelper.buffer();
-        PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf);
-        wrapper.setClientVersion(version);
-        wrapper.setServerVersion(version.toServerVersion());
+        PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf, version.toServerVersion());
 
         for (Map.Entry<String, NBT> entry : nbt) {
             ComponentType<?> compType = ComponentTypes.getByName(entry.getKey());
