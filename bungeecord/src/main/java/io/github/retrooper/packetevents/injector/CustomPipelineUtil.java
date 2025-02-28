@@ -20,17 +20,30 @@ package io.github.retrooper.packetevents.injector;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
 import io.netty.handler.codec.ByteToMessageDecoder;
 import io.netty.handler.codec.MessageToByteEncoder;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import io.netty.handler.codec.MessageToMessageEncoder;
+import io.netty.util.Recycler;
+import io.netty.util.concurrent.PromiseCombiner;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
+@ApiStatus.Internal
 public class CustomPipelineUtil {
+
+    private static final Recycler<OutList> OUT_LIST_RECYCLER = new Recycler<OutList>() {
+        @Override
+        protected OutList newObject(Handle<OutList> handle) {
+            return new OutList(handle);
+        }
+    };
+
     private static Method DECODE_METHOD;
     private static Method ENCODE_METHOD;
     private static Method MTM_DECODE;
@@ -130,41 +143,78 @@ public class CustomPipelineUtil {
         return output;
     }
 
-    public static void callPacketEncodeByteBuf(Object encoder, Object ctx, Object msg, List<Object> output) throws InvocationTargetException {
+    public static void callPacketEncodeByteBuf(Object encoder, ChannelHandlerContext ctx, ByteBuf msg, ChannelPromise promise) throws InvocationTargetException {
         if (BUNGEE_PACKET_ENCODE_BYTEBUF == null) {
             try {
-                BUNGEE_PACKET_ENCODE_BYTEBUF = encoder.getClass()
-                        .getDeclaredMethod("encode", ChannelHandlerContext.class, ByteBuf.class,
-                                List.class);
+                BUNGEE_PACKET_ENCODE_BYTEBUF = encoder.getClass().getDeclaredMethod("encode",
+                        ChannelHandlerContext.class, ByteBuf.class, List.class);
                 BUNGEE_PACKET_ENCODE_BYTEBUF.setAccessible(true);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+            } catch (NoSuchMethodException exception) {
+                throw new IllegalStateException(exception);
             }
         }
+        OutList out = OUT_LIST_RECYCLER.get();
         try {
-            BUNGEE_PACKET_ENCODE_BYTEBUF.invoke(encoder, ctx, msg, output);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            BUNGEE_PACKET_ENCODE_BYTEBUF.invoke(encoder, ctx, msg, out.list);
+            out.write(ctx, promise);
+        } catch (IllegalAccessException exception) {
+            throw new IllegalStateException(exception);
+        } finally {
+            msg.release();
+            out.list.clear();
+            out.handle.recycle(out);
         }
     }
 
-    public static List<Object> callPacketDecodeByteBuf(Object decoder, Object ctx, Object msg) throws InvocationTargetException {
-        List<Object> output = new ArrayList<>();
+    public static ByteBuf callPacketDecodeByteBuf(Object decoder, ChannelHandlerContext ctx, ByteBuf msg) throws InvocationTargetException {
         if (BUNGEE_PACKET_DECODE_BYTEBUF == null) {
             try {
-                BUNGEE_PACKET_DECODE_BYTEBUF = decoder.getClass().getDeclaredMethod("decode", ChannelHandlerContext.class,
-                        Object.class, List.class);
+                BUNGEE_PACKET_DECODE_BYTEBUF = decoder.getClass().getDeclaredMethod("decode",
+                        ChannelHandlerContext.class, Object.class, List.class);
                 BUNGEE_PACKET_DECODE_BYTEBUF.setAccessible(true);
-            } catch (NoSuchMethodException e) {
-                e.printStackTrace();
+            } catch (NoSuchMethodException exception) {
+                throw new IllegalStateException(exception);
             }
         }
+        OutList out = OUT_LIST_RECYCLER.get();
         try {
-            BUNGEE_PACKET_DECODE_BYTEBUF.invoke(decoder, ctx, msg, output);
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            BUNGEE_PACKET_DECODE_BYTEBUF.invoke(decoder, ctx, msg, out.list);
+            return (ByteBuf) out.list.get(0);
+        } catch (IllegalAccessException exception) {
+            throw new IllegalStateException(exception);
+        } finally {
+            msg.release();
+            out.list.clear();
+            out.handle.recycle(out);
         }
-        return output;
+    }
+
+    private static final class OutList {
+
+        // the default bungee compression handlers only produces one output bytebuf
+        private final List<Object> list = new ArrayList<>(1);
+        private final Recycler.Handle<OutList> handle;
+
+        public OutList(Recycler.Handle<OutList> handle) {
+            this.handle = handle;
+        }
+
+        public void write(ChannelHandlerContext ctx, ChannelPromise promise) {
+            List<Object> list = this.list;
+            int len = list.size();
+            if (len == 1) {
+                // should be the only case which
+                // happens on default bungeecord
+                ctx.write(list.get(0), promise);
+                return;
+            }
+
+            // copied from MessageToMessageEncoder#writePromiseCombiner
+            PromiseCombiner combiner = new PromiseCombiner(ctx.executor());
+            for (int i = 0; i < len; ++i) {
+                combiner.add(ctx.write(list.get(i)));
+            }
+            combiner.finish(promise);
+        }
     }
 }
-

@@ -35,6 +35,11 @@ public class ByteBufOperatorImpl implements ByteBufOperator {
     }
 
     @Override
+    public int maxCapacity(Object buffer) {
+        return ((ByteBuf) buffer).maxCapacity();
+    }
+
+    @Override
     public int readerIndex(Object buffer) {
         return ((ByteBuf)buffer).readerIndex();
     }
@@ -242,5 +247,15 @@ public class ByteBufOperatorImpl implements ByteBufOperator {
     @Override
     public Object resetWriterIndex(Object buffer) {
         return ((ByteBuf)buffer).resetWriterIndex();
+    }
+
+    @Override
+    public Object newBuffer(Object buffer) {
+        return ((ByteBuf)buffer).alloc().buffer();
+    }
+
+    @Override
+    public Object newBuffer(Object buffer, int initialCapacity) {
+        return ((ByteBuf)buffer).alloc().buffer(initialCapacity);
     }
 }

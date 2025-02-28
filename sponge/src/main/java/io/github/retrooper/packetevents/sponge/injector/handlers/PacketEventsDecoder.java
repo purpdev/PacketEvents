@@ -19,9 +19,10 @@
 package io.github.retrooper.packetevents.sponge.injector.handlers;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
 import com.github.retrooper.packetevents.exception.PacketProcessException;
-import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.protocol.ConnectionState;
+import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.ExceptionUtil;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
@@ -42,7 +43,7 @@ import java.util.UUID;
 public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     public User user;
-    public UUID player;
+    public UUID playerId;
     public boolean hasBeenRelocated;
 
     public PacketEventsDecoder(User user) {
@@ -51,19 +52,27 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     public PacketEventsDecoder(PacketEventsDecoder decoder) {
         user = decoder.user;
-        player = decoder.player;
+        playerId = decoder.playerId;
         hasBeenRelocated = decoder.hasBeenRelocated;
     }
 
     public void read(ChannelHandlerContext ctx, ByteBuf input, List<Object> out) throws Exception {
-        PacketEventsImplHelper.handleServerBoundPacket(ctx.channel(), user, player == null ? null : Sponge.server().player(player).orElse(null), input, true);
-        out.add(ByteBufHelper.retain(input));
+        Object player = this.playerId == null ? null : Sponge.server().player(this.playerId).orElse(null);
+        ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(ctx.channel(), this.user, player,
+                input.retain(), true, PacketSide.CLIENT);
+        ByteBuf buf = event != null ? (ByteBuf) event.getByteBuf() : input;
+
+        if (buf.isReadable()) {
+            out.add(buf);
+        } else {
+            buf.release();
+        }
     }
 
     @Override
     public void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
         if (buffer.isReadable()) {
-            read(ctx, buffer, out);
+            this.read(ctx, buffer, out);
         }
     }
 
@@ -88,9 +97,9 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
                     // Do nothing.
                 }
                 user.closeConnection();
-                if (player != null) {
+                if (playerId != null) {
                     Sponge.server().scheduler().submit(Task.builder().plugin((PluginContainer) PacketEvents.getAPI().getPlugin())
-                            .execute(() -> Sponge.server().player(player).get().kick(Component.text("Invalid packet"))).build());
+                            .execute(() -> Sponge.server().player(playerId).get().kick(Component.text("Invalid packet"))).build());
                 }
 
                 PacketEvents.getAPI().getLogManager().warn("Disconnected " + user.getProfile().getName() + " due to invalid packet!");

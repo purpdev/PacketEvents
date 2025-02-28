@@ -21,8 +21,18 @@ package io.github.retrooper.packetevents.impl.netty.buffer;
 import com.github.retrooper.packetevents.netty.buffer.ByteBufAllocationOperator;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.Unpooled;
+import io.netty.buffer.UnpooledByteBufAllocator;
 
 public class ByteBufAllocationOperatorImpl implements ByteBufAllocationOperator {
+
+    public static final ByteBufAllocationOperatorImpl UNPOOLED = new ByteBufAllocationOperatorImpl(UnpooledByteBufAllocator.DEFAULT);
+
+    private final ByteBufAllocator alloc;
+
+    public ByteBufAllocationOperatorImpl(ByteBufAllocator alloc) {
+        this.alloc = alloc;
+    }
+
     @Override
     public Object wrappedBuffer(byte[] bytes) {
         return Unpooled.wrappedBuffer(bytes);
@@ -35,31 +45,31 @@ public class ByteBufAllocationOperatorImpl implements ByteBufAllocationOperator 
 
     @Override
     public Object buffer() {
-        return Unpooled.buffer();
+        return this.alloc.buffer();
     }
 
     @Override
     public Object buffer(int initialCapacity) {
-        return Unpooled.buffer(initialCapacity);
+        return this.alloc.buffer(initialCapacity);
     }
 
     @Override
     public Object directBuffer() {
-        return Unpooled.directBuffer();
+        return this.alloc.directBuffer();
     }
 
     @Override
     public Object directBuffer(int initialCapacity) {
-        return Unpooled.directBuffer(initialCapacity);
+        return this.alloc.directBuffer(initialCapacity);
     }
 
     @Override
     public Object compositeBuffer() {
-        return Unpooled.compositeBuffer();
+        return this.alloc.compositeBuffer();
     }
 
     @Override
     public Object compositeBuffer(int maxNumComponents) {
-        return Unpooled.compositeBuffer(maxNumComponents);
+        return this.alloc.compositeBuffer(maxNumComponents);
     }
 }

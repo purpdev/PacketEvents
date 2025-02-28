@@ -18,6 +18,7 @@
 
 package io.github.retrooper.packetevents.handler;
 
+import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
 import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
@@ -46,10 +47,14 @@ public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
         if (!msg.isReadable()) {
             return;
         }
-        PacketEventsImplHelper.handlePacket(ctx.channel(), this.user, this.player,
-                msg, false, this.side);
-        if (msg.isReadable()) {
-            out.add(msg.retain());
+        ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(ctx.channel(), this.user, this.player,
+                msg.retain(), false, this.side);
+        ByteBuf buf = event != null ? (ByteBuf) event.getByteBuf() : msg;
+
+        if (buf.isReadable()) {
+            out.add(buf);
+        } else {
+            buf.release();
         }
     }
 }

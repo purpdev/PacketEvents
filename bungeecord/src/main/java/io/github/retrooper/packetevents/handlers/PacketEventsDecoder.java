@@ -18,11 +18,10 @@
 
 package io.github.retrooper.packetevents.handlers;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketReceiveEvent;
-import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
+import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
+import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.User;
-import com.github.retrooper.packetevents.util.EventCreationUtil;
+import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import io.github.retrooper.packetevents.injector.ServerConnectionInitializer;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
@@ -35,6 +34,8 @@ import java.util.List;
 
 @ChannelHandler.Sharable
 public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
+
+    private final PacketSide side = PacketSide.CLIENT;
     public User user;
     public ProxiedPlayer player;
 
@@ -42,45 +43,20 @@ public class PacketEventsDecoder extends MessageToMessageDecoder<ByteBuf> {
         this.user = user;
     }
 
-    public void read(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> output) throws Exception {
-        ByteBuf transformed = ctx.alloc().buffer().writeBytes(byteBuf);
-        try {
-            int firstReaderIndex = transformed.readerIndex();
-            PacketReceiveEvent packetReceiveEvent = EventCreationUtil.createReceiveEvent(ctx.channel(),
-                    user, player, transformed, false);
-            int readerIndex = transformed.readerIndex();
-            PacketEvents.getAPI().getEventManager().callEvent(packetReceiveEvent, () -> transformed.readerIndex(readerIndex));
-            if (!packetReceiveEvent.isCancelled()) {
-                if (packetReceiveEvent.getLastUsedWrapper() != null) {
-                    ByteBufHelper.clear(packetReceiveEvent.getByteBuf());
-                    packetReceiveEvent.getLastUsedWrapper().writeVarInt(packetReceiveEvent.getPacketId());
-                    packetReceiveEvent.getLastUsedWrapper().write();
-                }
-                else {
-                    transformed.readerIndex(firstReaderIndex);
-                }
-                output.add(transformed.retain());
-            }
-            if (packetReceiveEvent.hasPostTasks()) {
-                for (Runnable task : packetReceiveEvent.getPostTasks()) {
-                    task.run();
-                }
-            }
-        } finally {
-            transformed.release();
-        }
-    }
-
     @Override
-    protected void decode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> out) throws Exception {
-        if (byteBuf.isReadable()) {
-            read(ctx, byteBuf, out);
+    protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+        if (!msg.isReadable()) {
+            return;
         }
-    }
+        ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(ctx.channel(), this.user, this.player,
+                msg.retain(), false, this.side);
+        ByteBuf buf = event != null ? (ByteBuf) event.getByteBuf() : msg;
 
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
+        if (buf.isReadable()) {
+            out.add(buf);
+        } else {
+            buf.release();
+        }
     }
 
     @Override

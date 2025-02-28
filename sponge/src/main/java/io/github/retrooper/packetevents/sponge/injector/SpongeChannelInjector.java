@@ -208,7 +208,7 @@ public class SpongeChannelInjector implements ChannelInjector {
 
         PacketEventsDecoder decoder = getDecoder((Channel) channel);
         if (decoder != null) {
-            decoder.player = spongePlayer.uniqueId();
+            decoder.playerId = spongePlayer.uniqueId();
             decoder.user.getProfile().setName(spongePlayer.name());
             decoder.user.getProfile().setUUID(spongePlayer.uniqueId());
         }

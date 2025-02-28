@@ -18,19 +18,21 @@
 
 package io.github.retrooper.packetevents.handlers;
 
-import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.event.PacketSendEvent;
-import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
+import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
+import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.User;
-import com.github.retrooper.packetevents.util.EventCreationUtil;
+import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import com.velocitypowered.api.proxy.Player;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.handler.codec.MessageToByteEncoder;
+import io.netty.channel.ChannelOutboundHandlerAdapter;
+import io.netty.channel.ChannelPromise;
 
 @ChannelHandler.Sharable
-public class PacketEventsEncoder extends MessageToByteEncoder<ByteBuf> {
+public class PacketEventsEncoder extends ChannelOutboundHandlerAdapter {
+
+    private final PacketSide side = PacketSide.SERVER;
     public Player player;
     public User user;
 
@@ -38,45 +40,37 @@ public class PacketEventsEncoder extends MessageToByteEncoder<ByteBuf> {
         this.user = user;
     }
 
-    public void read(ChannelHandlerContext ctx, ByteBuf buffer) throws Exception {
-        int firstReaderIndex = buffer.readerIndex();
-        PacketSendEvent packetSendEvent = EventCreationUtil.createSendEvent(ctx.channel(), user, player, buffer,
-                false);
-        int readerIndex = buffer.readerIndex();
-        PacketEvents.getAPI().getEventManager().callEvent(packetSendEvent, () -> buffer.readerIndex(readerIndex));
-        if (!packetSendEvent.isCancelled()) {
-            if (packetSendEvent.getLastUsedWrapper() != null) {
-                ByteBufHelper.clear(packetSendEvent.getByteBuf());
-                packetSendEvent.getLastUsedWrapper().writeVarInt(packetSendEvent.getPacketId());
-                packetSendEvent.getLastUsedWrapper().write();
-            }
-            buffer.readerIndex(firstReaderIndex);
+    public void handle(ChannelHandlerContext ctx, ByteBuf in, ChannelPromise promise) throws Exception {
+        ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(ctx.channel(),
+                this.user, this.player, in.retain(), false, this.side);
+        ByteBuf buf = event != null ? (ByteBuf) event.getByteBuf() : in;
+
+        if (buf.isReadable()) {
+            ctx.write(buf, promise);
         } else {
-            ByteBufHelper.clear(packetSendEvent.getByteBuf());
-        }
-        if (packetSendEvent.hasPostTasks()) {
-            for (Runnable task : packetSendEvent.getPostTasks()) {
-                task.run();
-            }
+            buf.release();
+            promise.setSuccess(); // mark as done
         }
     }
 
     @Override
-    protected void encode(ChannelHandlerContext ctx, ByteBuf msg, ByteBuf out) throws Exception {
-        if (!msg.isReadable()) return;
+    public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+        if (!(msg instanceof ByteBuf)) {
+            ctx.write(msg, promise);
+            return;
+        }
+        ByteBuf in = (ByteBuf) msg;
+        if (!in.isReadable()) {
+            in.release();
+            promise.setSuccess(); // mark as done
+            return;
+        }
 
-        ByteBuf transformed = ctx.alloc().buffer().writeBytes(msg);
         try {
-            read(ctx, transformed);
-            out.writeBytes(transformed);
+            this.handle(ctx, in, promise);
         } finally {
-            transformed.release();
+            in.release();
         }
-    }
-
-    @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
-        super.exceptionCaught(ctx, cause);
     }
 }
 

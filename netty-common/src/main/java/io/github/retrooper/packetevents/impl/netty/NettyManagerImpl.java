@@ -28,7 +28,7 @@ import io.github.retrooper.packetevents.impl.netty.channel.ChannelOperatorImpl;
 
 public class NettyManagerImpl implements NettyManager {
     private static final ByteBufOperator BYTE_BUF_OPERATOR = new ByteBufOperatorImpl();
-    private static final ByteBufAllocationOperator BYTE_BUF_ALLOCATION_OPERATOR = new ByteBufAllocationOperatorImpl();
+    private static final ByteBufAllocationOperator BYTE_BUF_ALLOCATION_OPERATOR = ByteBufAllocationOperatorImpl.UNPOOLED;
     private static final ChannelOperator CHANNEL_OPERATOR = new ChannelOperatorImpl();
 
     @Override

@@ -23,6 +23,7 @@ import java.nio.charset.Charset;
 public interface ByteBufOperator {
     int capacity(Object buffer);
     Object capacity(Object buffer, int capacity);
+    int maxCapacity(Object buffer);
     int readerIndex(Object buffer);
     Object readerIndex(Object buffer, int readerIndex);
 
@@ -115,4 +116,10 @@ public interface ByteBufOperator {
     default void writeBoolean(Object buffer, boolean value) {
         writeByte(buffer, value ? 1 : 0);
     }
+
+    // allocation methods which use the specified buffer's allocator
+
+    Object newBuffer(Object buffer);
+
+    Object newBuffer(Object buffer, int initialCapacity);
 }

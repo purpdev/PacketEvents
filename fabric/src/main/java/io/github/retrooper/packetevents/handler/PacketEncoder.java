@@ -18,6 +18,7 @@
 
 package io.github.retrooper.packetevents.handler;
 
+import com.github.retrooper.packetevents.event.ProtocolPacketEvent;
 import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
@@ -40,6 +41,19 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
         this.user = user;
     }
 
+    public void handle(ChannelHandlerContext ctx, ByteBuf in, ChannelPromise promise) throws Exception {
+        ProtocolPacketEvent event = PacketEventsImplHelper.handlePacket(ctx.channel(),
+                this.user, this.player, in.retain(), false, this.side);
+        ByteBuf buf = event != null ? (ByteBuf) event.getByteBuf() : in;
+
+        if (buf.isReadable()) {
+            ctx.write(buf, promise);
+        } else {
+            buf.release();
+            promise.setSuccess(); // mark as done
+        }
+    }
+
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
         if (!(msg instanceof ByteBuf in)) {
@@ -48,13 +62,14 @@ public class PacketEncoder extends ChannelOutboundHandlerAdapter {
         }
         if (!in.isReadable()) {
             in.release();
+            promise.setSuccess(); // mark as done
             return;
         }
 
-        PacketEventsImplHelper.handlePacket(ctx.channel(),
-                this.user, this.player, in, false, this.side);
-        if (in.isReadable()) {
-            ctx.write(in, promise);
+        try {
+            this.handle(ctx, in, promise);
+        } finally {
+            in.release();
         }
     }
 }

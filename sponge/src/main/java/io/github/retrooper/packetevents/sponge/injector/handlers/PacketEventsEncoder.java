@@ -63,11 +63,11 @@ public class PacketEventsEncoder extends MessageToMessageEncoder<ByteBuf> {
 
     @Override
     protected void encode(ChannelHandlerContext ctx, ByteBuf byteBuf, List<Object> list) throws Exception {
-        boolean needsRecompression = !handledCompression && handleCompression(ctx, byteBuf);
-        handleClientBoundPacket(ctx.channel(), user, player, byteBuf, this.promise);
+        boolean needsRecompression = !this.handledCompression && this.handleCompression(ctx, byteBuf);
+        byteBuf = this.handleClientBoundPacket(ctx.channel(), this.user, this.player, byteBuf.retain(), this.promise);
 
         if (needsRecompression) {
-            compress(ctx, byteBuf);
+            this.compress(ctx, byteBuf);
         }
 
         // So apparently, this is how ViaVersion hacks around bungeecord not supporting sending empty packets
@@ -75,19 +75,28 @@ public class PacketEventsEncoder extends MessageToMessageEncoder<ByteBuf> {
             throw CancelPacketException.INSTANCE;
         }
 
-        list.add(byteBuf.retain());
+        list.add(byteBuf);
     }
 
-    private @Nullable PacketSendEvent handleClientBoundPacket(Channel channel, User user, UUID player, ByteBuf buffer, ChannelPromise promise) throws Exception {
-        PacketSendEvent packetSendEvent = PacketEventsImplHelper.handleClientBoundPacket(channel, user, player == null ? null : Sponge.server().player(player).orElse(null), buffer, true);
-        if (packetSendEvent != null && packetSendEvent.hasTasksAfterSend()) {
+    private ByteBuf handleClientBoundPacket(
+            Channel channel, User user,
+            @Nullable UUID playerId, ByteBuf buffer,
+            ChannelPromise promise
+    ) throws Exception {
+        Object player = playerId == null ? null : Sponge.server().player(playerId).orElse(null);
+        PacketSendEvent event = PacketEventsImplHelper.handleClientBoundPacket(channel, user,
+                player, buffer, true);
+        if (event == null) {
+            return buffer;
+        }
+        if (event.hasTasksAfterSend()) {
             promise.addListener((p) -> {
-                for (Runnable task : packetSendEvent.getTasksAfterSend()) {
+                for (Runnable task : event.getTasksAfterSend()) {
                     task.run();
                 }
             });
         }
-        return packetSendEvent;
+        return (ByteBuf) event.getByteBuf();
     }
 
     @Override

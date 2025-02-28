@@ -31,6 +31,10 @@ public class ByteBufHelper {
         return PacketEvents.getAPI().getNettyManager().getByteBufOperator().capacity(buffer, capacity);
     }
 
+    public static int maxCapacity(Object buffer) {
+        return PacketEvents.getAPI().getNettyManager().getByteBufOperator().maxCapacity(buffer);
+    }
+
     public static int readerIndex(Object buffer) {
         return PacketEvents.getAPI().getNettyManager().getByteBufOperator().readerIndex(buffer);
     }
@@ -237,6 +241,14 @@ public class ByteBufHelper {
 
     public static Object resetWriterIndex(Object buffer) {
         return PacketEvents.getAPI().getNettyManager().getByteBufOperator().resetWriterIndex(buffer);
+    }
+
+    public static Object newBuffer(Object buffer) {
+        return PacketEvents.getAPI().getNettyManager().getByteBufOperator().newBuffer(buffer);
+    }
+
+    public static Object newBuffer(Object buffer, int initialCapacity) {
+        return PacketEvents.getAPI().getNettyManager().getByteBufOperator().newBuffer(buffer, initialCapacity);
     }
 
     public static int readVarInt(Object buffer) {
