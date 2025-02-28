@@ -12,6 +12,7 @@ velocity = "3.4.0-SNAPSHOT"
 run-paper = "2.3.1"
 fabric-loom = "1.8.11"
 spongeGradle = "2.2.0"
+classgraph = "4.8.179"
 
 [libraries]
 adventure-api = { group = "net.kyori", name = "adventure-api", version.ref = "adventure" }
@@ -34,6 +35,7 @@ protocol-support = { group = "com.github.ProtocolSupport", name = "ProtocolSuppo
 paper = { group = "io.papermc.paper", name = "paper-api", version.ref = "paper" }
 bungeecord = { group = "net.md-5", name = "bungeecord-api", version.ref = "bungeecord" }
 velocity = { group = "com.velocitypowered", name = "velocity-api", version.ref = "velocity" }
+classgraph = { group = "io.github.classgraph", name = "classgraph", version.ref = "classgraph" }
 
 [bundles]
 adventure = [ "adventure-api", "adventure-nbt", "adventure-key", "adventure-examination-api", "adventure-examination-string" ]

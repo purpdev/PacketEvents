@@ -39,6 +39,7 @@ dependencies {
     testImplementation(testlibs.slf4j)
     testImplementation(testlibs.bundles.junit)
     testImplementation(libs.netty)
+    testImplementation(libs.classgraph)
 }
 
 mappingCompression {
