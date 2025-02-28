@@ -65,50 +65,8 @@ public final class MapDecorationTypes {
             boolean showOnItemFrame, int mapColor,
             boolean explorationMapElement, boolean trackCount
     ) {
-        return REGISTRY.define(key, data -> new MapDecorationType() {
-            @Override
-            public ResourceLocation getAssetId() {
-                return assetId;
-            }
-
-            @Override
-            public boolean isShowOnItemFrame() {
-                return showOnItemFrame;
-            }
-
-            @Override
-            public int getMapColor() {
-                return mapColor;
-            }
-
-            @Override
-            public boolean isExplorationMapElement() {
-                return explorationMapElement;
-            }
-
-            @Override
-            public boolean isTrackCount() {
-                return trackCount;
-            }
-
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
-
-            @Override
-            public int getId(ClientVersion version) {
-                return data.getId(version);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof MapDecorationType) {
-                    return this.getName().equals(((MapDecorationType) obj).getName());
-                }
-                return false;
-            }
-        });
+        return REGISTRY.define(key, data -> new StaticMapDecorationType(data,
+                assetId, showOnItemFrame, mapColor, explorationMapElement, trackCount));
     }
 
     public static VersionedRegistry<MapDecorationType> getRegistry() {
