@@ -66,13 +66,14 @@ import static com.github.retrooper.packetevents.util.adventure.AdventureIndexUti
 public class WrappedBlockState {
 
     // all versions where block state mappings were changed TODO UPDATE
-    private static final ClientVersion[] MAPPING_VERSIONS = new ClientVersion[]{
+    private static final ClientVersion[] MAPPING_VERSION_STEPS = new ClientVersion[]{
             ClientVersion.V_1_13, ClientVersion.V_1_13_2, ClientVersion.V_1_14, ClientVersion.V_1_15,
             ClientVersion.V_1_16, ClientVersion.V_1_16_2, ClientVersion.V_1_17, ClientVersion.V_1_19,
             ClientVersion.V_1_19_3, ClientVersion.V_1_19_4, ClientVersion.V_1_20, ClientVersion.V_1_20_2,
             ClientVersion.V_1_20_3, ClientVersion.V_1_20_5, ClientVersion.V_1_21_2, ClientVersion.V_1_21_4,
     };
     private static final byte[] MAPPING_INDEXES;
+    private static final ClientVersion[] MAPPING_VERSIONS;
 
     private static final byte AIR_MAPPING_INDEX = 0;
     private static final byte LEGACY_MAPPING_INDEX = 1;
@@ -85,13 +86,17 @@ public class WrappedBlockState {
     static {
         ClientVersion[] versions = ClientVersion.values();
         MAPPING_INDEXES = new byte[versions.length];
+        MAPPING_VERSIONS = new ClientVersion[versions.length];
 
+        ClientVersion mappingVersion = versions[0];
         for (int i = 0, j = 0; i < versions.length; i++) {
             ClientVersion version = versions[i];
-            if (j < MAPPING_VERSIONS.length && version == MAPPING_VERSIONS[j]) {
+            if (j < MAPPING_VERSION_STEPS.length && version == MAPPING_VERSION_STEPS[j]) {
                 j++;
+                mappingVersion = version;
             }
             MAPPING_INDEXES[version.ordinal()] = (byte) (LEGACY_MAPPING_INDEX + j);
+            MAPPING_VERSIONS[version.ordinal()] = mappingVersion;
         }
         HIGHEST_MAPPING_INDEX = MAPPING_INDEXES[versions.length - 1];
     }
@@ -161,7 +166,7 @@ public class WrappedBlockState {
     private static byte loadMappings(ClientVersion version) {
         byte mappingsIndex = getMappingsIndex(version);
         if (!PRELOAD_BLOCK_STATE_MAPPINGS && BY_ID[mappingsIndex].isEmpty()) {
-            loadMappings0(version, mappingsIndex); // try to load mappings
+            loadMappings0(getMappingsVersion(version), mappingsIndex); // try to load mappings
         }
         return mappingsIndex;
     }
@@ -338,6 +343,10 @@ public class WrappedBlockState {
 
     private static byte getMappingsIndex(ClientVersion version) {
         return MAPPING_INDEXES[version.ordinal()];
+    }
+
+    private static ClientVersion getMappingsVersion(ClientVersion version) {
+        return MAPPING_VERSIONS[version.ordinal()];
     }
 
     private static void loadLegacy(Map<Map<StateValue, Object>, StateCacheValue> cache) {
@@ -1528,7 +1537,7 @@ public class WrappedBlockState {
         {
             Map<Map<StateValue, Object>, StateCacheValue> cache = new HashMap<>();
             loadLegacy(cache);
-            for (ClientVersion version : MAPPING_VERSIONS) {
+            for (ClientVersion version : MAPPING_VERSION_STEPS) {
                 loadModern(cache, version);
             }
         }
