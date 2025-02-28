@@ -45,6 +45,10 @@ public final class RecipeSerializers {
     private RecipeSerializers() {
     }
 
+    public static VersionedRegistry<RecipeSerializer<?>> getRegistry() {
+        return REGISTRY;
+    }
+
     @ApiStatus.Internal
     public static <T extends RecipeData> RecipeSerializer<T> define(
             String name,

@@ -20,61 +20,31 @@ package com.github.retrooper.packetevents.protocol.sound;
 
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-public class Sounds {
+public final class Sounds {
 
-    private static final Map<String, Sound> SOUND_TYPE_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, Sound>> SOUND_TYPE_ID_MAP = new HashMap<>();
+    private static final VersionedRegistry<Sound> REGISTRY = new VersionedRegistry<>("sound_event");
 
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("sound/sound_mappings");
-
-    public static Sound define(String key) {
-        return define(key, new ResourceLocation(key), null);
+    private Sounds() {
     }
 
-    public static Sound define(String key, ResourceLocation soundId, @Nullable Float range) {
-        TypesBuilderData data = TYPES_BUILDER.define(key);
-        Sound soundType = new Sound() {
-            @Override
-            public ResourceLocation getSoundId() {
-                return soundId;
-            }
+    public static VersionedRegistry<Sound> getRegistry() {
+        return REGISTRY;
+    }
 
-            @Override
-            public @Nullable Float getRange() {
-                return range;
-            }
+    @ApiStatus.Internal
+    public static Sound define(String name) {
+        return define(name, new ResourceLocation(name), null);
+    }
 
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
-
-            @Override
-            public int getId(ClientVersion version) {
-                return MappingHelper.getId(version, TYPES_BUILDER, data);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof Sound) {
-                    return getName().equals(((Sound) obj).getName());
-                }
-                return false;
-            }
-        };
-        MappingHelper.registerMapping(TYPES_BUILDER, SOUND_TYPE_MAP, SOUND_TYPE_ID_MAP, soundType);
-        return soundType;
+    @ApiStatus.Internal
+    public static Sound define(String name, ResourceLocation soundId, @Nullable Float range) {
+        return REGISTRY.define(name, data -> new StaticSound(data, soundId, range));
     }
 
     public static Sound getByNameOrCreate(String name) {
@@ -86,13 +56,11 @@ public class Sounds {
     }
 
     public static @Nullable Sound getByName(String name) {
-        return SOUND_TYPE_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
     public static @Nullable Sound getById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, Sound> idMap = SOUND_TYPE_ID_MAP.get((byte) index);
-        return idMap.get(id);
+        return REGISTRY.getById(version, id);
     }
 
     public static final Sound ENTITY_ALLAY_AMBIENT_WITH_ITEM = define("entity.allay.ambient_with_item");
@@ -1779,10 +1747,10 @@ public class Sounds {
      * @return Sounds
      */
     public static Collection<Sound> values() {
-        return Collections.unmodifiableCollection(SOUND_TYPE_MAP.values());
+        return REGISTRY.getEntries();
     }
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
     }
 }
