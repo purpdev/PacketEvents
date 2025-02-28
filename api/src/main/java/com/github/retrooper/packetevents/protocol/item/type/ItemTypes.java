@@ -1530,6 +1530,9 @@ public final class ItemTypes {
                 continue;
             }
 
+            // reset to start of buffer
+            ByteBufHelper.resetReaderIndex(byteBuf);
+
             // empty values are serialized as a single byte (smaller than an empty byte array),
             // so just parse byte array tag values
             if (entry.getValue() instanceof NBTByteArray) {
@@ -1538,9 +1541,6 @@ public final class ItemTypes {
                 ByteBufHelper.resetWriterIndex(byteBuf);
                 ByteBufHelper.writeBytes(byteBuf, bytes);
             }
-
-            // reset to start of buffer
-            ByteBufHelper.resetReaderIndex(byteBuf);
 
             // read from shared buffer
             Object compValue = compType.read(wrapper);
