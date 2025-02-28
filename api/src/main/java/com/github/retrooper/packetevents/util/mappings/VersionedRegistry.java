@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +58,12 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
         Z instance = builder.apply(this.typesBuilder.define(name));
         MappingHelper.registerMapping(this.typesBuilder, this.typeMap, this.typeIdMap, instance);
         return instance;
+    }
+
+    @VisibleForTesting
+    @ApiStatus.Internal
+    public boolean isMappingDataLoaded() {
+        return this.typesBuilder.isMappingDataLoaded();
     }
 
     @ApiStatus.Internal

@@ -159,6 +159,11 @@ public class TypesBuilder {
         return versionMapper.getIndex(rawVersion);
     }
 
+    boolean isMappingDataLoaded() {
+        return this.entries != null;
+    }
+
+    @ApiStatus.Internal
     public void unloadFileMappings() {
         entries.clear();
         entries = null;

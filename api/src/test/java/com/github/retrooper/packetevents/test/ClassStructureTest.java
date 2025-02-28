@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.test;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.test.base.BaseDummyAPITest;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import io.github.classgraph.ClassGraph;
@@ -33,6 +34,7 @@ import io.github.classgraph.ScanResult;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,7 +47,7 @@ import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class ClassStructureTest {
+public class ClassStructureTest extends BaseDummyAPITest {
 
     private static ScanResult SCAN_RESULT;
 
@@ -148,5 +150,19 @@ public class ClassStructureTest {
         }
         assertEquals(0, issues.size(), () ->
                 "Found " + issues.size() + " issues: \n" + String.join("\n", issues) + "\n");
+    }
+
+    @Test
+    @DisplayName("Ensure mappings get unloaded after initialization")
+    public void ensureMappingDataUnload() {
+        SCAN_RESULT.getAllClasses().stream()
+                .flatMap(clazz -> clazz.getMethodInfo("getRegistry").stream())
+                .filter(meth -> meth.isPublic() && meth.isStatic())
+                .map(meth -> Assertions.assertDoesNotThrow(() -> {
+                    // this also ensures registries are able to load without errors
+                    return (VersionedRegistry<?>) meth.loadClassAndGetMethod().invoke(null);
+                }))
+                .forEach(registry -> Assertions.assertFalse(registry.isMappingDataLoaded(),
+                        () -> "Mapping data for registry " + registry.getRegistryKey() + " is still loaded"));
     }
 }
