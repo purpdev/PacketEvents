@@ -1,6 +1,6 @@
 /*
  * This file is part of packetevents - https://github.com/retrooper/packetevents
- * Copyright (C) 2022 retrooper and contributors
+ * Copyright (C) 2025 retrooper and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,23 @@
 
 package com.github.retrooper.packetevents.protocol.entity.villager.profession;
 
-import com.github.retrooper.packetevents.protocol.mapper.StaticMappedEntity;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
+import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
-public interface VillagerProfession extends StaticMappedEntity {
+public class StaticVillagerProfession extends AbstractMappedEntity implements VillagerProfession {
 
-    @Deprecated
+    @ApiStatus.Internal
+    public StaticVillagerProfession(@Nullable TypesBuilderData data) {
+        super(data);
+    }
+
     @Override
-    int getId();
+    public int getId() {
+        ServerVersion version = PacketEvents.getAPI().getServerManager().getVersion();
+        return this.getId(version.toClientVersion());
+    }
 }

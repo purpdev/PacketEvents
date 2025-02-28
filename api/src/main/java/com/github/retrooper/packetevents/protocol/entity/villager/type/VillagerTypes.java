@@ -80,6 +80,6 @@ public final class VillagerTypes {
     }
 
     static {
-        REGISTRY.getEntries();
+        REGISTRY.unloadMappings();
     }
 }

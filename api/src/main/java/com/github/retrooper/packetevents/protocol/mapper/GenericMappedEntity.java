@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
+@Deprecated
 public class GenericMappedEntity implements StaticMappedEntity {
 
     private final int id;
