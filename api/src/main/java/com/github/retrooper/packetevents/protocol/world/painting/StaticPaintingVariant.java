@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.world.painting;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -35,6 +36,7 @@ public class StaticPaintingVariant extends AbstractMappedEntity implements Paint
         this(null, width, height, assetId);
     }
 
+    @ApiStatus.Internal
     public StaticPaintingVariant(@Nullable TypesBuilderData data, int width, int height, ResourceLocation assetId) {
         super(data);
         this.width = width;

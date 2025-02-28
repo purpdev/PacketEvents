@@ -24,6 +24,7 @@ import com.github.retrooper.packetevents.protocol.particle.data.ParticleData;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public class StaticParticleType<T extends ParticleData> extends AbstractMappedEntity implements ParticleType<T> {
@@ -33,6 +34,7 @@ public class StaticParticleType<T extends ParticleData> extends AbstractMappedEn
     private final ParticleTypes.Decoder<T> decoder;
     private final ParticleTypes.Encoder<T> encoder;
 
+    @ApiStatus.Internal
     public StaticParticleType(
             @Nullable TypesBuilderData data,
             PacketWrapper.Reader<T> reader,

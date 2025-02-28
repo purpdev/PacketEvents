@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.entity.type;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.IdentityHashMap;
@@ -34,7 +35,8 @@ public class StaticEntityType extends AbstractMappedEntity implements EntityType
 
     private @Nullable TypesBuilderData legacyData;
 
-    StaticEntityType(@Nullable TypesBuilderData data, @Nullable EntityType parent) {
+    @ApiStatus.Internal
+    public StaticEntityType(@Nullable TypesBuilderData data, @Nullable EntityType parent) {
         super(data);
         this.parent = Optional.ofNullable(parent);
 

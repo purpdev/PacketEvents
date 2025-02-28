@@ -20,6 +20,7 @@ package com.github.retrooper.packetevents.protocol.potion;
 
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 /**
@@ -36,6 +37,11 @@ public final class Potions {
     private Potions() {
     }
 
+    public static VersionedRegistry<Potion> getRegistry() {
+        return REGISTRY;
+    }
+
+    @ApiStatus.Internal
     public static Potion define(String name) {
         return REGISTRY.define(name, StaticPotion::new);
     }

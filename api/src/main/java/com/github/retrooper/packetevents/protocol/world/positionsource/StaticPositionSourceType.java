@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTCompound;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public class StaticPositionSourceType<T extends PositionSource> extends AbstractMappedEntity implements PositionSourceType<T> {
@@ -32,6 +33,7 @@ public class StaticPositionSourceType<T extends PositionSource> extends Abstract
     private final PositionSourceTypes.Decoder<T> decoder;
     private final PositionSourceTypes.Encoder<T> encoder;
 
+    @ApiStatus.Internal
     public StaticPositionSourceType(
             @Nullable TypesBuilderData data,
             PacketWrapper.Reader<T> reader,

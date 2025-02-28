@@ -20,21 +20,25 @@ package com.github.retrooper.packetevents.protocol.world.damagetype;
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class StaticDamageType extends AbstractMappedEntity implements DamageType {
-    private String messageId;
-    private DamageScaling scaling;
-    private float exhaustion;
-    private DamageEffects effects;
-    private DeathMessageType deathMessageType;
 
-    protected StaticDamageType(@Nullable TypesBuilderData data, String messageId, DamageScaling scaling,
-                               float exhaustion, DamageEffects effects, DeathMessageType deathMessageType) {
+    private final String messageId;
+    private final DamageScaling scaling;
+    private final float exhaustion;
+    private final DamageEffects effects;
+    private final DeathMessageType deathMessageType;
+
+    @ApiStatus.Internal
+    public StaticDamageType(
+            @Nullable TypesBuilderData data, String messageId, DamageScaling scaling,
+            float exhaustion, DamageEffects effects, DeathMessageType deathMessageType
+    ) {
         super(data);
-
         this.messageId = messageId;
         this.scaling = scaling;
         this.exhaustion = exhaustion;

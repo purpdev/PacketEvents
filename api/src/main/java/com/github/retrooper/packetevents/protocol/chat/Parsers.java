@@ -234,7 +234,8 @@ public final class Parsers {
             );
         }
 
-        private Parser(TypesBuilderData data, @Nullable Reader reader, @Nullable Writer writer) {
+        @ApiStatus.Internal
+        public Parser(@Nullable TypesBuilderData data, @Nullable Reader reader, @Nullable Writer writer) {
             super(data);
             this.reader = reader;
             this.writer = writer;

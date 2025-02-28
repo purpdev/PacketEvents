@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.item.mapdecoration;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
@@ -34,10 +35,12 @@ public final class MapDecorationTypes {
     private MapDecorationTypes() {
     }
 
+    @ApiStatus.Internal
     public static MapDecorationType define(String key, boolean showOnItemFrame, boolean trackCount) {
         return define(key, minecraft(key), showOnItemFrame, trackCount);
     }
 
+    @ApiStatus.Internal
     public static MapDecorationType define(
             String key, ResourceLocation assetId,
             boolean showOnItemFrame, boolean trackCount
@@ -46,6 +49,7 @@ public final class MapDecorationTypes {
                 -1, false, trackCount);
     }
 
+    @ApiStatus.Internal
     public static MapDecorationType define(
             String key,
             boolean showOnItemFrame, int mapColor,
@@ -55,6 +59,7 @@ public final class MapDecorationTypes {
                 showOnItemFrame, mapColor, explorationMapElement, trackCount);
     }
 
+    @ApiStatus.Internal
     public static MapDecorationType define(
             String key, ResourceLocation assetId,
             boolean showOnItemFrame, int mapColor,

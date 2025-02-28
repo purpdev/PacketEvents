@@ -20,10 +20,12 @@ package com.github.retrooper.packetevents.protocol.potion;
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public class StaticPotion extends AbstractMappedEntity implements Potion {
 
+    @ApiStatus.Internal
     public StaticPotion(@Nullable TypesBuilderData data) {
         super(data);
     }

@@ -43,12 +43,14 @@ public class StaticBiome extends AbstractMappedEntity implements Biome {
         this(null, precipitation, temperature, temperatureModifier, downfall, effects);
     }
 
+    @ApiStatus.Internal
     @ApiStatus.Obsolete
     public StaticBiome(@Nullable TypesBuilderData data, Precipitation precipitation, float temperature,
                        TemperatureModifier temperatureModifier, float downfall, BiomeEffects effects) {
         this(data, precipitation != Precipitation.NONE, temperature, temperatureModifier, downfall, effects);
     }
 
+    @ApiStatus.Internal
     public StaticBiome(
             @Nullable TypesBuilderData data, boolean precipitation,
             float temperature, TemperatureModifier temperatureModifier,
@@ -67,6 +69,7 @@ public class StaticBiome extends AbstractMappedEntity implements Biome {
                 category, depth, scale, effects);
     }
 
+    @ApiStatus.Internal
     @ApiStatus.Obsolete
     public StaticBiome(@Nullable TypesBuilderData data, Precipitation precipitation, float temperature,
                        TemperatureModifier temperatureModifier, float downfall, @Nullable Category category,
@@ -75,6 +78,7 @@ public class StaticBiome extends AbstractMappedEntity implements Biome {
                 downfall, category, depth, scale, effects);
     }
 
+    @ApiStatus.Internal
     public StaticBiome(
             @Nullable TypesBuilderData data, boolean precipitation,
             float temperature, TemperatureModifier temperatureModifier,

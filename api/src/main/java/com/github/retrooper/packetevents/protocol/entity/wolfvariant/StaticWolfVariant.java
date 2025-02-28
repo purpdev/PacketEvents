@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.protocol.mapper.MappedEntitySet;
 import com.github.retrooper.packetevents.protocol.world.biome.Biome;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -43,6 +44,7 @@ public class StaticWolfVariant extends AbstractMappedEntity implements WolfVaria
         this(null, wildTexture, tameTexture, angryTexture, biomes);
     }
 
+    @ApiStatus.Internal
     public StaticWolfVariant(
             @Nullable TypesBuilderData data,
             ResourceLocation wildTexture,

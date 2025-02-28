@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -42,6 +43,7 @@ public class StaticInstrument extends AbstractMappedEntity implements Instrument
         this(null, sound, useSeconds, range, description);
     }
 
+    @ApiStatus.Internal
     public StaticInstrument(@Nullable TypesBuilderData data, Sound sound, float useSeconds, float range, Component description) {
         super(data);
         this.sound = sound;

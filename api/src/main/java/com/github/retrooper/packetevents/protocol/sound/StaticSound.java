@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.sound;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -34,6 +35,7 @@ public class StaticSound extends AbstractMappedEntity implements Sound {
         this(null, soundId, range);
     }
 
+    @ApiStatus.Internal
     public StaticSound(@Nullable TypesBuilderData data, ResourceLocation soundId, @Nullable Float range) {
         super(data);
         this.soundId = soundId;

@@ -23,7 +23,6 @@ import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.MaterialType;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
@@ -155,6 +154,7 @@ public class StateType {
 
     public final class Mapped extends AbstractMappedEntity {
 
+        @ApiStatus.Internal
         public Mapped(@Nullable TypesBuilderData data) {
             super(data);
         }

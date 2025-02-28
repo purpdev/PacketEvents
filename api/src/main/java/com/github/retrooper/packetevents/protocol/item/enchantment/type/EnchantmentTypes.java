@@ -59,6 +59,9 @@ public final class EnchantmentTypes {
 
     private static final VersionedRegistry<EnchantmentType> REGISTRY = new VersionedRegistry<>("enchantment");
 
+    private EnchantmentTypes() {
+    }
+
     @ApiStatus.Internal
     public static EnchantmentType define(String key) {
         return REGISTRY.define(key, data -> {

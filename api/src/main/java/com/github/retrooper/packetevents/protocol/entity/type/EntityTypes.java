@@ -33,6 +33,15 @@ public final class EntityTypes {
     private EntityTypes() {
     }
 
+    public static VersionedRegistry<EntityType> getRegistry() {
+        return REGISTRY;
+    }
+
+    @ApiStatus.Obsolete
+    public static VersionedRegistry<EntityType> getLegacySpawnRegistry() {
+        return LEGACY_SPAWN_REGISTRY;
+    }
+
     @ApiStatus.Internal
     public static EntityType define(String name, @Nullable EntityType parent) {
         StaticEntityType type = REGISTRY.define(name, data ->
@@ -52,6 +61,7 @@ public final class EntityTypes {
         return REGISTRY.getById(version, id);
     }
 
+    @ApiStatus.Obsolete
     public static EntityType getByLegacyId(ClientVersion version, int id) {
         if (version.isNewerThanOrEquals(ClientVersion.V_1_14)) {
             return null;

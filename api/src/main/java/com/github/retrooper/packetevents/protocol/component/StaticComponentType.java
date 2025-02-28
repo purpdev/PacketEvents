@@ -25,6 +25,7 @@ import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper.Reader;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper.Writer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Function;
@@ -36,6 +37,7 @@ public class StaticComponentType<T> extends AbstractMappedEntity implements Comp
     private final @Nullable Decoder<T> decoder;
     private final @Nullable Encoder<T> encoder;
 
+    @ApiStatus.Internal
     public StaticComponentType(
             @Nullable TypesBuilderData data,
             @Nullable Reader<T> reader,
@@ -44,6 +46,7 @@ public class StaticComponentType<T> extends AbstractMappedEntity implements Comp
         this(data, reader, writer, null, null);
     }
 
+    @ApiStatus.Internal
     public StaticComponentType(
             @Nullable TypesBuilderData data,
             @Nullable Decoder<T> decoder,
@@ -52,6 +55,7 @@ public class StaticComponentType<T> extends AbstractMappedEntity implements Comp
         this(data, null, null, decoder, encoder);
     }
 
+    @ApiStatus.Internal
     public StaticComponentType(
             @Nullable TypesBuilderData data,
             @Nullable Reader<T> reader,

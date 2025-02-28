@@ -24,6 +24,7 @@ import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.EnumMap;
@@ -39,8 +40,9 @@ public class StaticItemType extends AbstractMappedEntity implements ItemType {
     private final Set<ItemAttribute> attributes;
     private final Map<ClientVersion, StaticComponentMap> components;
 
-    StaticItemType(
-            TypesBuilderData data,
+    @ApiStatus.Internal
+    public StaticItemType(
+            @Nullable TypesBuilderData data,
             int maxAmount,
             int maxDurability,
             ItemType craftRemainder,

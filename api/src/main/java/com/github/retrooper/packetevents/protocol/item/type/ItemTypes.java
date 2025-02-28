@@ -33,6 +33,7 @@ import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.MappingHelper;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
@@ -1604,6 +1605,7 @@ public final class ItemTypes {
         return new Builder(key.toLowerCase());
     }
 
+    @ApiStatus.Internal
     public static ItemType define(int maxAmount, String key, ItemType craftRemainder, StateType placedType, int maxDurability, List<ItemAttribute> attributesArr) {
         // Creates an immutable set
         Set<ItemAttribute> attributes = attributesArr == null ? Collections.emptySet() :

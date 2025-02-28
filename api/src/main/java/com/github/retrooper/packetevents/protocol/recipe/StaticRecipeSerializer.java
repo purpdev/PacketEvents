@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.recipe.data.RecipeData;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public class StaticRecipeSerializer<T extends RecipeData> extends AbstractMappedEntity implements RecipeSerializer<T> {
@@ -30,6 +31,7 @@ public class StaticRecipeSerializer<T extends RecipeData> extends AbstractMapped
     private final PacketWrapper.Writer<T> writer;
     private final @Nullable RecipeType legacyType;
 
+    @ApiStatus.Internal
     public StaticRecipeSerializer(
             @Nullable TypesBuilderData data,
             PacketWrapper.Reader<T> reader,

@@ -32,6 +32,7 @@ public final class Instruments {
     private Instruments() {
     }
 
+    @ApiStatus.Internal
     public static Instrument define(String key, Sound sound) {
         // vanilla defaults for goat horns
         return define(key, sound, 20 * 7, 256f);
