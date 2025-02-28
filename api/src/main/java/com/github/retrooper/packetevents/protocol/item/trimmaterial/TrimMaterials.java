@@ -37,8 +37,7 @@ import static net.kyori.adventure.text.format.TextColor.color;
 
 public final class TrimMaterials {
 
-    private static final VersionedRegistry<TrimMaterial> REGISTRY = new VersionedRegistry<>(
-            "trim_material", "item/item_trim_material_mappings");
+    private static final VersionedRegistry<TrimMaterial> REGISTRY = new VersionedRegistry<>("trim_material");
 
     private TrimMaterials() {
     }

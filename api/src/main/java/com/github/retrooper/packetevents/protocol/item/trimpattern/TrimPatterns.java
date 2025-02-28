@@ -28,27 +28,26 @@ import org.jetbrains.annotations.ApiStatus;
 
 public final class TrimPatterns {
 
-    private static final VersionedRegistry<TrimPattern> REGISTRY = new VersionedRegistry<>(
-            "trim_pattern", "item/item_trim_pattern_mappings");
+    private static final VersionedRegistry<TrimPattern> REGISTRY = new VersionedRegistry<>("trim_pattern");
 
     private TrimPatterns() {
     }
 
     @ApiStatus.Internal
-    public static TrimPattern define(String key) {
-        ResourceLocation assetId = ResourceLocation.minecraft(key);
+    public static TrimPattern define(String name) {
+        ResourceLocation assetId = ResourceLocation.minecraft(name);
         ItemType templateItem = ItemTypes.getByName(assetId + "_armor_trim_smithing_template");
-        Component description = Component.translatable("trim_pattern.minecraft." + key);
+        Component description = Component.translatable("trim_pattern.minecraft." + name);
         boolean decal = false;
-        return define(key, assetId, templateItem, description, decal);
+        return define(name, assetId, templateItem, description, decal);
     }
 
     @ApiStatus.Internal
     public static TrimPattern define(
-            String key, ResourceLocation assetId, ItemType templateItem,
+            String name, ResourceLocation assetId, ItemType templateItem,
             Component description, boolean decal
     ) {
-        return REGISTRY.define(key, data ->
+        return REGISTRY.define(name, data ->
                 new StaticTrimPattern(data, assetId, templateItem, description, decal));
     }
 
