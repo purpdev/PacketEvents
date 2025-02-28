@@ -131,13 +131,14 @@ public class VelocityPacketEventsBuilder {
                     return this.version;
                 }
 
-                private Object getTargetServer(Player player) {
+                private @Nullable Object getTargetServer(Player player) {
                     ServerConnection server = player.getCurrentServer().orElse(null);
                     if (server != null) {
                         return server;
                     }
                     try {
-                        return this.registeredServer.get(this.connectionInFlight.get(player));
+                        Object connection = this.connectionInFlight.get(player);
+                        return connection != null ? this.registeredServer.get(connection) : null;
                     } catch (IllegalAccessException exception) {
                         throw new RuntimeException(exception);
                     }
@@ -201,7 +202,7 @@ public class VelocityPacketEventsBuilder {
                             Player player = event.getPlayer();
                             Object channel = PacketEvents.getAPI().getPlayerManager().getChannel(player);
                             // This only happens if a player is a fake player
-                            if(channel == null) {
+                            if (channel == null) {
                                 return;
                             }
                             PacketEvents.getAPI().getInjector().setPlayer(channel, player);
