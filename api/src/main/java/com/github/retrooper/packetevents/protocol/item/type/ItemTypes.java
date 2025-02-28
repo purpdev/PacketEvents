@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.protocol.item.type;
 
+import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.netty.buffer.UnpooledByteBufAllocationHelper;
 import com.github.retrooper.packetevents.protocol.component.ComponentType;
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
@@ -1515,23 +1516,32 @@ public final class ItemTypes {
         if (base != null) {
             components.setAll(base);
         }
+        // TODO release buffer helper
+        // allocate a buffer once and use it for parsing everything
+        Object byteBuf = UnpooledByteBufAllocationHelper.buffer();
+        PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf);
+        wrapper.setClientVersion(version);
+        wrapper.setServerVersion(version.toServerVersion());
+
         for (Map.Entry<String, NBT> entry : nbt) {
             ComponentType<?> compType = ComponentTypes.getByName(entry.getKey());
             if (compType == null) {
                 continue;
             }
-            Object byteBuf;
-            if (entry.getValue() instanceof NBTByteArray) {
-                byte[] encodedValue = ((NBTByteArray) entry.getValue()).getValue();
-                byteBuf = UnpooledByteBufAllocationHelper.wrappedBuffer(encodedValue);
-            } else {
-                // empty buffers are serialized as a single 0-byte
-                byteBuf = UnpooledByteBufAllocationHelper.emptyBuffer();
-            }
-            PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf);
-            wrapper.setClientVersion(version);
-            wrapper.setServerVersion(version.toServerVersion());
 
+            // empty values are serialized as a single byte (smaller than an empty byte array),
+            // so just parse byte array tag values
+            if (entry.getValue() instanceof NBTByteArray) {
+                byte[] bytes = ((NBTByteArray) entry.getValue()).getValue();
+                // write bytes at beginning of buffer
+                ByteBufHelper.resetWriterIndex(byteBuf);
+                ByteBufHelper.writeBytes(byteBuf, bytes);
+            }
+
+            // reset to start of buffer
+            ByteBufHelper.resetReaderIndex(byteBuf);
+
+            // read from shared buffer
             Object compValue = compType.read(wrapper);
             components.set((ComponentType<Object>) compType, compValue);
         }
