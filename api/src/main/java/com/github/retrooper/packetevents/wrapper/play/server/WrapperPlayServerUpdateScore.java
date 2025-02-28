@@ -22,7 +22,6 @@ import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.score.ScoreFormat;
-import com.github.retrooper.packetevents.protocol.score.ScoreFormatTypes;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
@@ -68,7 +67,7 @@ public class WrapperPlayServerUpdateScore extends PacketWrapper<WrapperPlayServe
             this.objectiveName = this.readString();
             this.value = Optional.of(this.readVarInt());
             this.entityDisplayName = this.readOptional(PacketWrapper::readComponent);
-            this.scoreFormat = this.readOptional(ScoreFormatTypes::read);
+            this.scoreFormat = this.readOptional(ScoreFormat::readTyped);
         } else if (this.serverVersion == ServerVersion.V_1_7_10) {
             entityName = readString(16);
             action = Action.VALUES[readByte()];
@@ -107,7 +106,7 @@ public class WrapperPlayServerUpdateScore extends PacketWrapper<WrapperPlayServe
             this.writeString(this.objectiveName);
             this.writeVarInt(this.value.orElse(0));
             this.writeOptional(this.entityDisplayName, PacketWrapper::writeComponent);
-            this.writeOptional(this.scoreFormat, ScoreFormatTypes::write);
+            this.writeOptional(this.scoreFormat, ScoreFormat::writeTyped);
         } else if (this.serverVersion == ServerVersion.V_1_7_10) {
             writeString(entityName, 16);
             writeByte(action.ordinal());

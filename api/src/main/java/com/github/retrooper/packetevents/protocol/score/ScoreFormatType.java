@@ -21,9 +21,13 @@ package com.github.retrooper.packetevents.protocol.score;
 import com.github.retrooper.packetevents.protocol.mapper.StaticMappedEntity;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
-public interface ScoreFormatType extends StaticMappedEntity {
+public interface ScoreFormatType<T extends ScoreFormat> extends StaticMappedEntity {
 
-    ScoreFormat read(PacketWrapper<?> wrapper);
+    @Deprecated
+    @Override
+    int getId();
 
-    void write(PacketWrapper<?> wrapper, ScoreFormat format);
+    T read(PacketWrapper<?> wrapper);
+
+    void write(PacketWrapper<?> wrapper, T format);
 }

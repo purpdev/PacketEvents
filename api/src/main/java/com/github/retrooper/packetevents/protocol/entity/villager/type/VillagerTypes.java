@@ -37,6 +37,7 @@ public final class VillagerTypes {
         return REGISTRY;
     }
 
+    @Deprecated
     @ApiStatus.Internal
     public static VillagerType define(int id, String name) {
         return define(name);
