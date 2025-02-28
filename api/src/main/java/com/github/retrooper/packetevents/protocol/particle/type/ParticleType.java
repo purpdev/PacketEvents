@@ -35,7 +35,7 @@ public interface ParticleType<T extends ParticleData> extends MappedEntity {
 
     T decodeData(NBTCompound compound, ClientVersion version);
 
-    void encodeData(T data, ClientVersion version, NBTCompound compound);
+    void encodeData(T value, ClientVersion version, NBTCompound compound);
 
     @Deprecated
     default Function<PacketWrapper<?>, ParticleData> readDataFunction() {

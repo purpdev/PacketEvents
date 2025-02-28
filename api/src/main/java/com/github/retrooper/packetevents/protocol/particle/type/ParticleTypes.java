@@ -30,101 +30,50 @@ import com.github.retrooper.packetevents.protocol.particle.data.ParticleShriekDa
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleTrailData;
 import com.github.retrooper.packetevents.protocol.particle.data.ParticleVibrationData;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
-import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper.Reader;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper.Writer;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-public class ParticleTypes {
+public final class ParticleTypes {
 
-    private static final Map<String, ParticleType<?>> PARTICLE_TYPE_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, ParticleType<?>>> PARTICLE_TYPE_ID_MAP = new HashMap<>();
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("particle/particle_type_mappings");
+    private static final VersionedRegistry<ParticleType<?>> REGISTRY = new VersionedRegistry<>("particle_type");
 
-    public static ParticleType<ParticleData> define(String key) {
+    private ParticleTypes() {
+    }
+
+    public static VersionedRegistry<ParticleType<?>> getRegistry() {
+        return REGISTRY;
+    }
+
+    @ApiStatus.Internal
+    public static ParticleType<ParticleData> define(String name) {
         return define(
-                key,
+                name,
                 wrapper -> ParticleData.emptyData(), null,
                 (nbt, version) -> ParticleData.emptyData(), null
         );
     }
 
+    @ApiStatus.Internal
     public static <T extends ParticleData> ParticleType<T> define(
-            String key,
+            String name,
             Reader<T> reader, @Nullable Writer<T> writer,
             Decoder<T> decoder, @Nullable Encoder<T> encoder
     ) {
-        TypesBuilderData data = TYPES_BUILDER.define(key);
-        ParticleType<T> particleType = new ParticleType<T>() {
-            @Override
-            public T readData(PacketWrapper<?> wrapper) {
-                return reader.apply(wrapper);
-            }
-
-            @Override
-            public void writeData(PacketWrapper<?> wrapper, T data) {
-                if (writer != null) {
-                    writer.accept(wrapper, data);
-                } else if (!data.isEmpty()) {
-                    throw new UnsupportedOperationException("Trying to write non-empty data for " + this.getName());
-                }
-            }
-
-            @Override
-            public T decodeData(NBTCompound compound, ClientVersion version) {
-                return decoder.decode(compound, version);
-            }
-
-            @Override
-            public void encodeData(T data, ClientVersion version, NBTCompound compound) {
-                if (encoder != null) {
-                    encoder.encode(data, version, compound);
-                } else if (!data.isEmpty()) {
-                    throw new UnsupportedOperationException("Trying to encode non-empty data for " + this.getName());
-                }
-            }
-
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
-
-            @Override
-            public int getId(ClientVersion version) {
-                return MappingHelper.getId(version, TYPES_BUILDER, data);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof ParticleType<?>) {
-                    return this.getName().equals(((ParticleType<?>) obj).getName());
-                }
-                return false;
-            }
-        };
-        MappingHelper.registerMapping(TYPES_BUILDER, PARTICLE_TYPE_MAP, PARTICLE_TYPE_ID_MAP, particleType);
-        return particleType;
+        return REGISTRY.define(name, data ->
+                new StaticParticleType<>(data, reader, writer, decoder, encoder));
     }
 
-    //with minecraft:key
     public static ParticleType<?> getByName(String name) {
-        return PARTICLE_TYPE_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
     public static ParticleType<?> getById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, ParticleType<?>> typeIdMap = PARTICLE_TYPE_ID_MAP.get((byte) index);
-        return typeIdMap.get(id);
+        return REGISTRY.getById(version, id);
     }
 
     @Deprecated // Removed in 1.20.5
@@ -291,11 +240,11 @@ public class ParticleTypes {
      * @return Particle Types
      */
     public static Collection<ParticleType<?>> values() {
-        return Collections.unmodifiableCollection(PARTICLE_TYPE_MAP.values());
+        return REGISTRY.getEntries();
     }
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
     }
 
     @ApiStatus.Internal
