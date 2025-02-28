@@ -23,8 +23,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
 public final class RecipeDisplayTypes {
 
-    private static final VersionedRegistry<RecipeDisplayType<?>> REGISTRY = new VersionedRegistry<>(
-            "recipe_display", "item/recipe_display_types");
+    private static final VersionedRegistry<RecipeDisplayType<?>> REGISTRY = new VersionedRegistry<>("recipe_display");
 
     private RecipeDisplayTypes() {
     }
