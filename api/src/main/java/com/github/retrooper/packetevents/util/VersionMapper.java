@@ -50,6 +50,7 @@ public class VersionMapper {
             }
             index--;
         }
+
         //Give them the oldest version
         return 0;
     }

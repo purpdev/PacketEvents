@@ -23,7 +23,6 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTList;
 import com.github.retrooper.packetevents.protocol.nbt.NBTNumber;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.BlockFace;
-
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import java.util.Objects;
 import org.jetbrains.annotations.NotNull;
@@ -34,26 +33,26 @@ import org.jetbrains.annotations.NotNull;
  * You can use this to represent an array if you really want.
  *
  * @author retrooper
- * @since 1.8
+ * @since 2.7.1
  */
-public class Vector3d implements VectorInterface3d {
+public class VectorMutable3d implements VectorInterface3d {
     /**
      * X (coordinate/angle/whatever you wish)
      */
-    public final double x;
+    public double x;
     /**
      * Y (coordinate/angle/whatever you wish)
      */
-    public final double y;
+    public double y;
     /**
      * Z (coordinate/angle/whatever you wish)
      */
-    public final double z;
+    public double z;
 
     /**
      * Default constructor setting all coordinates/angles/values to their default values (=0).
      */
-    public Vector3d() {
+    public VectorMutable3d() {
         this.x = 0.0;
         this.y = 0.0;
         this.z = 0.0;
@@ -66,7 +65,7 @@ public class Vector3d implements VectorInterface3d {
      * @param y Y
      * @param z Z
      */
-    public Vector3d(double x, double y, double z) {
+    public VectorMutable3d(double x, double y, double z) {
         this.x = x;
         this.y = y;
         this.z = z;
@@ -80,7 +79,7 @@ public class Vector3d implements VectorInterface3d {
      *
      * @param array Array.
      */
-    public Vector3d(double[] array) {
+    public VectorMutable3d(double[] array) {
         if (array.length > 0) {
             x = array[0];
         } else {
@@ -120,7 +119,7 @@ public class Vector3d implements VectorInterface3d {
         return z;
     }
 
-    public boolean equals(Vector3d other) {
+    public boolean equals(VectorMutable3d other) {
         return this.x == other.x && this.y == other.y && this.z == other.z;
     }
 
@@ -153,51 +152,62 @@ public class Vector3d implements VectorInterface3d {
     }
 
     @Override
-    public Vector3d add(double x, double y, double z) {
-        return new Vector3d(this.x + x, this.y + y, this.z + z);
+    public VectorMutable3d add(double x, double y, double z) {
+        this.x += x;
+        this.y += y;
+        this.z += z;
+        return this;
     }
 
     @Override
-    public Vector3d add(VectorInterface3i other) {
+    public VectorMutable3d add(VectorInterface3i other) {
         return add(other.getX(), other.getY(), other.getZ());
     }
 
     @Override
-    public Vector3d offset(BlockFace face) {
+    public VectorMutable3d offset(BlockFace face) {
         return add(face.getModX(), face.getModY(), face.getModZ());
     }
 
     @Override
-    public Vector3d subtract(double x, double y, double z) {
-        return new Vector3d(this.x - x, this.y - y, this.z - z);
+    public VectorMutable3d subtract(double x, double y, double z) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 
     @Override
-    public Vector3d subtract(VectorInterface3d other) {
+    public VectorMutable3d subtract(VectorInterface3d other) {
         return subtract(other.getX(), other.getY(), other.getZ());
     }
 
     @Override
-    public Vector3d multiply(double x, double y, double z) {
-        return new Vector3d(this.x * x, this.y * y, this.z * z);
+    public VectorMutable3d multiply(double x, double y, double z) {
+        this.x -= x;
+        this.y -= y;
+        this.z -= z;
+        return this;
     }
 
     @Override
-    public Vector3d multiply(VectorInterface3d other) {
+    public VectorMutable3d multiply(VectorInterface3d other) {
         return multiply(other.getX(), other.getY(), other.getZ());
     }
 
     @Override
-    public Vector3d multiply(double value) {
+    public VectorMutable3d multiply(double value) {
         return multiply(value, value, value);
     }
 
     @Override
-    public Vector3d crossProduct(VectorInterface3d other) {
-        double newX = this.y * other.getZ() - other.getY() * this.z;
-        double newY = this.z * other.getX() - other.getZ() * this.x;
-        double newZ = this.x * other.getY() - other.getX() * this.y;
-        return new Vector3d(newX, newY, newZ);
+    public VectorMutable3d crossProduct(VectorInterface3d other) {
+        double oldX = this.x;
+        double oldY = this.y;
+        this.x = this.y * other.getZ() - other.getY() * this.z;
+        this.y = this.z * other.getX() - other.getZ() * oldX;
+        this.z = oldX * other.getY() - this.x * oldY;
+        return this;
     }
 
     @Override
@@ -206,23 +216,11 @@ public class Vector3d implements VectorInterface3d {
     }
 
     @Override
-    public Vector3d with(Double x, Double y, Double z) {
-        return new Vector3d(x == null ? this.x : x, y == null ? this.y : y, z == null ? this.z : z);
-    }
-
-    @Override
-    public Vector3d withX(double x) {
-        return new Vector3d(x, this.y, this.z);
-    }
-
-    @Override
-    public Vector3d withY(double y) {
-        return new Vector3d(this.x, y, this.z);
-    }
-
-    @Override
-    public Vector3d withZ(double z) {
-        return new Vector3d(this.x, this.y, z);
+    public VectorMutable3d with(Double x, Double y, Double z) {
+        this.x = x == null ? this.x : x;
+        this.y = y == null ? this.y : y;
+        this.z = z == null ? this.z : z;
+        return this;
     }
 
     @Override
@@ -241,9 +239,12 @@ public class Vector3d implements VectorInterface3d {
     }
 
     @Override
-    public Vector3d normalize() {
+    public VectorMutable3d normalize() {
         double length = length();
-        return new Vector3d(x / length, y / length, z / length);
+        this.x /= length;
+        this.y /= length;
+        this.z /= length;
+        return this;
     }
 
     @Override
@@ -254,7 +255,6 @@ public class Vector3d implements VectorInterface3d {
         return distX + distY + distZ;
     }
 
-    @Override
     public Vector3i toVector3i() {
         return new Vector3i((int) x, (int) y, (int) z);
     }
@@ -262,6 +262,24 @@ public class Vector3d implements VectorInterface3d {
     @Override
     public String toString() {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
+    }
+
+    @Override @NotNull
+    public VectorMutable3d withX(double x) {
+        this.x = x;
+        return this;
+    }
+
+    @Override @NotNull
+    public VectorMutable3d withY(double y) {
+        this.y = y;
+        return this;
+    }
+
+    @Override @NotNull
+    public VectorMutable3d withZ(double z) {
+        this.z = z;
+        return this;
     }
 
     @Override
@@ -280,38 +298,38 @@ public class Vector3d implements VectorInterface3d {
     }
 
     @NotNull
-    public Vector3d clone() {
+    public VectorMutable3d clone() {
         try {
-            return (Vector3d) super.clone();
+            return (VectorMutable3d) super.clone();
         } catch (CloneNotSupportedException e) {
             throw new Error(e);
         }
     }
 
-    public static Vector3d read(PacketWrapper<?> wrapper) {
+    public static VectorMutable3d read(PacketWrapper<?> wrapper) {
         double x = wrapper.readDouble();
         double y = wrapper.readDouble();
         double z = wrapper.readDouble();
-        return new Vector3d(x, y, z);
+        return new VectorMutable3d(x, y, z);
     }
 
     public static void write(PacketWrapper<?> wrapper, VectorInterface3d vector) {
         VectorInterface3d.write(wrapper, vector);
     }
 
-    public static Vector3d decode(NBT tag, ClientVersion version) {
+    public static VectorMutable3d decode(NBT tag, ClientVersion version) {
         NBTList<?> list = (NBTList<?>) tag;
         double x = ((NBTNumber) list.getTag(0)).getAsDouble();
         double y = ((NBTNumber) list.getTag(1)).getAsDouble();
         double z = ((NBTNumber) list.getTag(2)).getAsDouble();
-        return new Vector3d(x, y, z);
+        return new VectorMutable3d(x, y, z);
     }
 
     public static NBT encode(VectorInterface3d vector3d, ClientVersion version) {
         return VectorInterface3d.encode(vector3d, version);
     }
 
-    public static Vector3d zero() {
-        return new Vector3d();
+    public static VectorMutable3d zero() {
+        return new VectorMutable3d();
     }
 }
