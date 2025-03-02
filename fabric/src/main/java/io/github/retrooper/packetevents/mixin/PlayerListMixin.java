@@ -19,8 +19,13 @@
 package io.github.retrooper.packetevents.mixin;
 
 import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.PacketEventsAPI;
+import com.github.retrooper.packetevents.event.UserLoginEvent;
+import com.github.retrooper.packetevents.protocol.player.User;
+import com.github.retrooper.packetevents.util.FakeChannelUtil;
 import io.netty.channel.Channel;
 import net.minecraft.network.Connection;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.CommonListenerCookie;
 import net.minecraft.server.players.PlayerList;
@@ -45,6 +50,39 @@ public class PlayerListMixin {
             CommonListenerCookie cookie, CallbackInfo ci
     ) {
         PacketEvents.getAPI().getInjector().setPlayer(connection.channel, player);
+    }
+
+    /**
+     * @reason Associate connection instance with player instance and handle login event
+     */
+    @Inject(
+            method = "placeNewPlayer",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/server/players/PlayerList;broadcastAll(Lnet/minecraft/network/protocol/Packet;)V",
+                    shift = At.Shift.AFTER
+            )
+    )
+    private void onPlayerLogin(
+        Connection connection, ServerPlayer player,
+        CommonListenerCookie cookie, CallbackInfo ci
+    ) {
+        PacketEventsAPI<?> api = PacketEvents.getAPI();
+
+        User user = api.getPlayerManager().getUser(player);
+        if (user == null) {
+            Object channelObj = api.getPlayerManager().getChannel(player);
+
+            // Check if it's a fake connection
+            if (!FakeChannelUtil.isFakeChannel(channelObj) &&
+                (!api.isTerminated() || api.getSettings().isKickIfTerminated())) {
+                // Kick the player if they're not a fake player
+                player.connection.disconnect(Component.literal("PacketEvents 2.0 failed to inject"));
+            }
+            return;
+        }
+
+        api.getEventManager().callEvent(new UserLoginEvent(user, player));
     }
 
     /**
