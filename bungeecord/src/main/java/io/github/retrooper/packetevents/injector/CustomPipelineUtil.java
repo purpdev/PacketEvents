@@ -149,7 +149,7 @@ public class CustomPipelineUtil {
     }
 
     public static List<Object> callPacketDecodeByteBuf(Object decoder, Object ctx, Object msg) throws InvocationTargetException {
-        List<Object> output = new ArrayList<>();
+        List<Object> output = new ArrayList<>(1);
         if (BUNGEE_PACKET_DECODE_BYTEBUF == null) {
             try {
                 BUNGEE_PACKET_DECODE_BYTEBUF = decoder.getClass().getDeclaredMethod("decode", ChannelHandlerContext.class,
