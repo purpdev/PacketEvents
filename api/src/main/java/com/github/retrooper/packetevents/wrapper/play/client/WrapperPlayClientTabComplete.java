@@ -77,7 +77,10 @@ public class WrapperPlayClientTabComplete extends PacketWrapper<WrapperPlayClien
             if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_9)) {
                 assumeCommand = readBoolean();
             }
-            blockPosition = readOptional(PacketWrapper::readBlockPosition);
+
+            if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_8)) {
+                blockPosition = readOptional(PacketWrapper::readBlockPosition);
+            }
         }
     }
 
