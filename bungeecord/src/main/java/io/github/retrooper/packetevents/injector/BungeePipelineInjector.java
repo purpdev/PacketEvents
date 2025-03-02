@@ -19,7 +19,6 @@ package io.github.retrooper.packetevents.injector;
 
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.injector.ChannelInjector;
-import com.github.retrooper.packetevents.protocol.ConnectionState;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.reflection.Reflection;
 import io.github.retrooper.packetevents.handlers.PacketEventsDecoder;
@@ -29,10 +28,8 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelInitializer;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Set;
 
 //Thanks to ViaVersion for helping us design this injector.
@@ -81,10 +78,8 @@ public class BungeePipelineInjector implements ChannelInjector {
         }
 
         try {
-            Field f = bootstrapAcceptor.getClass().getDeclaredField("childHandler");
-            f.setAccessible(true);
-            f.set(bootstrapAcceptor, newInitializer);
-        } catch (IllegalAccessException | NoSuchFieldException e) {
+            initializerField.set(bootstrapAcceptor, newInitializer);
+        } catch (IllegalAccessException e) {
             throw new RuntimeException(e);
         }
 
