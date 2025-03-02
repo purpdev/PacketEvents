@@ -20,6 +20,7 @@ package com.github.retrooper.packetevents.protocol.chat;
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnknownNullability;
 
@@ -39,6 +40,7 @@ public class StaticChatType extends AbstractMappedEntity implements ChatType {
         this(null, chatDecoration, null, narrationDecoration, null);
     }
 
+    @ApiStatus.Internal
     public StaticChatType(
             @Nullable TypesBuilderData data,
             ChatTypeDecoration chatDecoration,
@@ -56,6 +58,7 @@ public class StaticChatType extends AbstractMappedEntity implements ChatType {
         this(null, chatDecoration, overlayDecoration, narrationDecoration, narrationPriority);
     }
 
+    @ApiStatus.Internal
     public StaticChatType(
             @Nullable TypesBuilderData data,
             @UnknownNullability("only nullable for 1.19") ChatTypeDecoration chatDecoration,

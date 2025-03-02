@@ -22,7 +22,11 @@ import java.nio.file.Path
 interface CompressionStrategy {
 
     companion object {
-        const val COMPRESSION_VERSION: Byte = 2
+        const val COMPRESSION_VERSION: Byte = 3
+
+        fun resolveTargetPath(output: Path, relativePath: String): Path {
+            return output.resolve(relativePath.replace(".json", ".nbt"))
+        }
     }
 
     fun compress(from: Path, to: Path)

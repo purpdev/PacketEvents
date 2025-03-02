@@ -54,7 +54,7 @@ public class WrapperPlayClientUpdateCommandBlock extends PacketWrapper<WrapperPl
 
     @Override
     public void read() {
-        this.position = new Vector3i(readLong());
+        this.position = new Vector3i(readLong(), this.serverVersion);
         this.command = readString();
         this.mode = CommandBlockMode.getById(readVarInt());
         this.flags = readUnsignedByte();
@@ -65,7 +65,7 @@ public class WrapperPlayClientUpdateCommandBlock extends PacketWrapper<WrapperPl
 
     @Override
     public void write() {
-        writeLong(position.getSerializedPosition());
+        writeLong(position.getSerializedPosition(this.serverVersion));
         writeString(command);
         writeVarInt(mode.ordinal());
         if (this.doesTrackOutput) {

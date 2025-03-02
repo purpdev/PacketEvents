@@ -19,105 +19,54 @@
 package com.github.retrooper.packetevents.protocol.entity.type;
 
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
-public class EntityTypes {
-    private static final Map<String, EntityType> ENTITY_TYPE_MAP = new HashMap<>();
-    //Key - mappings version, value - map with entity type ids and entity types
-    private static final Map<Byte, Map<Integer, EntityType>> ENTITY_TYPE_ID_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, EntityType>> LEGACY_ENTITY_TYPE_ID_MAP = new HashMap<>();
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("entity/entity_type_mappings");
-    private static final TypesBuilder LEGACY_TYPES_BUILDER = new TypesBuilder("entity/legacy_entity_type_mappings");
+public final class EntityTypes {
 
-    public static EntityType define(String key, @Nullable EntityType parent) {
-        TypesBuilderData data = TYPES_BUILDER.define(key);
-        TypesBuilderData legacyData = LEGACY_TYPES_BUILDER.define(key);
-        Optional<EntityType> optParent = Optional.ofNullable(parent);
-        EntityType entityType = new EntityType() {
-            private final int[] ids = data.getData();
-            private final int[] legacyIds = legacyData.getData();
+    private static final VersionedRegistry<EntityType> REGISTRY = new VersionedRegistry<>("entity_type");
+    private static final VersionedRegistry<EntityType> LEGACY_SPAWN_REGISTRY = new VersionedRegistry<>("legacy_spawn_entity_type");
 
-            @Override
-            public Optional<EntityType> getParent() {
-                return optParent;
-            }
+    private EntityTypes() {
+    }
 
-            @Override
-            public int getLegacyId(ClientVersion version) {
-                if (version.isNewerThanOrEquals(ClientVersion.V_1_14)) {
-                    return -1;
-                }
-                int index = LEGACY_TYPES_BUILDER.getDataIndex(version);
-                return legacyIds[index];
-            }
+    public static VersionedRegistry<EntityType> getRegistry() {
+        return REGISTRY;
+    }
 
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
+    @ApiStatus.Obsolete
+    public static VersionedRegistry<EntityType> getLegacySpawnRegistry() {
+        return LEGACY_SPAWN_REGISTRY;
+    }
 
-            @Override
-            public int getId(ClientVersion version) {
-                int index = TYPES_BUILDER.getDataIndex(version);
-                return ids[index];
-            }
-        };
-        ENTITY_TYPE_MAP.put(entityType.getName().toString(), entityType);
-        for (ClientVersion version : TYPES_BUILDER.getVersions()) {
-            int index = TYPES_BUILDER.getDataIndex(version);
-            Map<Integer, EntityType> typeIdMap = ENTITY_TYPE_ID_MAP.computeIfAbsent((byte) index, k -> new HashMap<>());
-            typeIdMap.put(entityType.getId(version), entityType);
-        }
-
-        for (ClientVersion version : LEGACY_TYPES_BUILDER.getVersions()) {
-            int index = LEGACY_TYPES_BUILDER.getDataIndex(version);
-            Map<Integer, EntityType> legacyTypeIdMap = LEGACY_ENTITY_TYPE_ID_MAP.computeIfAbsent((byte) index, k -> new HashMap<>());
-            legacyTypeIdMap.put(entityType.getLegacyId(version), entityType);
-        }
-
-        return entityType;
+    @ApiStatus.Internal
+    public static EntityType define(String name, @Nullable EntityType parent) {
+        StaticEntityType type = REGISTRY.define(name, data ->
+                new StaticEntityType(data, parent));
+        return LEGACY_SPAWN_REGISTRY.define(name, type::setLegacyData);
     }
 
     public static boolean isTypeInstanceOf(EntityType type, EntityType parent) {
-        while (type != null) {
-            if (type == parent) {
-                return true;
-            }
-            if (type.getParent().isPresent()) {
-                type = type.getParent().get();
-            } else {
-                return false;
-            }
-        }
-        return false;
+        return type != null && type.isInstanceOf(parent);
     }
 
-    //with minecraft:key
     public static EntityType getByName(String name) {
-        return ENTITY_TYPE_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
     public static EntityType getById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        return ENTITY_TYPE_ID_MAP.get((byte) index).get(id);
+        return REGISTRY.getById(version, id);
     }
 
+    @ApiStatus.Obsolete
     public static EntityType getByLegacyId(ClientVersion version, int id) {
         if (version.isNewerThanOrEquals(ClientVersion.V_1_14)) {
             return null;
         }
-        int index = LEGACY_TYPES_BUILDER.getDataIndex(version);
-        return LEGACY_ENTITY_TYPE_ID_MAP.get((byte) index).get(id);
+        return LEGACY_SPAWN_REGISTRY.getById(version, id);
     }
 
     // Credit to ViaVersion for these categories
@@ -340,11 +289,11 @@ public class EntityTypes {
      * @return Entity Types
      */
     public static Collection<EntityType> values() {
-        return Collections.unmodifiableCollection(ENTITY_TYPE_MAP.values());
+        return REGISTRY.getEntries();
     }
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
-        LEGACY_TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
+        LEGACY_SPAWN_REGISTRY.unloadMappings();
     }
 }

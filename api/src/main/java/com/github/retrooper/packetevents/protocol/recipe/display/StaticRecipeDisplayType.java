@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.recipe.display;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public class StaticRecipeDisplayType<T extends RecipeDisplay<?>> extends AbstractMappedEntity implements RecipeDisplayType<T> {
@@ -28,6 +29,7 @@ public class StaticRecipeDisplayType<T extends RecipeDisplay<?>> extends Abstrac
     private final PacketWrapper.Reader<T> reader;
     private final PacketWrapper.Writer<T> writer;
 
+    @ApiStatus.Internal
     public StaticRecipeDisplayType(
             @Nullable TypesBuilderData data,
             PacketWrapper.Reader<T> reader,

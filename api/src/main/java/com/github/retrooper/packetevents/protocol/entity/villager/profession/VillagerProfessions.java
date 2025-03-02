@@ -18,54 +18,65 @@
 
 package com.github.retrooper.packetevents.protocol.entity.villager.profession;
 
-import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.HashMap;
-import java.util.Map;
+public final class VillagerProfessions {
 
-public class VillagerProfessions {
-    private static final Map<String, VillagerProfession> VILLAGER_PROFESSION_MAP = new HashMap<>();
-    private static final Map<Byte, VillagerProfession> VILLAGER_PROFESSION_ID_MAP = new HashMap<>();
+    private static final VersionedRegistry<VillagerProfession> REGISTRY = new VersionedRegistry<>("villager_profession");
 
-    public static VillagerProfession define(int id, String name) {
-        ResourceLocation location = new ResourceLocation(name);
-        VillagerProfession type = new VillagerProfession() {
-            @Override
-            public ResourceLocation getName() {
-                return location;
-            }
-
-            @Override
-            public int getId() {
-                return id;
-            }
-        };
-        VILLAGER_PROFESSION_MAP.put(type.getName().toString(), type);
-        VILLAGER_PROFESSION_ID_MAP.put((byte) type.getId(), type);
-        return type;
+    private VillagerProfessions() {
     }
 
+    public static VersionedRegistry<VillagerProfession> getRegistry() {
+        return REGISTRY;
+    }
+
+    @Deprecated
+    @ApiStatus.Internal
+    public static VillagerProfession define(int id, String name) {
+        return define(name);
+    }
+
+    @ApiStatus.Internal
+    public static VillagerProfession define(String name) {
+        return REGISTRY.define(name, StaticVillagerProfession::new);
+    }
+
+    @Deprecated
     public static VillagerProfession getById(int id) {
-        return VILLAGER_PROFESSION_ID_MAP.get((byte)id);
+        ServerVersion version = PacketEvents.getAPI().getServerManager().getVersion();
+        return getById(version.toClientVersion(), id);
+    }
+
+    public static VillagerProfession getById(ClientVersion version, int id) {
+        return REGISTRY.getById(version, id);
     }
 
     public static VillagerProfession getByName(String name) {
-        return VILLAGER_PROFESSION_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
-    public static final VillagerProfession NONE = define(0, "minecraft:none");
-    public static final VillagerProfession ARMORER = define(1, "minecraft:armorer");
-    public static final VillagerProfession BUTCHER = define(2, "minecraft:butcher");
-    public static final VillagerProfession CARTOGRAPHER = define(3, "minecraft:cartographer");
-    public static final VillagerProfession CLERIC = define(4, "minecraft:cleric");
-    public static final VillagerProfession FARMER = define(5, "minecraft:farmer");
-    public static final VillagerProfession FISHERMAN = define(6, "minecraft:fisherman");
-    public static final VillagerProfession FLETCHER = define(7, "minecraft:fletcher");
-    public static final VillagerProfession LEATHERWORKER = define(8, "minecraft:leatherworker");
-    public static final VillagerProfession LIBRARIAN = define(9, "minecraft:librarian");
-    public static final VillagerProfession MASON = define(10, "minecraft:mason");
-    public static final VillagerProfession NITWIT = define(11, "minecraft:nitwit");
-    public static final VillagerProfession SHEPHERD = define(12, "minecraft:shepherd");
-    public static final VillagerProfession TOOLSMITH = define(13, "minecraft:toolsmith");
-    public static final VillagerProfession WEAPONSMITH = define(14, "minecraft:weaponsmith");
+    public static final VillagerProfession NONE = define("none");
+    public static final VillagerProfession ARMORER = define("armorer");
+    public static final VillagerProfession BUTCHER = define("butcher");
+    public static final VillagerProfession CARTOGRAPHER = define("cartographer");
+    public static final VillagerProfession CLERIC = define("cleric");
+    public static final VillagerProfession FARMER = define("farmer");
+    public static final VillagerProfession FISHERMAN = define("fisherman");
+    public static final VillagerProfession FLETCHER = define("fletcher");
+    public static final VillagerProfession LEATHERWORKER = define("leatherworker");
+    public static final VillagerProfession LIBRARIAN = define("librarian");
+    public static final VillagerProfession MASON = define("mason");
+    public static final VillagerProfession NITWIT = define("nitwit");
+    public static final VillagerProfession SHEPHERD = define("shepherd");
+    public static final VillagerProfession TOOLSMITH = define("toolsmith");
+    public static final VillagerProfession WEAPONSMITH = define("weaponsmith");
+
+    static {
+        REGISTRY.unloadMappings();
+    }
 }

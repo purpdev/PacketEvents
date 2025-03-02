@@ -41,6 +41,7 @@ public class VillagerData {
         this.level = level;
     }
 
+    @Deprecated
     public VillagerData(int typeId, int professionId, int level) {
         this(VillagerTypes.getById(typeId), VillagerProfessions.getById(professionId), level);
     }

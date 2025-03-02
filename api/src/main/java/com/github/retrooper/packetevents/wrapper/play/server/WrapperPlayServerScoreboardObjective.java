@@ -22,7 +22,6 @@ import com.github.retrooper.packetevents.event.PacketSendEvent;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.score.ScoreFormat;
-import com.github.retrooper.packetevents.protocol.score.ScoreFormatTypes;
 import com.github.retrooper.packetevents.util.LegacyFormat;
 import com.github.retrooper.packetevents.util.adventure.AdventureSerializer;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
@@ -78,7 +77,7 @@ public class WrapperPlayServerScoreboardObjective extends PacketWrapper<WrapperP
                 displayName = readComponent();
                 renderType = RenderType.getById(readVarInt());
                 if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_20_3)) {
-                    scoreFormat = readOptional(ScoreFormatTypes::read);
+                    scoreFormat = readOptional(ScoreFormat::readTyped);
                 }
             }
         }
@@ -108,7 +107,7 @@ public class WrapperPlayServerScoreboardObjective extends PacketWrapper<WrapperP
                     writeVarInt(RenderType.INTEGER.ordinal());
                 }
                 if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_20_3)) {
-                    writeOptional(scoreFormat, ScoreFormatTypes::write);
+                    writeOptional(scoreFormat, ScoreFormat::writeTyped);
                 }
             }
         }

@@ -99,7 +99,7 @@ public class WrapperPlayServerSpawnPainting extends PacketWrapper<WrapperPlaySer
             writeString(this.type.getTitle(), 13);
         }
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_8)) {
-            long positionVector = this.position.getSerializedPosition();
+            long positionVector = this.position.getSerializedPosition(this.serverVersion);
             writeLong(positionVector);
         } else {
             writeInt(this.position.x);

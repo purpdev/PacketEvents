@@ -18,18 +18,26 @@
 
 package com.github.retrooper.packetevents.protocol.sound;
 
-import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public class StaticSound implements Sound {
+public class StaticSound extends AbstractMappedEntity implements Sound {
 
     private final ResourceLocation soundId;
     private final @Nullable Float range;
 
     public StaticSound(ResourceLocation soundId, @Nullable Float range) {
+        this(null, soundId, range);
+    }
+
+    @ApiStatus.Internal
+    public StaticSound(@Nullable TypesBuilderData data, ResourceLocation soundId, @Nullable Float range) {
+        super(data);
         this.soundId = soundId;
         this.range = range;
     }
@@ -45,31 +53,19 @@ public class StaticSound implements Sound {
     }
 
     @Override
-    public ResourceLocation getName() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public int getId(ClientVersion version) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public boolean isRegistered() {
-        return false;
-    }
-
-    @Override
     public boolean equals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof StaticSound)) return false;
         StaticSound that = (StaticSound) obj;
+        if (this.isRegistered()) {
+            return super.equals(obj);
+        }
         if (!this.soundId.equals(that.soundId)) return false;
         return Objects.equals(this.range, that.range);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(this.soundId, this.range);
+        return this.isRegistered() ? super.hashCode() : Objects.hash(this.soundId, this.range);
     }
 }

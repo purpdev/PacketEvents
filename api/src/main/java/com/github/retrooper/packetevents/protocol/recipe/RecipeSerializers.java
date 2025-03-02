@@ -27,94 +27,54 @@ import com.github.retrooper.packetevents.protocol.recipe.data.SimpleRecipeData;
 import com.github.retrooper.packetevents.protocol.recipe.data.SmithingRecipeData;
 import com.github.retrooper.packetevents.protocol.recipe.data.SmithingTrimRecipeData;
 import com.github.retrooper.packetevents.protocol.recipe.data.StoneCuttingRecipeData;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * <strong>WARNING:</strong> No longer exists since 1.21.2, network recipe data was rewritten.
  */
 @ApiStatus.Obsolete
-public class RecipeSerializers {
+public final class RecipeSerializers {
 
-    private static final Map<String, RecipeSerializer<?>> PATTERN_TYPE_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, RecipeSerializer<?>>> PATTERN_TYPE_ID_MAP = new HashMap<>();
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("item/recipe_serializer_mappings");
+    private static final VersionedRegistry<RecipeSerializer<?>> REGISTRY = new VersionedRegistry<>("legacy_recipe_serializer");
 
+    private RecipeSerializers() {
+    }
+
+    public static VersionedRegistry<RecipeSerializer<?>> getRegistry() {
+        return REGISTRY;
+    }
+
+    @ApiStatus.Internal
     public static <T extends RecipeData> RecipeSerializer<T> define(
-            String key,
+            String name,
             PacketWrapper.Reader<T> reader,
             PacketWrapper.Writer<T> writer
     ) {
-        return define(key, reader, writer, null);
+        return define(name, reader, writer, null);
     }
 
+    @ApiStatus.Internal
     public static <T extends RecipeData> RecipeSerializer<T> define(
-            String key,
+            String name,
             PacketWrapper.Reader<T> reader,
             PacketWrapper.Writer<T> writer,
-            @Nullable RecipeType recipeType
+            @Nullable RecipeType legacyType
     ) {
-        TypesBuilderData data = TYPES_BUILDER.define(key);
-        RecipeSerializer<T> pattern = new RecipeSerializer<T>() {
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
-
-            @Override
-            public int getId(ClientVersion version) {
-                return MappingHelper.getId(version, TYPES_BUILDER, data);
-            }
-
-            @Override
-            public RecipeType getLegacyType() {
-                if (recipeType == null) {
-                    throw new UnsupportedOperationException("No legacy type found for " + this.getName());
-                }
-                return recipeType;
-            }
-
-            @Override
-            public T read(PacketWrapper<?> wrapper) {
-                return reader.apply(wrapper);
-            }
-
-            @Override
-            public void write(PacketWrapper<?> wrapper, T data) {
-                writer.accept(wrapper, data);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof RecipeSerializer<?>) {
-                    return this.getName().equals(((RecipeSerializer<?>) obj).getName());
-                }
-                return false;
-            }
-        };
-        MappingHelper.registerMapping(TYPES_BUILDER, PATTERN_TYPE_MAP, PATTERN_TYPE_ID_MAP, pattern);
-        return pattern;
+        return REGISTRY.define(name, data -> new StaticRecipeSerializer<>(
+                data, reader, writer, legacyType));
     }
 
-    // with key
     public static RecipeSerializer<?> getByName(String name) {
-        return PATTERN_TYPE_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
     public static RecipeSerializer<?> getById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, RecipeSerializer<?>> idMap = PATTERN_TYPE_ID_MAP.get((byte) index);
-        return idMap.get(id);
+        return REGISTRY.getById(version, id);
     }
 
     public static final RecipeSerializer<ShapedRecipeData> CRAFTING_SHAPED = define("crafting_shaped",
@@ -175,10 +135,10 @@ public class RecipeSerializers {
      * @return Banner Patterns
      */
     public static Collection<RecipeSerializer<?>> values() {
-        return Collections.unmodifiableCollection(PATTERN_TYPE_MAP.values());
+        return REGISTRY.getEntries();
     }
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
     }
 }

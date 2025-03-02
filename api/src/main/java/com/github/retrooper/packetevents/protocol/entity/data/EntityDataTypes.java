@@ -18,7 +18,6 @@
 
 package com.github.retrooper.packetevents.protocol.entity.data;
 
-import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.entity.armadillo.ArmadilloState;
 import com.github.retrooper.packetevents.protocol.entity.pose.EntityPose;
@@ -34,27 +33,23 @@ import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Quaternion4f;
 import com.github.retrooper.packetevents.util.Vector3f;
 import com.github.retrooper.packetevents.util.Vector3i;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 
-import java.util.*;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
-public class EntityDataTypes {
-    //1.7 -> 1.18 block_position is just 3 ints, not serialized with a long
-    //short was removed in 1.9+
-    //boolean was added in 1.9
-    //nbt was added in 1.12
+public final class EntityDataTypes {
 
-    private static final Map<String, EntityDataType<?>> ENTITY_DATA_TYPE_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, EntityDataType<?>>> ENTITY_DATA_TYPE_ID_MAP = new HashMap<>();
-    protected static final TypesBuilder TYPES_BUILDER = new TypesBuilder("entity/entity_data_type_mappings");
+    private static final VersionedRegistry<EntityDataType<?>> REGISTRY = new VersionedRegistry<>("entity_data_serializer");
 
     public static final EntityDataType<Byte> BYTE = define("byte", PacketWrapper::readByte, PacketWrapper::writeByte);
 
+    // short was removed in 1.9+
     public static final EntityDataType<Short> SHORT = define("short", PacketWrapper::readShort, PacketWrapper::writeShort);
 
     public static final EntityDataType<Integer> INT = define("int", wrapper -> {
@@ -91,6 +86,7 @@ public class EntityDataTypes {
             (PacketWrapper<?> wrapper) -> Optional.of(wrapper.readItemStack()),
             (PacketWrapper<?> wrapper, Optional<ItemStack> value) -> wrapper.writeItemStack(value.orElse(null)));
 
+    // boolean was added in 1.9
     public static final EntityDataType<Boolean> BOOLEAN = define("boolean", PacketWrapper::readBoolean, PacketWrapper::writeBoolean);
 
     public static final EntityDataType<Vector3f> ROTATION = define("rotation",
@@ -101,6 +97,7 @@ public class EntityDataTypes {
                 wrapper.writeFloat(value.z);
             });
 
+    // 1.7 -> 1.18 block_position is just 3 ints, not serialized with a long
     public static final EntityDataType<Vector3i> BLOCK_POSITION = define("block_position", (PacketWrapper<?> wrapper) -> {
         if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
             return wrapper.readBlockPosition();
@@ -139,6 +136,7 @@ public class EntityDataTypes {
 
     public static final EntityDataType<Integer> OPTIONAL_BLOCK_STATE = define("optional_block_state", readIntDeserializer(), writeIntSerializer());
 
+    // nbt was added in 1.12
     public static final EntityDataType<NBTCompound> NBT = define("nbt", PacketWrapper::readNBT, PacketWrapper::writeNBT);
 
     public static final EntityDataType<Particle<?>> PARTICLE = define("particle", Particle::read, Particle::write);
@@ -206,171 +204,95 @@ public class EntityDataTypes {
     public static final EntityDataType<Integer> WOLF_VARIANT =
             define("wolf_variant_type", readIntDeserializer(), writeIntSerializer());
 
+    private EntityDataTypes() {
+    }
+
+    public static VersionedRegistry<EntityDataType<?>> getRegistry() {
+        return REGISTRY;
+    }
+
     /**
      * Returns an immutable view of the entity-data types.
+     *
      * @return Entity-Data Types
      */
     public static Collection<EntityDataType<?>> values() {
-        return Collections.unmodifiableCollection(ENTITY_DATA_TYPE_MAP.values());
+        return REGISTRY.getEntries();
     }
 
     public static EntityDataType<?> getById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, EntityDataType<?>> typeIdMap = ENTITY_DATA_TYPE_ID_MAP.get((byte) index);
-        return typeIdMap.get(id);
+        return REGISTRY.getById(version, id);
     }
 
     public static EntityDataType<?> getByName(String name) {
-        return ENTITY_DATA_TYPE_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
-    public static <T> EntityDataType<T> define(String name, Function<PacketWrapper<?>, T> deserializer, BiConsumer<PacketWrapper<?>, T> serializer) {
-        TypesBuilderData data = TYPES_BUILDER.define(name);
-        EntityDataType<T> type = new EntityDataType<>(name, data.getData(), deserializer,
-                (BiConsumer<PacketWrapper<?>, Object>) serializer);
-        ENTITY_DATA_TYPE_MAP.put(type.getName(), type);
-        for (ClientVersion version : TYPES_BUILDER.getVersions()) {
-            int index = TYPES_BUILDER.getDataIndex(version);
-            if (index == -1) continue;
-            Map<Integer, EntityDataType<?>> typeIdMap = ENTITY_DATA_TYPE_ID_MAP
-                    .computeIfAbsent((byte) index, k -> new HashMap<>());
-            typeIdMap.put(type.getId(version), type);
-        }
-        return type;
+    @ApiStatus.Internal
+    public static <T, Z extends T> EntityDataType<Z> define(
+            String name, PacketWrapper.Reader<Z> reader, PacketWrapper.Writer<T> writer
+    ) {
+        return REGISTRY.define(name, data -> new EntityDataType<>(data, reader, writer::accept));
     }
 
-    private static <T> Function<PacketWrapper<?>, T> readIntDeserializer() {
-        if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
-            return (PacketWrapper<?> wrapper) -> (T) ((Object) wrapper.readVarInt());
-        } else {
-            return (PacketWrapper<?> wrapper) -> (T) ((Object) wrapper.readInt());
-        }
+    private static PacketWrapper.Reader<Integer> readIntDeserializer() {
+        return wrapper -> wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_9) ?
+                wrapper.readVarInt() : wrapper.readInt();
     }
 
-    private static <T> BiConsumer<PacketWrapper<?>, T> writeIntSerializer() {
-        return (PacketWrapper<?> wrapper, T value) -> {
-            int output = 0;
-            if (value instanceof Byte) {
-                output = ((Byte) value).intValue();
-            } else if (value instanceof Short) {
-                output = ((Short) value).intValue();
-            } else if (value instanceof Integer) {
-                output = (Integer) value;
-            } else if (value instanceof Long) {
-                output = ((Long) value).intValue();
-            }
-            if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
-                wrapper.writeVarInt(output);
+    private static PacketWrapper.Writer<Number> writeIntSerializer() {
+        return (wrapper, value) -> {
+            if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
+                wrapper.writeVarInt(value.intValue());
             } else {
-                wrapper.writeInt(output);
+                wrapper.writeInt(value.intValue());
             }
         };
     }
 
     @Deprecated
-    private static Function<PacketWrapper<?>, Optional<String>> readOptionalComponentJSONDeserializer() {
-        return (PacketWrapper<?> wrapper) -> {
-            if (wrapper.readBoolean()) {
-                return Optional.of(wrapper.readComponentJSON());
-            } else {
-                return Optional.empty();
-            }
-        };
+    private static PacketWrapper.Reader<Optional<String>> readOptionalComponentJSONDeserializer() {
+        return wrapper -> wrapper.readJavaOptional(PacketWrapper::readComponentJSON);
     }
 
     @Deprecated
-    private static BiConsumer<PacketWrapper<?>, Optional<String>> writeOptionalComponentJSONSerializer() {
-        return (PacketWrapper<?> wrapper, Optional<String> value) -> {
-            if (value != null && value.isPresent()) {
-                wrapper.writeBoolean(true);
-                wrapper.writeComponentJSON(value.get());
-            } else {
-                wrapper.writeBoolean(false);
+    private static PacketWrapper.Writer<Optional<String>> writeOptionalComponentJSONSerializer() {
+        return (wrapper, value) -> wrapper.writeJavaOptional(value, PacketWrapper::writeComponentJSON);
+    }
+
+    private static PacketWrapper.Reader<Optional<Component>> readOptionalComponentDeserializer() {
+        return wrapper -> wrapper.readJavaOptional(PacketWrapper::readComponent);
+    }
+
+    private static PacketWrapper.Writer<Optional<Component>> writeOptionalComponentSerializer() {
+        return (wrapper, value) -> wrapper.writeJavaOptional(value, PacketWrapper::writeComponent);
+    }
+
+    private static PacketWrapper.Reader<Optional<Vector3i>> readOptionalBlockPositionDeserializer() {
+        return wrapper -> {
+            if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
+                return wrapper.readJavaOptional(PacketWrapper::readBlockPosition);
             }
+            return wrapper.readJavaOptional(ew ->
+                    new Vector3i(ew.readInt(), ew.readInt(), ew.readInt()));
         };
     }
 
-    private static Function<PacketWrapper<?>, Optional<Component>> readOptionalComponentDeserializer() {
-        return (PacketWrapper<?> wrapper) -> {
-            if (wrapper.readBoolean()) {
-                return Optional.of(wrapper.readComponent());
+    private static PacketWrapper.Writer<Optional<Vector3i>> writeOptionalBlockPositionSerializer() {
+        return (wrapper, value) -> {
+            if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
+                wrapper.writeJavaOptional(value, PacketWrapper::writeBlockPosition);
             } else {
-                return Optional.empty();
+                wrapper.writeJavaOptional(value, (ew, valuee) -> {
+                    wrapper.writeInt(valuee.getX());
+                    wrapper.writeInt(valuee.getY());
+                    wrapper.writeInt(valuee.getZ());
+                });
             }
         };
-    }
-
-    private static BiConsumer<PacketWrapper<?>, Optional<Component>> writeOptionalComponentSerializer() {
-        return (PacketWrapper<?> wrapper, Optional<Component> value) -> {
-            if (value != null && value.isPresent()) {
-                wrapper.writeBoolean(true);
-                wrapper.writeComponent(value.get());
-            } else {
-                wrapper.writeBoolean(false);
-            }
-        };
-    }
-
-    private static <T> Function<PacketWrapper<?>, T> readOptionalBlockPositionDeserializer() {
-        if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
-            return (PacketWrapper<?> wrapper) -> {
-                if (wrapper.readBoolean()) {
-                    return (T) Optional.of(wrapper.readBlockPosition());
-                } else {
-                    return (T) Optional.empty();
-                }
-            };
-        } else {
-            return (PacketWrapper<?> wrapper) -> {
-                if (wrapper.readBoolean()) {
-                    int x = wrapper.readInt();
-                    int y = wrapper.readInt();
-                    int z = wrapper.readInt();
-                    return (T) Optional.of(new Vector3i(x, y, z));
-                } else {
-                    return (T) Optional.empty();
-                }
-            };
-        }
-    }
-
-    private static <T> BiConsumer<PacketWrapper<?>, T> writeOptionalBlockPositionSerializer() {
-        if (PacketEvents.getAPI().getServerManager().getVersion().isNewerThanOrEquals(ServerVersion.V_1_9)) {
-            return (PacketWrapper<?> wrapper, T value) -> {
-                if (value instanceof Optional) {
-                    Optional<?> optional = (Optional<?>) value;
-                    if (optional.isPresent()) {
-                        wrapper.writeBoolean(true);
-                        wrapper.writeBlockPosition((Vector3i) optional.get());
-                    } else {
-                        wrapper.writeBoolean(false);
-                    }
-                } else {
-                    wrapper.writeBoolean(false);
-                }
-            };
-        } else {
-            return (PacketWrapper<?> wrapper, T value) -> {
-                if (value instanceof Optional) {
-                    Optional<?> optional = (Optional<?>) value;
-                    if (optional.isPresent()) {
-                        wrapper.writeBoolean(true);
-                        Vector3i position = (Vector3i) optional.get();
-                        wrapper.writeInt(position.getX());
-                        wrapper.writeInt(position.getY());
-                        wrapper.writeInt(position.getZ());
-                    } else {
-                        wrapper.writeBoolean(false);
-                    }
-                } else {
-                    wrapper.writeBoolean(false);
-                }
-            };
-        }
     }
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
     }
-
 }

@@ -27,6 +27,7 @@ import com.github.retrooper.packetevents.manager.protocol.ProtocolManager;
 import com.github.retrooper.packetevents.manager.server.ServerManager;
 import com.github.retrooper.packetevents.netty.NettyManager;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import com.github.retrooper.packetevents.util.LogManager;
 import io.github.retrooper.packetevents.impl.netty.NettyManagerImpl;
@@ -92,6 +93,8 @@ public class FabricPacketEventsAPI extends PacketEventsAPI<FabricLoader> {
         PacketEvents.DECODER_NAME = "pe-decoder-" + id;
         PacketEvents.CONNECTION_HANDLER_NAME = "pe-connection-handler-" + id;
         PacketEvents.SERVER_CHANNEL_HANDLER_NAME = "pe-connection-initializer-" + id;
+
+        WrappedBlockState.ensureLoad();
 
         // register internal packet listener (should be the first listener)
         // this listener doesn't do any modifications to the packets, just reads data

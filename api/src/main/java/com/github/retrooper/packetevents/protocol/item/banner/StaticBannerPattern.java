@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.item.banner;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -34,6 +35,7 @@ public class StaticBannerPattern extends AbstractMappedEntity implements BannerP
         this(null, assetId, translationKey);
     }
 
+    @ApiStatus.Internal
     public StaticBannerPattern(@Nullable TypesBuilderData data, ResourceLocation assetId, String translationKey) {
         super(data);
         this.assetId = assetId;

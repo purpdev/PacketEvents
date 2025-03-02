@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+import org.jetbrains.annotations.VisibleForTesting;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -37,6 +38,10 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
 
     private final Map<String, T> typeMap = new HashMap<>();
     private final Map<Byte, Map<Integer, T>> typeIdMap = new HashMap<>();
+
+    public VersionedRegistry(String registry) {
+        this(registry, "registries/" + registry);
+    }
 
     public VersionedRegistry(String registry, String mappingsPath) {
         this(new ResourceLocation(registry), mappingsPath);
@@ -53,6 +58,12 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
         Z instance = builder.apply(this.typesBuilder.define(name));
         MappingHelper.registerMapping(this.typesBuilder, this.typeMap, this.typeIdMap, instance);
         return instance;
+    }
+
+    @VisibleForTesting
+    @ApiStatus.Internal
+    public boolean isMappingDataLoaded() {
+        return this.typesBuilder.isMappingDataLoaded();
     }
 
     @ApiStatus.Internal
@@ -89,6 +100,11 @@ public final class VersionedRegistry<T extends MappedEntity> implements IRegistr
     @Override
     public Collection<T> getEntries() {
         return Collections.unmodifiableCollection(this.typeMap.values());
+    }
+
+    @Override
+    public int size() {
+        return this.typeMap.size();
     }
 
     @Override

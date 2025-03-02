@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -41,6 +42,7 @@ public class StaticTrimPattern extends AbstractMappedEntity implements TrimPatte
         this(null, assetId, templateItem, description, decal);
     }
 
+    @ApiStatus.Internal
     public StaticTrimPattern(
             @Nullable TypesBuilderData data,
             ResourceLocation assetId, ItemType templateItem,

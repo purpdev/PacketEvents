@@ -23,11 +23,13 @@ import com.github.retrooper.packetevents.protocol.sound.Sound;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class JukeboxSong extends AbstractMappedEntity implements IJukeboxSong {
+
     private Sound sound;
     private Component description;
     private float lengthInSeconds;
@@ -37,8 +39,14 @@ public class JukeboxSong extends AbstractMappedEntity implements IJukeboxSong {
         this(null, sound, description, lengthInSeconds, comparatorOutput);
     }
 
-    public JukeboxSong(@Nullable TypesBuilderData data, Sound sound, Component description, float lengthInSeconds,
-                       int comparatorOutput) {
+    @ApiStatus.Internal
+    public JukeboxSong(
+            @Nullable TypesBuilderData data,
+            Sound sound,
+            Component description,
+            float lengthInSeconds,
+            int comparatorOutput
+    ) {
         super(data);
         this.sound = sound;
         this.description = description;

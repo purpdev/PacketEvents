@@ -31,8 +31,10 @@ abstract class MappingCompressionTask : DefaultTask() {
 
     @get:Internal
     internal var mappingsDir: Path? = null
+
     @get:Internal
     internal var outDir: Path? = null
+
     @get:Internal
     internal var strategies: Map<String, CompressionStrategy> = emptyMap()
 
@@ -42,10 +44,8 @@ abstract class MappingCompressionTask : DefaultTask() {
         outDir ?: error("outDir is not set")
 
         for ((relativePath, strategy) in strategies) {
-            strategy.compress(
-                mappingsDir!!.resolve(relativePath),
-                outDir!!.resolve(relativePath.replace(".json", ".nbt"))
-            )
+            val target = CompressionStrategy.resolveTargetPath(outDir!!, relativePath)
+            strategy.compress(mappingsDir!!.resolve(relativePath), target)
         }
     }
 }

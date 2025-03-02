@@ -31,6 +31,7 @@ import com.github.retrooper.packetevents.netty.NettyManager;
 import com.github.retrooper.packetevents.protocol.packettype.PacketType;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.player.User;
+import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
 import com.github.retrooper.packetevents.settings.PacketEventsSettings;
 import com.github.retrooper.packetevents.util.LogManager;
 import com.velocitypowered.api.event.connection.PostLoginEvent;
@@ -176,6 +177,7 @@ public class VelocityPacketEventsBuilder {
                     PacketEvents.CONNECTION_HANDLER_NAME = "pe-connection-handler-" + id;
                     PacketEvents.SERVER_CHANNEL_HANDLER_NAME = "pe-connection-initializer-" + id;
                     PacketEvents.TIMEOUT_HANDLER_NAME = "pe-timeout-handler-" + id;
+                    WrappedBlockState.ensureLoad();
                     injector.inject();
 
                     loaded = true;

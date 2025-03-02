@@ -49,6 +49,7 @@ public interface ItemType extends MappedEntity {
         return this.getAttributes().contains(attribute);
     }
 
+    @Deprecated
     default StaticComponentMap getComponents() {
         return this.getComponents(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
     }

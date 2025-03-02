@@ -84,8 +84,7 @@ import java.util.Collection;
  */
 public final class ComponentTypes {
 
-    private static final VersionedRegistry<ComponentType<?>> REGISTRY = new VersionedRegistry<>(
-            "data_component_type", "item/item_component_mappings");
+    private static final VersionedRegistry<ComponentType<?>> REGISTRY = new VersionedRegistry<>("data_component_type");
 
     private ComponentTypes() {
     }

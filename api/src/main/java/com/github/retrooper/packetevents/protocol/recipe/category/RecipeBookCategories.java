@@ -22,8 +22,7 @@ import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 
 public final class RecipeBookCategories {
 
-    private static final VersionedRegistry<RecipeBookCategory> REGISTRY = new VersionedRegistry<>(
-            "recipe_book_category", "item/recipe_book_category");
+    private static final VersionedRegistry<RecipeBookCategory> REGISTRY = new VersionedRegistry<>("recipe_book_category");
 
     private RecipeBookCategories() {
     }

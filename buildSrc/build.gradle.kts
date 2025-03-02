@@ -4,7 +4,7 @@ plugins {
 
 kotlin {
     compilerOptions {
-        jvmToolchain(21)
+        jvmToolchain(8)
     }
 }
 

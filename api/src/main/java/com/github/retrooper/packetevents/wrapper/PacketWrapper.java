@@ -70,6 +70,10 @@ import com.github.retrooper.packetevents.protocol.entity.data.EntityDataType;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
 import com.github.retrooper.packetevents.protocol.entity.data.EntityMetadataProvider;
 import com.github.retrooper.packetevents.protocol.entity.villager.VillagerData;
+import com.github.retrooper.packetevents.protocol.entity.villager.profession.VillagerProfession;
+import com.github.retrooper.packetevents.protocol.entity.villager.profession.VillagerProfessions;
+import com.github.retrooper.packetevents.protocol.entity.villager.type.VillagerType;
+import com.github.retrooper.packetevents.protocol.entity.villager.type.VillagerTypes;
 import com.github.retrooper.packetevents.protocol.item.ItemStack;
 import com.github.retrooper.packetevents.protocol.item.type.ItemType;
 import com.github.retrooper.packetevents.protocol.item.type.ItemTypes;
@@ -201,12 +205,16 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         this.clientVersion = ClientVersion.UNKNOWN;
         this.serverVersion = PacketEvents.getAPI().getServerManager().getVersion();
         this.buffer = null;
-        int id = packetType.getId(PacketEvents.getAPI().getServerManager().getVersion().toClientVersion());
+        int id = packetType.getId(this.serverVersion.toClientVersion());
         this.packetTypeData = new PacketTypeData(packetType, id);
     }
 
     public static PacketWrapper<?> createUniversalPacketWrapper(Object byteBuf) {
-        PacketWrapper<?> wrapper = new PacketWrapper<>(ClientVersion.UNKNOWN, PacketEvents.getAPI().getServerManager().getVersion(), -2);
+        return createUniversalPacketWrapper(byteBuf, PacketEvents.getAPI().getServerManager().getVersion());
+    }
+
+    public static PacketWrapper<?> createUniversalPacketWrapper(Object byteBuf, ServerVersion version) {
+        PacketWrapper<?> wrapper = new PacketWrapper<>(ClientVersion.UNKNOWN, version, -2);
         wrapper.buffer = byteBuf;
         return wrapper;
     }
@@ -448,15 +456,15 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public VillagerData readVillagerData() {
-        int villagerTypeId = readVarInt();
-        int villagerProfessionId = readVarInt();
+        VillagerType type = this.readMappedEntity(VillagerTypes.getRegistry());
+        VillagerProfession profession = this.readMappedEntity(VillagerProfessions.getRegistry());
         int level = readVarInt();
-        return new VillagerData(villagerTypeId, villagerProfessionId, level);
+        return new VillagerData(type, profession, level);
     }
 
     public void writeVillagerData(VillagerData data) {
-        writeVarInt(data.getType().getId());
-        writeVarInt(data.getProfession().getId());
+        this.writeMappedEntity(data.getType());
+        this.writeMappedEntity(data.getProfession());
         writeVarInt(data.getLevel());
     }
 
@@ -477,7 +485,8 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         }
 
         PatchableComponentMap components = new PatchableComponentMap(
-                itemType.getComponents(), new HashMap<>(4));
+                itemType.getComponents(this.serverVersion.toClientVersion()),
+                new HashMap<>(4));
         for (int i = 0; i < presentCount; i++) {
             ComponentType<?> type = this.readMappedEntity(ComponentTypes.getRegistry());
             components.set((ComponentType<Object>) type, type.read(this));
@@ -967,16 +976,14 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 if (type == null) {
                     throw new IllegalStateException("Unknown entity metadata type id: " + typeID + " version " + serverVersion.toClientVersion());
                 }
-                Object value = type.getDataDeserializer().apply(this);
-                list.add(new EntityData(index, type, value));
+                list.add(new EntityData(index, type, type.read(this)));
             }
         } else {
             for (byte data = readByte(); data != Byte.MAX_VALUE; data = readByte()) {
                 int typeID = (data & 0xE0) >> 5;
                 int index = data & 0x1F;
                 EntityDataType<?> type = EntityDataTypes.getById(serverVersion.toClientVersion(), typeID);
-                Object value = type.getDataDeserializer().apply(this);
-                EntityData entityData = new EntityData(index, type, value);
+                EntityData entityData = new EntityData(index, type, type.read(this));
                 list.add(entityData);
             }
         }
@@ -996,7 +1003,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 } else {
                     writeByte(entityData.getType().getId(serverVersion.toClientVersion()));
                 }
-                entityData.getType().getDataSerializer().accept(this, entityData.getValue());
+                ((EntityDataType<? super Object>) entityData.getType()).write(this, entityData.getValue());
             }
             writeByte(255); // End of metadata array
         } else {
@@ -1005,7 +1012,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
                 int index = entityData.getIndex();
                 int data = (typeID << 5 | index & 31) & 255;
                 writeByte(data);
-                entityData.getType().getDataSerializer().accept(this, entityData.getValue());
+                ((EntityDataType<? super Object>) entityData.getType()).write(this, entityData.getValue());
             }
             writeByte(127); // End of metadata array
         }
@@ -1434,6 +1441,18 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         }
     }
 
+    public <R> Optional<R> readJavaOptional(Reader<R> reader) {
+        return this.readBoolean() ? Optional.of(reader.apply(this)) : Optional.empty();
+    }
+
+    public <V> void writeJavaOptional(Optional<V> value, Writer<V> writer) {
+        if (value.isPresent()) {
+            this.writeBoolean(true);
+            writer.accept(this, value.get());
+        } else {
+            this.writeBoolean(false);
+        }
+    }
 
     public <K, C extends Collection<K>> C readCollection(IntFunction<C> function, Reader<K> reader) {
         int size = this.readVarInt();
@@ -1521,12 +1540,12 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public <Z extends MappedEntity> Z readMappedEntity(IRegistry<Z> registry) {
-        IRegistry<Z> replacedRegistry = this.getRegistryHolder().getRegistryOr(registry);
+        IRegistry<Z> replacedRegistry = this.getRegistryHolder().getRegistryOr(registry, this.serverVersion.toClientVersion());
         return this.readMappedEntity((BiFunction<ClientVersion, Integer, Z>) replacedRegistry);
     }
 
     public <Z extends MappedEntity> Z readMappedEntityOrDirect(IRegistry<Z> registry, Reader<Z> directReader) {
-        IRegistry<Z> replacedRegistry = this.getRegistryHolder().getRegistryOr(registry);
+        IRegistry<Z> replacedRegistry = this.getRegistryHolder().getRegistryOr(registry, this.serverVersion.toClientVersion());
         return this.readMappedEntityOrDirect((BiFunction<ClientVersion, Integer, Z>) replacedRegistry, directReader);
     }
 

@@ -21,28 +21,29 @@ package com.github.retrooper.packetevents.protocol.world.states.type;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.MaterialType;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
-public class StateTypes {
+public final class StateTypes {
 
-    private static final List<StateType> ALL_STATE_TYPES = new ArrayList<>();
-    private static final Map<String, StateType.Mapped> BY_NAME = new HashMap<>();
-    private static final Map<Byte, Map<Integer, StateType.Mapped>> BY_ID = new HashMap<>();
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("block/block_type_mappings");
+    private static final VersionedRegistry<StateType.Mapped> REGISTRY = new VersionedRegistry<>("block");
+    private static final List<StateType> STATE_TYPE_VALUES;
+
+    private StateTypes() {
+    }
+
+    public static VersionedRegistry<StateType.Mapped> getRegistry() {
+        return REGISTRY;
+    }
 
     public static Collection<StateType> values() {
-        return Collections.unmodifiableCollection(ALL_STATE_TYPES);
+        return STATE_TYPE_VALUES;
     }
 
     public static @Nullable StateType getByName(String blockString) {
@@ -51,7 +52,7 @@ public class StateTypes {
     }
 
     public static StateType.@Nullable Mapped getMappedByName(String blockString) {
-        return getMappedByName(new ResourceLocation(blockString));
+        return REGISTRY.getByName(blockString);
     }
 
     public static @Nullable StateType getByName(ResourceLocation blockKey) {
@@ -60,7 +61,7 @@ public class StateTypes {
     }
 
     public static StateType.@Nullable Mapped getMappedByName(ResourceLocation blockKey) {
-        return BY_NAME.get(blockKey.toString());
+        return REGISTRY.getByName(blockKey);
     }
 
     public static StateType getById(ClientVersion version, int id) {
@@ -68,11 +69,10 @@ public class StateTypes {
     }
 
     public static StateType.Mapped getMappedById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, StateType.Mapped> idMap = BY_ID.get((byte) index);
-        return idMap.get(id);
+        return REGISTRY.getById(version, id);
     }
 
+    // <editor-fold desc="state type definitions" defaultstate="collapsed">
     public static StateType AIR = StateTypes.builder().name("AIR").blastResistance(0.0f).hardness(0.0f).isBlocking(false).requiresCorrectTool(false).isSolid(false).isAir(true).setMaterial(MaterialType.AIR).build();
     public static StateType STONE = StateTypes.builder().name("STONE").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
     public static StateType GRANITE = StateTypes.builder().name("GRANITE").blastResistance(6.0f).hardness(1.5f).isBlocking(true).requiresCorrectTool(true).isSolid(true).setMaterial(MaterialType.STONE).build();
@@ -1196,9 +1196,16 @@ public class StateTypes {
     public static StateType CLOSED_EYEBLOSSOM = StateTypes.builder().name("CLOSED_EYEBLOSSOM").blastResistance(0.0f).hardness(0.0f).isBlocking(false).requiresCorrectTool(false).isSolid(false).setMaterial(MaterialType.PLANT).build();
     public static StateType POTTED_OPEN_EYEBLOSSOM = StateTypes.builder().name("POTTED_OPEN_EYEBLOSSOM").blastResistance(0.0f).hardness(0.0f).isBlocking(false).requiresCorrectTool(false).isSolid(true).setMaterial(MaterialType.DECORATION).build();
     public static StateType POTTED_CLOSED_EYEBLOSSOM = StateTypes.builder().name("POTTED_CLOSED_EYEBLOSSOM").blastResistance(0.0f).hardness(0.0f).isBlocking(false).requiresCorrectTool(false).isSolid(true).setMaterial(MaterialType.DECORATION).build();
+    // </editor-fold>
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
+
+        List<StateType> stateTypes = new ArrayList<>(REGISTRY.size());
+        for (StateType.Mapped type : REGISTRY.getEntries()) {
+            stateTypes.add(type.getStateType());
+        }
+        STATE_TYPE_VALUES = Collections.unmodifiableList(stateTypes);
     }
 
     public static Builder builder() {
@@ -1262,13 +1269,11 @@ public class StateTypes {
         }
 
         public StateType build() {
-            TypesBuilderData data = TYPES_BUILDER.define(this.name.getKey().toLowerCase(Locale.ROOT));
-            StateType type = new StateType(
-                    TYPES_BUILDER, data, blastResistance, hardness, isSolid,
-                    isBlocking, isAir, requiresCorrectTool, isShapeExceedsCube, materialType);
-            ALL_STATE_TYPES.add(type);
-            MappingHelper.registerMapping(TYPES_BUILDER, BY_NAME, BY_ID, type.getMapped());
-            return type;
+            String definedName = this.name.getKey().toLowerCase(Locale.ROOT);
+            return REGISTRY.define(definedName, data -> new StateType(
+                    data, this.blastResistance, this.hardness, this.isSolid, this.isBlocking, this.isAir,
+                    this.requiresCorrectTool, this.isShapeExceedsCube, this.materialType
+            ).getMapped()).getStateType();
         }
     }
 }

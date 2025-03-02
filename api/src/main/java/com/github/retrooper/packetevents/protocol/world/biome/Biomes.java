@@ -33,20 +33,16 @@ import java.util.Map;
 
 public final class Biomes {
 
-    private static final VersionedRegistry<Biome> REGISTRY = new VersionedRegistry<>(
-            "worldgen/biome", "world/biome_mappings");
+    private static final VersionedRegistry<Biome> REGISTRY = new VersionedRegistry<>("worldgen/biome");
 
     // load data from file, biomes are too complex to define in code here
     private static final Map<ResourceLocation, NBTCompound> BIOME_DATA;
 
     static {
         BIOME_DATA = new HashMap<>();
-        try (SequentialNBTReader.Compound dataTag = MappingHelper.decompress("mappings/world/biome_data")) {
-            while (dataTag.hasNext()) {
-                Map.Entry<String, NBT> entry = dataTag.next();
-                if (entry.getKey().equals("version")) {
-                    continue; // skip version field
-                }
+        try (SequentialNBTReader.Compound dataTag = MappingHelper.decompress("mappings/data/worldgen/biome")) {
+            dataTag.skipOne(); // skip version
+            for (Map.Entry<String, NBT> entry : (SequentialNBTReader.Compound) dataTag.next().getValue()) {
                 ResourceLocation biomeKey = new ResourceLocation(entry.getKey());
                 BIOME_DATA.put(biomeKey, ((SequentialNBTReader.Compound) entry.getValue()).readFully());
             }

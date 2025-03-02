@@ -24,6 +24,7 @@ import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntitySet;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -44,6 +45,7 @@ public class StaticEnchantmentType extends AbstractMappedEntity implements Encha
         this(null, description, definition, exclusiveSet, effects);
     }
 
+    @ApiStatus.Internal
     public StaticEnchantmentType(
             @Nullable TypesBuilderData data,
             Component description,

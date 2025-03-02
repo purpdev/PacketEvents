@@ -22,4 +22,7 @@ import com.github.retrooper.packetevents.protocol.mapper.StaticMappedEntity;
 
 public interface VillagerProfession extends StaticMappedEntity {
 
+    @Deprecated
+    @Override
+    int getId();
 }

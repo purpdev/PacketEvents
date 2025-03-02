@@ -44,14 +44,15 @@ public class Statistics {
 
         if (version.isOlderThan(ServerVersion.V_1_12_2)) {
 
-            try (final SequentialNBTReader.Compound mapping = MappingHelper.decompress("mappings/stats/statistics")) {
-                mapping.skipOne(); //Skip version
+            try (final SequentialNBTReader.Compound rootMapping = MappingHelper.decompress("mappings/data/statistics")) {
+                rootMapping.skipOne(); //Skip version
+                SequentialNBTReader.Compound mapping = (SequentialNBTReader.Compound) rootMapping.next().getValue();
 
                 if (version.isOlderThanOrEquals(ServerVersion.V_1_8_3)) {
                     mapping.skipOne(); // Skip to version 1.8
                 }
 
-                SequentialNBTReader.Compound toLoad = (SequentialNBTReader.Compound) mapping.next();
+                SequentialNBTReader.Compound toLoad = (SequentialNBTReader.Compound) mapping.next().getValue();
 
                 for (Map.Entry<String, NBT> entry : toLoad) {
                     String value = ((NBTString) entry.getValue()).getValue();

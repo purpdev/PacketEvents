@@ -23,8 +23,7 @@ import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 
 public final class SlotDisplayTypes {
 
-    private static final VersionedRegistry<SlotDisplayType<?>> REGISTRY = new VersionedRegistry<>(
-            "slot_display", "item/recipe_slot_display_types");
+    private static final VersionedRegistry<SlotDisplayType<?>> REGISTRY = new VersionedRegistry<>("slot_display");
 
     private SlotDisplayTypes() {
     }

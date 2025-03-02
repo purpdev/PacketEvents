@@ -20,97 +20,83 @@ package com.github.retrooper.packetevents.protocol.score;
 
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public final class ScoreFormatTypes {
 
-    private static final Map<String, ScoreFormatType> SCORE_FORMAT_TYPE_MAP = new HashMap<>();
-    private static final Map<Byte, ScoreFormatType> SCORE_FORMAT_TYPE_ID_MAP = new HashMap<>();
+    private static final VersionedRegistry<ScoreFormatType<?>> REGISTRY = new VersionedRegistry<>("number_format_type");
 
-    public static final ScoreFormatType BLANK = define(0, "blank", BlankScoreFormat.class,
-            wrapper -> ScoreFormat.blankScore(),
-            (wrapper, format) -> { /**/ });
-    public static final ScoreFormatType STYLED = define(1, "styled", StyledScoreFormat.class,
-            wrapper -> ScoreFormat.styledScore(wrapper.readStyle()),
-            (wrapper, format) -> wrapper.writeStyle(format.getStyle()));
-    public static final ScoreFormatType FIXED = define(2, "fixed", FixedScoreFormat.class,
-            wrapper -> ScoreFormat.fixedScore(wrapper.readComponent()),
-            (wrapper, format) -> wrapper.writeComponent(format.getValue()));
+    public static final ScoreFormatType<BlankScoreFormat> BLANK = define("blank",
+            BlankScoreFormat::read, BlankScoreFormat::write);
+    public static final ScoreFormatType<StyledScoreFormat> STYLED = define("styled",
+            StyledScoreFormat::read, StyledScoreFormat::write);
+    public static final ScoreFormatType<FixedScoreFormat> FIXED = define("fixed",
+            FixedScoreFormat::read, FixedScoreFormat::write);
 
-    /**
-     * Returns an immutable view of the score format types.
-     * @return Score Format Types
-     */
-    public static Collection<ScoreFormatType> values() {
-        return Collections.unmodifiableCollection(SCORE_FORMAT_TYPE_MAP.values());
+    static {
+        REGISTRY.unloadMappings();
     }
 
     private ScoreFormatTypes() {
     }
 
+    public static VersionedRegistry<ScoreFormatType<?>> getRegistry() {
+        return REGISTRY;
+    }
+
+    /**
+     * Returns an immutable view of the score format types.
+     *
+     * @return Score Format Types
+     */
+    public static Collection<ScoreFormatType<?>> values() {
+        return REGISTRY.getEntries();
+    }
+
+    @Deprecated
     public static ScoreFormat read(PacketWrapper<?> wrapper) {
-        int formatTypeId = wrapper.readVarInt();
-        ScoreFormatType formatType = getById(wrapper.getServerVersion().toClientVersion(), formatTypeId);
-        if (formatType == null) {
-            throw new NullPointerException("Can't resolve format type " + formatTypeId);
-        }
-        return formatType.read(wrapper);
+        return ScoreFormat.readTyped(wrapper);
     }
 
+    @Deprecated
     public static void write(PacketWrapper<?> wrapper, ScoreFormat format) {
-        int formatTypeId = format.getType().getId(wrapper.getServerVersion().toClientVersion());
-        wrapper.writeVarInt(formatTypeId);
-        format.getType().write(wrapper, format);
+        ScoreFormat.writeTyped(wrapper, format);
     }
 
-    public static <T extends ScoreFormat> ScoreFormatType define(int id, String name,
-                                                                 Class<T> formatClass,
-                                                                 Function<PacketWrapper<?>, T> reader,
-                                                                 BiConsumer<PacketWrapper<?>, T> writer) {
-        ResourceLocation location = new ResourceLocation(name);
-        ScoreFormatType type = new ScoreFormatType() {
-            @Override
-            public ScoreFormat read(PacketWrapper<?> wrapper) {
-                return reader.apply(wrapper);
-            }
-
-            @Override
-            public void write(PacketWrapper<?> wrapper, ScoreFormat format) {
-                writer.accept(wrapper, formatClass.cast(format));
-            }
-
-            @Override
-            public ResourceLocation getName() {
-                return location;
-            }
-
-            @Override
-            public int getId() {
-                return id;
-            }
-        };
-        SCORE_FORMAT_TYPE_MAP.put(location.toString(), type);
-        SCORE_FORMAT_TYPE_ID_MAP.put((byte) id, type);
-        return type;
+    @Deprecated
+    @ApiStatus.Internal
+    public static <T extends ScoreFormat> ScoreFormatType<T> define(
+            int id, String name, Class<T> formatClass,
+            Function<PacketWrapper<?>, T> reader,
+            BiConsumer<PacketWrapper<?>, T> writer
+    ) {
+        return define(name, reader::apply, writer::accept);
     }
 
-    public static @Nullable ScoreFormatType getById(ClientVersion version, int id) {
-        return SCORE_FORMAT_TYPE_ID_MAP.get((byte) id);
+    @ApiStatus.Internal
+    public static <T extends ScoreFormat> ScoreFormatType<T> define(
+            String name, PacketWrapper.Reader<T> reader, PacketWrapper.Writer<T> writer
+    ) {
+        return REGISTRY.define(name, data ->
+                new StaticScoreFormatType<>(data, reader, writer));
     }
 
-    public static @Nullable ScoreFormatType getByName(String name) {
-        return getByName(new ResourceLocation(name));
+    public static @Nullable ScoreFormatType<?> getById(ClientVersion version, int id) {
+        return REGISTRY.getById(version, id);
     }
 
-    public static @Nullable ScoreFormatType getByName(ResourceLocation name) {
-        return SCORE_FORMAT_TYPE_MAP.get(name.toString());
+    public static @Nullable ScoreFormatType<?> getByName(String name) {
+        return REGISTRY.getByName(name);
+    }
+
+    public static @Nullable ScoreFormatType<?> getByName(ResourceLocation name) {
+        return REGISTRY.getByName(name);
     }
 }

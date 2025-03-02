@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public class StaticAttribute extends AbstractMappedEntity implements Attribute {
@@ -31,21 +32,24 @@ public class StaticAttribute extends AbstractMappedEntity implements Attribute {
     private final double minValue;
     private final double maxValue;
 
-    StaticAttribute(
-            TypesBuilderData data, String legacyPrefix,
+    @ApiStatus.Internal
+    public StaticAttribute(
+            @Nullable TypesBuilderData data, String legacyPrefix,
             double defaultValue, double minValue, double maxValue
     ) {
         super(data);
         this.defaultValue = defaultValue;
         this.minValue = minValue;
         this.maxValue = maxValue;
-        this.legacyName = legacyPrefix == null ? null : new ResourceLocation(
+        this.legacyName = legacyPrefix == null || data == null ? null : new ResourceLocation(
                 data.getName().getNamespace(), legacyPrefix + "." + data.getName().getKey());
     }
 
     @Override
     public ResourceLocation getName(ClientVersion version) {
-        assert this.data != null; // not marked as nullable in ctor
+        if (this.data == null) {
+            throw new UnsupportedOperationException();
+        }
         return version.isNewerThanOrEquals(ClientVersion.V_1_21_2) || this.legacyName == null
                 ? this.data.getName() : this.legacyName;
     }

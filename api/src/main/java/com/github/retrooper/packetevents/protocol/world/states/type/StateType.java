@@ -19,22 +19,19 @@
 package com.github.retrooper.packetevents.protocol.world.states.type;
 
 import com.github.retrooper.packetevents.PacketEvents;
-import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.MaterialType;
 import com.github.retrooper.packetevents.protocol.world.states.WrappedBlockState;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
 public class StateType {
 
-    private final TypesBuilder typesBuilder;
-    private final TypesBuilderData typeData;
-    private final Mapped mapped = new Mapped();
+    private final Mapped mapped;
 
     private final float blastResistance;
     private final float hardness;
@@ -45,14 +42,14 @@ public class StateType {
     private final boolean exceedsCube;
     private final MaterialType materialType;
 
+    @ApiStatus.Internal
     public StateType(
-            TypesBuilder typesBuilder, TypesBuilderData typeData,
+            TypesBuilderData typeData,
             float blastResistance, float hardness, boolean isSolid,
             boolean isBlocking, boolean isAir, boolean requiresCorrectTool,
             boolean isShapeExceedsCube, MaterialType materialType
     ) {
-        this.typesBuilder = typesBuilder;
-        this.typeData = typeData;
+        this.mapped = new Mapped(typeData);
         this.blastResistance = blastResistance;
         this.hardness = hardness;
         this.isSolid = isSolid;
@@ -76,7 +73,7 @@ public class StateType {
     }
 
     public String getName() {
-        return typeData.getName().getKey();
+        return this.mapped.getName().getKey();
     }
 
     public float getBlastResistance() {
@@ -155,20 +152,15 @@ public class StateType {
         return Objects.hash(getName(), blastResistance, hardness, isSolid, isBlocking, isAir, requiresCorrectTool, exceedsCube, materialType);
     }
 
-    public final class Mapped implements MappedEntity {
+    public final class Mapped extends AbstractMappedEntity {
+
+        @ApiStatus.Internal
+        public Mapped(@Nullable TypesBuilderData data) {
+            super(data);
+        }
 
         public StateType getStateType() {
             return StateType.this;
-        }
-
-        @Override
-        public ResourceLocation getName() {
-            return typeData.getName();
-        }
-
-        @Override
-        public int getId(ClientVersion version) {
-            return MappingHelper.getId(version, typesBuilder, typeData);
         }
     }
 }

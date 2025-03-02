@@ -27,12 +27,12 @@ import org.jetbrains.annotations.ApiStatus;
 
 public final class Instruments {
 
-    private static final VersionedRegistry<Instrument> REGISTRY = new VersionedRegistry<>(
-            "instrument", "item/item_instrument_mappings");
+    private static final VersionedRegistry<Instrument> REGISTRY = new VersionedRegistry<>("instrument");
 
     private Instruments() {
     }
 
+    @ApiStatus.Internal
     public static Instrument define(String key, Sound sound) {
         // vanilla defaults for goat horns
         return define(key, sound, 20 * 7, 256f);

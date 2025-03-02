@@ -298,7 +298,8 @@ public class WrapperPlayServerRespawn extends PacketWrapper<WrapperPlayServerRes
     }
 
     public DimensionType getDimensionType() {
-        IRegistry<DimensionType> registry = this.getRegistryHolder().getRegistryOr(DimensionTypes.getRegistry());
+        IRegistry<DimensionType> registry = this.getRegistryHolder().getRegistryOr(
+                DimensionTypes.getRegistry(), this.serverVersion.toClientVersion());
         return this.dimensionTypeRef.resolve(registry, this.serverVersion.toClientVersion());
     }
 

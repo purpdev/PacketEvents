@@ -18,39 +18,46 @@
 
 package com.github.retrooper.packetevents.protocol.entity.data;
 
-import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
+import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class EntityDataType<T> {
-    private final String name;
-    private final int[] ids;
-    private final Function<PacketWrapper<?>, T> dataDeserializer;
-    private final BiConsumer<PacketWrapper<?>, Object> dataSerializer;
+public class EntityDataType<T> extends AbstractMappedEntity {
 
-    public EntityDataType(String name, int[] ids, Function<PacketWrapper<?>, T> dataDeserializer, BiConsumer<PacketWrapper<?>, Object> dataSerializer) {
-        this.name = name;
-        this.ids = ids;
-        this.dataDeserializer = dataDeserializer;
-        this.dataSerializer = dataSerializer;
+    private final PacketWrapper.Reader<? extends T> reader;
+    private final PacketWrapper.Writer<T> writer;
+
+    @ApiStatus.Internal
+    public EntityDataType(
+            @Nullable TypesBuilderData data,
+            PacketWrapper.Reader<? extends T> reader,
+            PacketWrapper.Writer<T> writer
+    ) {
+        super(data);
+        this.reader = reader;
+        this.writer = writer;
     }
 
-    public String getName() {
-        return name;
+    public T read(PacketWrapper<?> wrapper) {
+        return this.reader.apply(wrapper);
     }
 
-    public int getId(ClientVersion version) {
-        int index = EntityDataTypes.TYPES_BUILDER.getDataIndex(version);
-        return ids[index];
+    public void write(PacketWrapper<?> wrapper, T serializer) {
+        this.writer.accept(wrapper, serializer);
     }
 
+    @Deprecated
     public Function<PacketWrapper<?>, T> getDataDeserializer() {
-        return dataDeserializer;
+        return this.reader::apply;
     }
 
-    public BiConsumer<PacketWrapper<?>, Object> getDataSerializer() {
-        return dataSerializer;
+    @Deprecated
+    public BiConsumer<PacketWrapper<?>, T> getDataSerializer() {
+        return this.writer;
     }
 }

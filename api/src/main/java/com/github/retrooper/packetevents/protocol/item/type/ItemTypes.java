@@ -18,12 +18,13 @@
 
 package com.github.retrooper.packetevents.protocol.item.type;
 
+import com.github.retrooper.packetevents.netty.buffer.ByteBufHelper;
 import com.github.retrooper.packetevents.netty.buffer.UnpooledByteBufAllocationHelper;
 import com.github.retrooper.packetevents.protocol.component.ComponentType;
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
 import com.github.retrooper.packetevents.protocol.component.StaticComponentMap;
 import com.github.retrooper.packetevents.protocol.nbt.NBT;
-import com.github.retrooper.packetevents.protocol.nbt.NBTString;
+import com.github.retrooper.packetevents.protocol.nbt.NBTByteArray;
 import com.github.retrooper.packetevents.protocol.nbt.serializer.SequentialNBTReader;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.states.type.StateType;
@@ -32,11 +33,11 @@ import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.MappingHelper;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -46,10 +47,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class ItemTypes {
+public final class ItemTypes {
 
-    private static final VersionedRegistry<ItemType> REGISTRY = new VersionedRegistry<>(
-            "item", "item/item_type_mappings");
+    private static final VersionedRegistry<ItemType> REGISTRY = new VersionedRegistry<>("item");
     private static final Map<StateType, ItemType> HELD_TO_PLACED_MAP = new HashMap<>();
 
     // <editor-fold desc="item type definitions" defaultstate="collapsed">
@@ -1504,6 +1504,9 @@ public class ItemTypes {
 
     // </editor-fold>
 
+    private ItemTypes() {
+    }
+
     @SuppressWarnings("unchecked")
     private static StaticComponentMap.Builder parseComponents(
             ClientVersion version,
@@ -1514,51 +1517,72 @@ public class ItemTypes {
         if (base != null) {
             components.setAll(base);
         }
+        // TODO release buffer helper
+        // allocate a buffer once and use it for parsing everything
+        Object byteBuf = UnpooledByteBufAllocationHelper.buffer();
+        PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf, version.toServerVersion());
+
         for (Map.Entry<String, NBT> entry : nbt) {
             ComponentType<?> compType = ComponentTypes.getByName(entry.getKey());
             if (compType == null) {
                 continue;
             }
-            byte[] encodedValue = Base64.getDecoder().decode(
-                    ((NBTString) entry.getValue()).getValue());
-            Object byteBuf = UnpooledByteBufAllocationHelper.wrappedBuffer(encodedValue);
-            PacketWrapper<?> wrapper = PacketWrapper.createUniversalPacketWrapper(byteBuf);
-            wrapper.setClientVersion(version);
-            wrapper.setServerVersion(version.toServerVersion());
 
+            // reset to start of buffer
+            ByteBufHelper.resetReaderIndex(byteBuf);
+
+            // empty values are serialized as a single byte (smaller than an empty byte array),
+            // so just parse byte array tag values
+            if (entry.getValue() instanceof NBTByteArray) {
+                byte[] bytes = ((NBTByteArray) entry.getValue()).getValue();
+                // write bytes at beginning of buffer
+                ByteBufHelper.resetWriterIndex(byteBuf);
+                ByteBufHelper.writeBytes(byteBuf, bytes);
+            }
+
+            // read from shared buffer
             Object compValue = compType.read(wrapper);
             components.set((ComponentType<Object>) compType, compValue);
         }
         return components;
     }
 
-    static {
-        try (SequentialNBTReader.Compound compound = MappingHelper.decompress("mappings/item/item_base_components")) {
+    private static void parseAllComponents(ClientVersion version) {
+        String path = "mappings/item_base_components/" + version.name();
+        try (SequentialNBTReader.Compound compound = MappingHelper.decompress(path)) {
             compound.skipOne(); // skip version
-            for (Map.Entry<String, NBT> entry : compound) {
-                ClientVersion version = ClientVersion.valueOf(entry.getKey());
-                SequentialNBTReader.Compound items = (SequentialNBTReader.Compound) entry.getValue();
-                StaticComponentMap defaults = parseComponents(
-                        version, null, (SequentialNBTReader.Compound) items.next().getValue()).build();
+            SequentialNBTReader.Compound items = (SequentialNBTReader.Compound) compound.next().getValue();
+            StaticComponentMap defaults = parseComponents(
+                    version, null, (SequentialNBTReader.Compound) items.next().getValue()).build();
 
-                for (Map.Entry<String, NBT> item : items) {
-                    ItemType itemType = REGISTRY.getByName(new ResourceLocation(item.getKey()));
-                    if (!(itemType instanceof StaticItemType)) {
-                        ((SequentialNBTReader.Compound) item.getValue()).skip();
-                        continue; // somehow unknown item
-                    }
-                    StaticComponentMap.Builder components = parseComponents(version, defaults,
-                            (SequentialNBTReader.Compound) item.getValue());
-                    ((StaticItemType) itemType).setComponents(version, components.build());
+            for (Map.Entry<String, NBT> item : items) {
+                ItemType itemType = REGISTRY.getByName(new ResourceLocation(item.getKey()));
+                if (!(itemType instanceof StaticItemType)) {
+                    ((SequentialNBTReader.Compound) item.getValue()).skip();
+                    continue; // somehow unknown item
                 }
-                for (ItemType type : REGISTRY.getEntries()) {
-                    if (type instanceof StaticItemType && !((StaticItemType) type).hasComponents(version)) {
-                        ((StaticItemType) type).setComponents(version, defaults);
-                    }
+                StaticComponentMap.Builder components = parseComponents(version, defaults,
+                        (SequentialNBTReader.Compound) item.getValue());
+                ((StaticItemType) itemType).setComponents(version, components.build());
+            }
+            for (ItemType type : REGISTRY.getEntries()) {
+                if (type instanceof StaticItemType && !((StaticItemType) type).hasComponents(version)) {
+                    ((StaticItemType) type).setComponents(version, defaults);
                 }
             }
         } catch (IOException exception) {
             throw new RuntimeException("Error while parsing item base component data", exception);
+        }
+    }
+
+    static {
+        // all versions where base components were changed TODO UPDATE
+        ClientVersion[] versions = new ClientVersion[]{
+                ClientVersion.V_1_20_5, ClientVersion.V_1_21, ClientVersion.V_1_21_2,
+                ClientVersion.V_1_21_4,
+        };
+        for (ClientVersion version : versions) {
+            parseAllComponents(version);
         }
         for (ItemType type : REGISTRY.getEntries()) {
             if (type instanceof StaticItemType) {
@@ -1579,6 +1603,7 @@ public class ItemTypes {
         return new Builder(key.toLowerCase());
     }
 
+    @ApiStatus.Internal
     public static ItemType define(int maxAmount, String key, ItemType craftRemainder, StateType placedType, int maxDurability, List<ItemAttribute> attributesArr) {
         // Creates an immutable set
         Set<ItemAttribute> attributes = attributesArr == null ? Collections.emptySet() :

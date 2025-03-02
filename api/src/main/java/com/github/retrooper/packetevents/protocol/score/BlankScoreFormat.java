@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.protocol.score;
 
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import net.kyori.adventure.text.Component;
 
 public final class BlankScoreFormat implements ScoreFormat {
@@ -27,13 +28,21 @@ public final class BlankScoreFormat implements ScoreFormat {
     private BlankScoreFormat() {
     }
 
+    public static BlankScoreFormat read(PacketWrapper<?> wrapper) {
+        return INSTANCE;
+    }
+
+    public static void write(PacketWrapper<?> wrapper, BlankScoreFormat format) {
+        // NO-OP
+    }
+
     @Override
     public Component format(int score) {
         return Component.empty();
     }
 
     @Override
-    public ScoreFormatType getType() {
+    public ScoreFormatType<BlankScoreFormat> getType() {
         return ScoreFormatTypes.BLANK;
     }
 }

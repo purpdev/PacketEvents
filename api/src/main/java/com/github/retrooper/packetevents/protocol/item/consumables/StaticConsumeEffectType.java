@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper.Reader;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper.Writer;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 public class StaticConsumeEffectType<T extends ConsumeEffect<?>> extends AbstractMappedEntity implements ConsumeEffectType<T> {
@@ -30,6 +31,7 @@ public class StaticConsumeEffectType<T extends ConsumeEffect<?>> extends Abstrac
     private final Reader<T> reader;
     private final Writer<T> writer;
 
+    @ApiStatus.Internal
     public StaticConsumeEffectType(
             @Nullable TypesBuilderData data,
             Reader<T> reader,

@@ -58,8 +58,10 @@ public class TypesBuilder {
     }
 
     public void load() {
-        try (final SequentialNBTReader.Compound compound = MappingHelper.decompress("mappings/" + mapPath)) {
-            compound.skipOne(); // skip version tag for now
+        try (final SequentialNBTReader.Compound rootCompound = MappingHelper.decompress("mappings/" + this.mapPath)) {
+            rootCompound.skipOne(); // skip version tag for now
+            SequentialNBTReader.Compound compound = (SequentialNBTReader.Compound) rootCompound.next().getValue();
+
             int length = ((NBTNumber) compound.next().getValue()).getAsInt(); // Second tag is the length
             final SequentialNBTReader.Compound entries = (SequentialNBTReader.Compound) compound.next().getValue(); // Third tag are the entries
 
@@ -157,6 +159,11 @@ public class TypesBuilder {
         return versionMapper.getIndex(rawVersion);
     }
 
+    boolean isMappingDataLoaded() {
+        return this.entries != null;
+    }
+
+    @ApiStatus.Internal
     public void unloadFileMappings() {
         entries.clear();
         entries = null;

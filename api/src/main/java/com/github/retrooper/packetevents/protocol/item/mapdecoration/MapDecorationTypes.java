@@ -21,21 +21,26 @@ package com.github.retrooper.packetevents.protocol.item.mapdecoration;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
 
 import static com.github.retrooper.packetevents.resources.ResourceLocation.minecraft;
 
-public class MapDecorationTypes {
+public final class MapDecorationTypes {
 
-    private static final VersionedRegistry<MapDecorationType> REGISTRY =
-            new VersionedRegistry<>("map_decoration_type", "item/item_map_decoration_type_mappings");
+    private static final VersionedRegistry<MapDecorationType> REGISTRY = new VersionedRegistry<>("map_decoration_type");
 
+    private MapDecorationTypes() {
+    }
+
+    @ApiStatus.Internal
     public static MapDecorationType define(String key, boolean showOnItemFrame, boolean trackCount) {
         return define(key, minecraft(key), showOnItemFrame, trackCount);
     }
 
+    @ApiStatus.Internal
     public static MapDecorationType define(
             String key, ResourceLocation assetId,
             boolean showOnItemFrame, boolean trackCount
@@ -44,6 +49,7 @@ public class MapDecorationTypes {
                 -1, false, trackCount);
     }
 
+    @ApiStatus.Internal
     public static MapDecorationType define(
             String key,
             boolean showOnItemFrame, int mapColor,
@@ -53,55 +59,18 @@ public class MapDecorationTypes {
                 showOnItemFrame, mapColor, explorationMapElement, trackCount);
     }
 
+    @ApiStatus.Internal
     public static MapDecorationType define(
             String key, ResourceLocation assetId,
             boolean showOnItemFrame, int mapColor,
             boolean explorationMapElement, boolean trackCount
     ) {
-        return REGISTRY.define(key, data -> new MapDecorationType() {
-            @Override
-            public ResourceLocation getAssetId() {
-                return assetId;
-            }
+        return REGISTRY.define(key, data -> new StaticMapDecorationType(data,
+                assetId, showOnItemFrame, mapColor, explorationMapElement, trackCount));
+    }
 
-            @Override
-            public boolean isShowOnItemFrame() {
-                return showOnItemFrame;
-            }
-
-            @Override
-            public int getMapColor() {
-                return mapColor;
-            }
-
-            @Override
-            public boolean isExplorationMapElement() {
-                return explorationMapElement;
-            }
-
-            @Override
-            public boolean isTrackCount() {
-                return trackCount;
-            }
-
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
-
-            @Override
-            public int getId(ClientVersion version) {
-                return data.getId(version);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof MapDecorationType) {
-                    return this.getName().equals(((MapDecorationType) obj).getName());
-                }
-                return false;
-            }
-        });
+    public static VersionedRegistry<MapDecorationType> getRegistry() {
+        return REGISTRY;
     }
 
     public static @Nullable MapDecorationType getByName(String name) {

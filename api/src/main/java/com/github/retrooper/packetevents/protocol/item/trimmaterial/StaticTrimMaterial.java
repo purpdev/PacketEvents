@@ -23,6 +23,7 @@ import com.github.retrooper.packetevents.protocol.item.type.ItemType;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import net.kyori.adventure.text.Component;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Map;
@@ -43,6 +44,7 @@ public class StaticTrimMaterial extends AbstractMappedEntity implements TrimMate
         this(null, assetName, ingredient, FALLBACK_ITEM_MODEL_INDEX, overrideArmorMaterials, description);
     }
 
+    @ApiStatus.Internal
     public StaticTrimMaterial(
             @Nullable TypesBuilderData data,
             String assetName, ItemType ingredient,
@@ -58,6 +60,7 @@ public class StaticTrimMaterial extends AbstractMappedEntity implements TrimMate
         this(null, assetName, ingredient, itemModelIndex, overrideArmorMaterials, description);
     }
 
+    @ApiStatus.Internal
     public StaticTrimMaterial(
             @Nullable TypesBuilderData data,
             String assetName, ItemType ingredient, float itemModelIndex,

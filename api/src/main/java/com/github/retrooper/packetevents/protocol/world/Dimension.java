@@ -101,15 +101,15 @@ public class Dimension {
 
     public com.github.retrooper.packetevents.protocol.world.dimension.DimensionType asDimensionType(
             @Nullable User user, @Nullable ClientVersion version) {
-        IRegistry<com.github.retrooper.packetevents.protocol.world.dimension.DimensionType> registry = user != null
-                ? user.getRegistryOr(DimensionTypes.getRegistry()) : DimensionTypes.getRegistry();
-        String dimName = this.getDimensionName();
-        if (!dimName.isEmpty()) {
-            return registry.getByName(new ResourceLocation(dimName));
-        }
         if (version == null) {
             version = user != null && PacketEvents.getAPI().getInjector().isProxy() ? user.getClientVersion() :
                     PacketEvents.getAPI().getServerManager().getVersion().toClientVersion();
+        }
+        IRegistry<com.github.retrooper.packetevents.protocol.world.dimension.DimensionType> registry = user != null
+                ? user.getRegistryOr(DimensionTypes.getRegistry(), version) : DimensionTypes.getRegistry();
+        String dimName = this.getDimensionName();
+        if (!dimName.isEmpty()) {
+            return registry.getByName(new ResourceLocation(dimName));
         }
         return registry.getById(version, this.id);
     }

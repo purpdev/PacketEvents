@@ -48,7 +48,7 @@ public class WrapperPlayServerSpawnPosition extends PacketWrapper<WrapperPlaySer
     @Override
     public void read() {
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_8)) {
-            this.position = new Vector3i(readLong());
+            this.position = new Vector3i(readLong(), this.serverVersion);
         } else {
             int x = readInt();
             int y = readShort();
@@ -63,7 +63,7 @@ public class WrapperPlayServerSpawnPosition extends PacketWrapper<WrapperPlaySer
     @Override
     public void write() {
         if (serverVersion.isNewerThanOrEquals(ServerVersion.V_1_8)) {
-            long positionVector = this.position.getSerializedPosition();
+            long positionVector = this.position.getSerializedPosition(this.serverVersion);
             writeLong(positionVector);
         } else {
             writeInt(this.position.x);

@@ -19,65 +19,42 @@
 package com.github.retrooper.packetevents.protocol.potion;
 
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
-import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Potions are all possible brewable drinks.<br>
  * Some examples are the potion of leaping, the extended potion of leaping
  * or the strong potion of leaping.
  * <p>
- * For individual potion effects, see {@link PotionTypes}.
+ * For individual potion effects (also called "mob effects"), see {@link PotionTypes}.
  */
-public class Potions {
+public final class Potions {
 
-    private static final Map<String, Potion> POTION_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, Potion>> POTION_ID_MAP = new HashMap<>();
+    private static final VersionedRegistry<Potion> REGISTRY = new VersionedRegistry<>("potion");
 
-    // initial mappings based upon https://minecraft.wiki/w/Potion#History
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("item/item_potion_mappings");
+    private Potions() {
+    }
 
-    public static Potion define(String key) {
-        TypesBuilderData data = TYPES_BUILDER.define(key);
-        Potion potion = new Potion() {
-            @Override
-            public ResourceLocation getName() {
-                return data.getName();
-            }
+    public static VersionedRegistry<Potion> getRegistry() {
+        return REGISTRY;
+    }
 
-            @Override
-            public int getId(ClientVersion version) {
-                return MappingHelper.getId(version, TYPES_BUILDER, data);
-            }
-
-            @Override
-            public boolean equals(Object obj) {
-                if (obj instanceof PotionType) {
-                    return getName().equals(((PotionType) obj).getName());
-                }
-                return false;
-            }
-        };
-        MappingHelper.registerMapping(TYPES_BUILDER, POTION_MAP, POTION_ID_MAP, potion);
-        return potion;
+    @ApiStatus.Internal
+    public static Potion define(String name) {
+        return REGISTRY.define(name, StaticPotion::new);
     }
 
     public static @Nullable Potion getByName(String name) {
-        return POTION_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
     public static @Nullable Potion getById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, Potion> idMap = POTION_ID_MAP.get((byte) index);
-        return idMap.get(id);
+        return REGISTRY.getById(version, id);
     }
 
+    // initial mappings based upon https://minecraft.wiki/w/Potion#History
     public static final Potion WATER = define("water");
     public static final Potion MUNDANE = define("mundane");
     public static final Potion THICK = define("thick");
@@ -126,6 +103,6 @@ public class Potions {
     public static final Potion INFESTED = define("infested");
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
     }
 }

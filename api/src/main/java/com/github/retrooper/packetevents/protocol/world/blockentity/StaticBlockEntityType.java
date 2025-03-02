@@ -20,10 +20,13 @@ package com.github.retrooper.packetevents.protocol.world.blockentity;
 
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Nullable;
 
 public class StaticBlockEntityType extends AbstractMappedEntity implements BlockEntityType {
 
-    StaticBlockEntityType(TypesBuilderData data) {
+    @ApiStatus.Internal
+    public StaticBlockEntityType(@Nullable TypesBuilderData data) {
         super(data);
     }
 }

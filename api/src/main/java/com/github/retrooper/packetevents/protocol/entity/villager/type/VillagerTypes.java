@@ -18,58 +18,68 @@
 
 package com.github.retrooper.packetevents.protocol.entity.villager.type;
 
-import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.PacketEvents;
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
+import com.github.retrooper.packetevents.protocol.player.ClientVersion;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import org.jetbrains.annotations.ApiStatus;
 
 import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
-public class VillagerTypes {
-    private static final Map<String, VillagerType> VILLAGER_TYPE_MAP = new HashMap<>();
-    private static final Map<Byte, VillagerType> VILLAGER_TYPE_ID_MAP = new HashMap<>();
+public final class VillagerTypes {
 
+    private static final VersionedRegistry<VillagerType> REGISTRY = new VersionedRegistry<>("villager_type");
 
+    private VillagerTypes() {
+    }
+
+    public static VersionedRegistry<VillagerType> getRegistry() {
+        return REGISTRY;
+    }
+
+    @Deprecated
+    @ApiStatus.Internal
     public static VillagerType define(int id, String name) {
-        ResourceLocation location = new ResourceLocation(name);
-        VillagerType type = new VillagerType() {
-            @Override
-            public ResourceLocation getName() {
-                return location;
-            }
-
-            @Override
-            public int getId() {
-                return id;
-            }
-        };
-        VILLAGER_TYPE_MAP.put(type.getName().toString(), type);
-        VILLAGER_TYPE_ID_MAP.put((byte)type.getId(), type);
-        return type;
+        return define(name);
     }
 
+    @ApiStatus.Internal
+    public static VillagerType define(String name) {
+        return REGISTRY.define(name, StaticVillagerType::new);
+    }
+
+    @Deprecated
     public static VillagerType getById(int id) {
-        return VILLAGER_TYPE_ID_MAP.get((byte)id);
+        ServerVersion version = PacketEvents.getAPI().getServerManager().getVersion();
+        return getById(version.toClientVersion(), id);
     }
 
+    public static VillagerType getById(ClientVersion version, int id) {
+        return REGISTRY.getById(version, id);
+    }
 
     public static VillagerType getByName(String name) {
-        return VILLAGER_TYPE_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
-    public static final VillagerType DESERT = define(0, "minecraft:desert");
-    public static final VillagerType JUNGLE = define(1, "minecraft:jungle");
-    public static final VillagerType PLAINS = define(2, "minecraft:plains");
-    public static final VillagerType SAVANNA = define(3, "minecraft:savanna");
-    public static final VillagerType SNOW = define(4, "minecraft:snow");
-    public static final VillagerType SWAMP = define(5, "minecraft:swamp");
-    public static final VillagerType TAIGA = define(6, "minecraft:taiga");
+    public static final VillagerType DESERT = define("desert");
+    public static final VillagerType JUNGLE = define("jungle");
+    public static final VillagerType PLAINS = define("plains");
+    public static final VillagerType SAVANNA = define("savanna");
+    public static final VillagerType SNOW = define("snow");
+    public static final VillagerType SWAMP = define("swamp");
+    public static final VillagerType TAIGA = define("taiga");
 
     /**
      * Returns an immutable view of the villager types.
+     *
      * @return Villager Types
      */
     public static Collection<VillagerType> values() {
-        return Collections.unmodifiableCollection(VILLAGER_TYPE_MAP.values());
+        return REGISTRY.getEntries();
+    }
+
+    static {
+        REGISTRY.unloadMappings();
     }
 }

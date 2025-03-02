@@ -19,58 +19,54 @@
 package com.github.retrooper.packetevents.protocol.chat;
 
 import com.github.retrooper.packetevents.manager.server.ServerVersion;
-import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
-import com.github.retrooper.packetevents.util.mappings.MappingHelper;
-import com.github.retrooper.packetevents.util.mappings.TypesBuilder;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 
-public class Parsers {
+public final class Parsers {
 
-    private static final List<Parser> ALL_PARSERS = new ArrayList<>(); // support for old methods
-    private static final Map<String, Parser> PARSER_MAP = new HashMap<>();
-    private static final Map<Byte, Map<Integer, Parser>> PARSER_ID_MAP = new HashMap<>();
-    private static final TypesBuilder TYPES_BUILDER = new TypesBuilder("command/argument_parser_mappings");
+    private static final VersionedRegistry<Parser> REGISTRY = new VersionedRegistry<>("argument_type");
 
+    private Parsers() {
+    }
+
+    @ApiStatus.Internal
     public static Parser define(String key) {
         return define(key, null, null);
     }
 
+    @ApiStatus.Internal
     public static Parser define(String key, @Nullable Reader reader, @Nullable Writer writer) {
-        TypesBuilderData data = TYPES_BUILDER.define(key);
-        Parser parser = new Parser(data, reader, writer);
-
-        ALL_PARSERS.add(parser);
-        MappingHelper.registerMapping(TYPES_BUILDER, PARSER_MAP, PARSER_ID_MAP, parser);
-        return parser;
+        return REGISTRY.define(key, data -> new Parser(data, reader, writer));
     }
 
-    // with key
     public static Parser getByName(String name) {
-        return PARSER_MAP.get(name);
+        return REGISTRY.getByName(name);
     }
 
     public static Parser getById(ClientVersion version, int id) {
-        int index = TYPES_BUILDER.getDataIndex(version);
-        Map<Integer, Parser> idMap = PARSER_ID_MAP.get((byte) index);
-        return idMap.get(id);
+        return REGISTRY.getById(version, id);
     }
 
     public static List<Parser> getParsers() {
-        return Collections.unmodifiableList(ALL_PARSERS);
+        return new ArrayList<>(REGISTRY.getEntries());
+    }
+
+    public static VersionedRegistry<Parser> getRegistry() {
+        return REGISTRY;
     }
 
     public static final Parser BRIGADIER_BOOL = define("brigadier:bool", null, null);
@@ -215,7 +211,7 @@ public class Parsers {
     public static final Parser UUID = define("uuid", null, null);
 
     static {
-        TYPES_BUILDER.unloadFileMappings();
+        REGISTRY.unloadMappings();
     }
 
     @FunctionalInterface
@@ -224,9 +220,8 @@ public class Parsers {
     @FunctionalInterface
     public interface Writer extends BiConsumer<PacketWrapper<?>, List<Object>> {}
 
-    public static final class Parser implements MappedEntity {
+    public static final class Parser extends AbstractMappedEntity {
 
-        private final TypesBuilderData data;
         private final Reader reader;
         private final Writer writer;
 
@@ -239,8 +234,9 @@ public class Parsers {
             );
         }
 
-        private Parser(TypesBuilderData data, @Nullable Reader reader, Writer writer) {
-            this.data = data;
+        @ApiStatus.Internal
+        public Parser(@Nullable TypesBuilderData data, @Nullable Reader reader, @Nullable Writer writer) {
+            super(data);
             this.reader = reader;
             this.writer = writer;
         }
@@ -256,25 +252,6 @@ public class Parsers {
             if (this.writer != null) {
                 this.writer.accept(wrapper, properties);
             }
-        }
-
-        @Override
-        public ResourceLocation getName() {
-            return this.data.getName();
-        }
-
-        @Override
-        public int getId(ClientVersion version) {
-            int index = TYPES_BUILDER.getDataIndex(version);
-            return this.data.getData()[index];
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj instanceof Parser) {
-                return this.getName().equals(((Parser) obj).getName());
-            }
-            return false;
         }
     }
 }

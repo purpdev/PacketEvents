@@ -26,8 +26,7 @@ import org.jetbrains.annotations.Nullable;
 
 public final class Attributes {
 
-    private static final VersionedRegistry<Attribute> REGISTRY = new VersionedRegistry<>(
-            "attribute", "attribute/attribute_mappings");
+    private static final VersionedRegistry<Attribute> REGISTRY = new VersionedRegistry<>("attribute");
 
     private Attributes() {
     }

@@ -32,8 +32,7 @@ import org.jetbrains.annotations.Nullable;
  */
 public final class EnchantEffectComponentTypes {
 
-    private static final VersionedRegistry<ComponentType<?>> REGISTRY = new VersionedRegistry<>(
-            "enchantment_effect_component_type", "enchantment/effect_component_type");
+    private static final VersionedRegistry<ComponentType<?>> REGISTRY = new VersionedRegistry<>("enchantment_effect_component_type");
 
     private EnchantEffectComponentTypes() {
     }
