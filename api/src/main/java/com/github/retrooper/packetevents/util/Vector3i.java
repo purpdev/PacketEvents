@@ -253,6 +253,10 @@ public class Vector3i {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
 
+    public String toUnlabledString() {
+        return x + ", " + y + ", " + z;
+    }
+
     public static Vector3i zero() {
         return new Vector3i();
     }

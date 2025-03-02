@@ -267,6 +267,10 @@ public class Vector3d {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
 
+    public String toUnlabledString() {
+        return x + ", " + y + ", " + z;
+    }
+
     public static Vector3d zero() {
         return new Vector3d();
     }

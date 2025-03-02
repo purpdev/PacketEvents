@@ -202,6 +202,10 @@ public class Vector3f {
         return "X: " + x + ", Y: " + y + ", Z: " + z;
     }
 
+    public String toUnlabledString() {
+        return x + ", " + y + ", " + z;
+    }
+
     public static Vector3f zero() {
         return new Vector3f();
     }
