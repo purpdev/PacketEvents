@@ -412,14 +412,15 @@ public class WrappedBlockState {
                     StateType type = StateTypes.getByName(typeString);
                     if (type == null) {
                         // Let's update the state type to a modern version
+                        String updatedString = typeString;
                         for (Map.Entry<String, String> stringEntry : STRING_UPDATER.entrySet()) {
-                            typeString = typeString.replace(stringEntry.getKey(), stringEntry.getValue());
+                            updatedString = typeString.replace(stringEntry.getKey(), stringEntry.getValue());
                         }
 
-                        type = StateTypes.getByName(typeString);
+                        type = StateTypes.getByName(updatedString);
 
                         if (type == null) {
-                            PacketEvents.getAPI().getLogger().warning("Unknown block type: " + typeString);
+                            PacketEvents.getAPI().getLogger().warning("Unknown block type: " + typeString + "/" + updatedString);
                             element.skip();
                             continue;
                         }
