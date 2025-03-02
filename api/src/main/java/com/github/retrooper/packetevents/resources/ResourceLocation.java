@@ -18,6 +18,9 @@
 
 package com.github.retrooper.packetevents.resources;
 
+import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.Nullable;
+
 import java.util.Objects;
 
 public class ResourceLocation {
@@ -45,7 +48,11 @@ public class ResourceLocation {
         this.key = array[1];
     }
 
-    public static String normString(String location) {
+    @Contract("null -> null; !null -> !null")
+    public static @Nullable String normString(@Nullable String location) {
+        if (location == null) {
+            return null;
+        }
         int index = location.indexOf(':');
         if (index > 0) {
             return location; // namespace already set

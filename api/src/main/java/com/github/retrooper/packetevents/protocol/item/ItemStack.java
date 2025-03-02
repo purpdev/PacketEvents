@@ -351,10 +351,12 @@ public class ItemStack {
                     EnchantmentType type = getEnchantmentTypeFromTag(compound, version);
 
                     if (type != null) {
-                        NBTShort levelTag = compound.getTagOfTypeOrNull("lvl", NBTShort.class);
-                        int level = levelTag.getAsInt();
-                        Enchantment enchantment = Enchantment.builder().type(type).level(level).build();
-                        enchantments.add(enchantment);
+                        NBTNumber levelTag = compound.getNumberTagOrNull("lvl");
+                        if (levelTag != null) {
+                            int level = levelTag.getAsInt();
+                            Enchantment enchantment = Enchantment.builder().type(type).level(level).build();
+                            enchantments.add(enchantment);
+                        }
                     }
                 }
                 return enchantments;
@@ -391,9 +393,9 @@ public class ItemStack {
             if (nbtList != null) {
                 for (NBTCompound base : nbtList.getTags()) {
                     EnchantmentType type = getEnchantmentTypeFromTag(base, version);
-                    if (enchantment == type) {
-                        NBTShort nbtShort = base.getTagOfTypeOrNull("lvl", NBTShort.class);
-                        return nbtShort != null ? nbtShort.getAsInt() : 0;
+                    if (Objects.equals(type, enchantment)) {
+                        NBTNumber nbtLevel = base.getNumberTagOrNull("lvl");
+                        return nbtLevel != null ? nbtLevel.getAsInt() : 0;
                     }
                 }
             }
