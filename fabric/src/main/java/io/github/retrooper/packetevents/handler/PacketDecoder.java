@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.protocol.PacketSide;
 import com.github.retrooper.packetevents.protocol.player.User;
 import com.github.retrooper.packetevents.util.PacketEventsImplHelper;
 import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
 import net.minecraft.world.entity.player.Player;
@@ -29,7 +30,7 @@ import org.jetbrains.annotations.ApiStatus;
 
 import java.util.List;
 
-@ApiStatus.Internal
+@ApiStatus.Internal @ChannelHandler.Sharable
 public class PacketDecoder extends MessageToMessageDecoder<ByteBuf> {
 
     private final PacketSide side;

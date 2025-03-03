@@ -34,5 +34,7 @@ include("bungeecord")
 include("velocity")
 include("sponge")
 include("fabric")
+include(":fabric:mc1201")
+include(":fabric:mc1211")
 // Patch modules
 include(":patch:adventure-text-serializer-gson")

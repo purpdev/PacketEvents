@@ -3,13 +3,6 @@
   "minVersion": "0.8",
   "package": "io.github.retrooper.packetevents.mixin",
   "compatibilityLevel": "JAVA_17",
-  "mixins": [
-    "ConnectionMixin",
-    "PlayerListMixin"
-  ],
-  "client": [
-    "ClientPacketListenerMixin"
-  ],
   "injectors": {
     "defaultRequire": 1
   }
