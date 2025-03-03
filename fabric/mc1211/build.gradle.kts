@@ -38,6 +38,13 @@ tasks {
             options.release = targetJavaVersion
         }
     }
+
+    processResources {
+        inputs.property("version", project.version)
+        filesMatching(listOf("fabric.mod.json")) {
+            expand("version" to project.version)
+        }
+    }
 }
 
 loom {

@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "id": "packetevents-mc1201",
+  "id": "packetevents-mc1211",
   "version": "${version}",
-  "name": "PacketEvents for 1.20.1",
+  "name": "PacketEvents for 1.21.1",
   "description": "",
   "authors": [
     "retrooper"
@@ -12,16 +12,16 @@
   "environment": "*",
   "entrypoints": {
     "pePreLaunchClient": [
-      "io.github.retrooper.packetevents.PacketEventsClientMod"
+      "io.github.retrooper.packetevents.mc1211.PacketEventsClientMod"
     ],
     "pePreLaunchServer": [
-      "io.github.retrooper.packetevents.PacketEventsServerMod"
+      "io.github.retrooper.packetevents.mc1211.PacketEventsServerMod"
     ],
     "preLaunch": [
-      "io.github.retrooper.packetevents.PacketEventsMod"
+      "io.github.retrooper.packetevents.mc1211.PacketEventsMod"
     ],
     "main": [
-      "io.github.retrooper.packetevents.PacketEventsMod"
+      "io.github.retrooper.packetevents.mc1211.PacketEventsMod"
     ]
   },
   "mixins": [

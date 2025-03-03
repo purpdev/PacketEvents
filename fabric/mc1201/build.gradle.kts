@@ -38,6 +38,13 @@ tasks {
             options.release = targetJavaVersion
         }
     }
+
+    processResources {
+        inputs.property("version", project.version)
+        filesMatching(listOf("fabric.mod.json")) {
+            expand("version" to project.version)
+        }
+    }
 }
 
 loom {
@@ -51,7 +58,6 @@ loom {
     accessWidenerPath = sourceSets.main.get().resources.srcDirs.single()
         .resolve("${rootProject.name}.accesswidener")
 }
-
 
 tasks.compileJava {
     options.release.set(17)
