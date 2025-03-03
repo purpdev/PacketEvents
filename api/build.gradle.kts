@@ -39,6 +39,11 @@ dependencies {
     testImplementation(testlibs.slf4j)
     testImplementation(testlibs.bundles.junit)
     testImplementation(libs.netty)
+
+    // Minecraft jar input for generator
+    //compileOnly(files("C:/Users/User/Documents/newwind_source/newwind_plugins/NWNMS/libs/paper-1.21.4.jar"))
+    //compileOnly("com.mojang:datafixerupper:8.0.16")
+    //compileOnly("io.papermc.paper:paper-api:1.21.4-R0.1-SNAPSHOT")
 }
 
 mappingCompression {
