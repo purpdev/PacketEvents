@@ -16,26 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package io.github.retrooper.packetevents;
+package io.github.retrooper.packetevents.mc1201;
 
-import com.github.retrooper.packetevents.PacketEvents;
+import io.github.retrooper.packetevents.LazyHolder;
 import io.github.retrooper.packetevents.factory.fabric.FabricPacketEventsAPI;
-import io.github.retrooper.packetevents.impl.netty.manager.player.PlayerManagerAbstract;
-import java.util.function.Supplier;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.loader.api.entrypoint.PreLaunchEntrypoint;
+import io.github.retrooper.packetevents.mc1201.factory.fabric.Fabric1201ServerPlayerManager;
 
-public class PacketEventsServerMod implements PreLaunchEntrypoint {
-
-    public static FabricPacketEventsAPI constructApi(String modid) {
-        return new FabricPacketEventsAPI(modid, EnvType.SERVER);
-    }
+public class PacketEventsServerMod extends io.github.retrooper.packetevents.PacketEventsServerMod {
 
     @Override
-    public void onPreLaunch() {}
-
-    public void preLaunch() {
-        PacketEvents.setAPI(constructApi(PacketEventsMod.MOD_ID));
-        PacketEvents.getAPI().load();
+    public void onPreLaunch() {
+        FabricPacketEventsAPI.staticLazyPlayerManagerHolder = LazyHolder.simple(Fabric1201ServerPlayerManager::new);
+        super.preLaunch();
     }
 }

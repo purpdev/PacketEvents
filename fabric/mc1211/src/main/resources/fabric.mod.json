@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "id": "packetevents-mc1201",
+  "version": "${version}",
+  "name": "PacketEvents for 1.20.1",
+  "description": "",
+  "authors": [
+    "retrooper"
+  ],
+  "contact": {},
+  "license": "GPL-3.0",
+  "environment": "*",
+  "entrypoints": {
+    "pePreLaunchClient": [
+      "io.github.retrooper.packetevents.PacketEventsClientMod"
+    ],
+    "pePreLaunchServer": [
+      "io.github.retrooper.packetevents.PacketEventsServerMod"
+    ],
+    "preLaunch": [
+      "io.github.retrooper.packetevents.PacketEventsMod"
+    ],
+    "main": [
+      "io.github.retrooper.packetevents.PacketEventsMod"
+    ]
+  },
+  "mixins": [
+    "packetevents-mc1211.mixins.json"
+  ],
+  "accessWidener": "packetevents.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.15.11",
+    "minecraft": ">=1.21"
+  }
+}

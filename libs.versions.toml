@@ -10,7 +10,7 @@ paper = "1.20.6-R0.1-SNAPSHOT"
 bungeecord = "1.21-R0.1-SNAPSHOT"
 velocity = "3.4.0-SNAPSHOT"
 run-paper = "2.3.1"
-fabric-loom = "1.8.11"
+fabric-loom = "1.10.2"
 spongeGradle = "2.2.0"
 
 [libraries]

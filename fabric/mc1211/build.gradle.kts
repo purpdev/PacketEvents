@@ -1,5 +1,4 @@
 plugins {
-    packetevents.`library-conventions`
     alias(libs.plugins.fabric.loom)
 }
 
@@ -17,13 +16,10 @@ val parchment_mappings: String by project
 val loader_version: String by project
 
 dependencies {
-    api(libs.bundles.adventure)
-    api(project(":api", "shadow"))
-    api(project(":netty-common"))
-
-    include(libs.bundles.adventure)
-    include(project(":api", "shadow"))
-    include(project(":netty-common"))
+    compileOnly(libs.bundles.adventure)
+    compileOnly(project(":api"))
+    compileOnly(project(":netty-common"))
+    compileOnly(project(":fabric"))
 
     // To change the versions, see the gradle.properties file
     minecraft("com.mojang:minecraft:$minecraft_version")
@@ -42,37 +38,21 @@ tasks {
             options.release = targetJavaVersion
         }
     }
-
-    remapJar {
-        archiveBaseName = "${rootProject.name}-fabric"
-        archiveVersion = rootProject.ext["versionNoHash"] as String
-    }
-
-    remapSourcesJar {
-        archiveVersion = rootProject.ext["versionNoHash"] as String
-    }
 }
 
 loom {
+    splitEnvironmentSourceSets()
     mods {
         register("packetevents") {
             sourceSet(sourceSets.main.get())
+            sourceSet(sourceSets.maybeCreate("client"))
         }
     }
     accessWidenerPath = sourceSets.main.get().resources.srcDirs.single()
         .resolve("${rootProject.name}.accesswidener")
 }
 
-subprojects.forEach {
-    tasks.named("remapJar").configure {
-        dependsOn("${it.path}:remapJar")
-    }
-}
 
-tasks.remapJar.configure {
-    subprojects.forEach { subproject ->
-        subproject.tasks.matching { it.name == "remapJar" }.configureEach {
-            nestedJars.from(this)
-        }
-    }
+tasks.compileJava {
+    options.release.set(17)
 }
