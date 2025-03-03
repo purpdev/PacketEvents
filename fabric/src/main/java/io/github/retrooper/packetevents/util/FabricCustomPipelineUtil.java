@@ -32,7 +32,7 @@ import net.fabricmc.loader.api.MappingResolver;
 import net.minecraft.network.CompressionDecoder;
 
 public class FabricCustomPipelineUtil {
-    private static MethodHandle FABRIC_PACKET_DECODE_BYTEBUF;
+    private static final MethodHandle FABRIC_PACKET_DECODE_BYTEBUF;
 
     static {
         try {
@@ -77,14 +77,14 @@ public class FabricCustomPipelineUtil {
                 methodType
             );
         } catch (IllegalAccessException | NoSuchMethodException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 
-    public static List<Object> callPacketDecodeByteBuf(Object decoder, Object ctx, Object msg) throws InvocationTargetException {
+    public static List<Object> callPacketDecodeByteBuf(Object decoder, ChannelHandlerContext ctx, ByteBuf msg) throws InvocationTargetException {
         List<Object> output = new ArrayList<>(1);
         try {
-            FABRIC_PACKET_DECODE_BYTEBUF.invoke(decoder, ctx, msg, output);
+            FABRIC_PACKET_DECODE_BYTEBUF.invokeExact(decoder, ctx, msg, output);
         } catch (Throwable e) {
             e.printStackTrace();
         }
