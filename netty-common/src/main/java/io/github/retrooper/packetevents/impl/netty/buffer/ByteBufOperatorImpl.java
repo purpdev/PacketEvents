@@ -22,6 +22,7 @@ import com.github.retrooper.packetevents.netty.buffer.ByteBufOperator;
 import io.netty.buffer.ByteBuf;
 
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 public class ByteBufOperatorImpl implements ByteBufOperator {
     @Override
@@ -97,6 +98,16 @@ public class ByteBufOperatorImpl implements ByteBufOperator {
     @Override
     public long readLong(Object buffer) {
         return ((ByteBuf)buffer).readLong();
+    }
+
+    @Override
+    public int getIntLE(Object buffer, int readerIndex) {
+        return ((ByteBuf) buffer).getIntLE(readerIndex);
+    }
+
+    @Override
+    public int readVarInt(Object buffer) {
+        return FastNettyUtils.readVarInt((ByteBuf) buffer);
     }
 
     @Override

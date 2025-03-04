@@ -387,18 +387,7 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
     }
 
     public int readVarInt() {
-        int value = 0;
-        int length = 0;
-        byte currentByte;
-        do {
-            currentByte = readByte();
-            value |= (currentByte & 0x7F) << (length * 7);
-            length++;
-            if (length > 5) {
-                throw new RuntimeException("VarInt is too large. Must be smaller than 5 bytes.");
-            }
-        } while ((currentByte & 0x80) == 0x80);
-        return value;
+        return ByteBufHelper.readVarInt(this.buffer);//delegate to ByteBufHelper
     }
 
     public void writeVarInt(int value) {

@@ -19,6 +19,7 @@
 package com.github.retrooper.packetevents.netty.buffer;
 
 import java.nio.charset.Charset;
+import java.util.Objects;
 
 public interface ByteBufOperator {
     int capacity(Object buffer);
@@ -48,6 +49,9 @@ public interface ByteBufOperator {
 
     Object getBytes(Object buffer, int index, byte[] destination);
     short getUnsignedByte(Object buffer, int index);
+
+    int getIntLE(Object buffer, int readerIndex);
+    int readVarInt(Object buffer);
 
     boolean isReadable(Object buffer);
     Object copy(Object buffer);
