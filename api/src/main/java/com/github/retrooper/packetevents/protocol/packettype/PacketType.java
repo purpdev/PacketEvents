@@ -821,7 +821,7 @@ public final class PacketType {
             SCULK_VIBRATION_SIGNAL,
             ACKNOWLEDGE_PLAYER_DIGGING,
             CHAT_PREVIEW_PACKET,
-            NAMED_SOUND_EFFECT,
+            CUSTOM_SOUND_EFFECT,
             PLAYER_CHAT_HEADER,
             PLAYER_INFO,
             DISPLAY_CHAT_PREVIEW,

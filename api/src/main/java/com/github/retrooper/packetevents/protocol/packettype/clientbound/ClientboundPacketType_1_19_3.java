@@ -64,7 +64,7 @@ public enum ClientboundPacketType_1_19_3 {
     PLUGIN_MESSAGE,
 
     //Removed in 1.19.3
-    //NAMED_SOUND_EFFECT,
+    //CUSTOM_SOUND_EFFECT,
 
     //Added in 1.19.1
     DELETE_CHAT,

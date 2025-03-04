@@ -45,7 +45,7 @@ public enum ClientboundPacketType_1_15 {
     SET_SLOT,
     SET_COOLDOWN,
     PLUGIN_MESSAGE,
-    NAMED_SOUND_EFFECT,
+    CUSTOM_SOUND_EFFECT,
     DISCONNECT,
     ENTITY_STATUS,
     EXPLOSION,

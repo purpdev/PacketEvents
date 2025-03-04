@@ -62,7 +62,7 @@ public enum ClientboundPacketType_1_19_1 {
     CUSTOM_CHAT_COMPLETIONS,
 
     PLUGIN_MESSAGE,
-    NAMED_SOUND_EFFECT,
+    CUSTOM_SOUND_EFFECT,
 
     //Added in 1.19.1
     DELETE_CHAT,
