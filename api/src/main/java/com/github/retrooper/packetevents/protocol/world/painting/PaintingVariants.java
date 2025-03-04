@@ -21,8 +21,13 @@ package com.github.retrooper.packetevents.protocol.world.painting;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.VersionedRegistry;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.ApiStatus;
 import org.jetbrains.annotations.Nullable;
+
+import static net.kyori.adventure.text.Component.translatable;
+import static net.kyori.adventure.text.format.NamedTextColor.GRAY;
+import static net.kyori.adventure.text.format.NamedTextColor.YELLOW;
 
 public final class PaintingVariants {
 
@@ -40,6 +45,17 @@ public final class PaintingVariants {
 
     @ApiStatus.Internal
     public static PaintingVariant define(String key, int width, int height, ResourceLocation assetId) {
+        String i18nPrefix = "painting." + assetId.getNamespace() + "." + assetId.getKey() + ".";
+        return define(key, width, height, assetId,
+                translatable(i18nPrefix + ".title", YELLOW),
+                translatable(i18nPrefix + ".author", GRAY));
+    }
+
+    @ApiStatus.Internal
+    public static PaintingVariant define(
+            String key, int width, int height, ResourceLocation assetId,
+            @Nullable Component title, @Nullable Component author
+    ) {
         return REGISTRY.define(key, data ->
                 new StaticPaintingVariant(data, width, height, assetId));
     }

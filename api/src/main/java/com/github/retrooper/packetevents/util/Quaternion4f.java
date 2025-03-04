@@ -18,6 +18,8 @@
 
 package com.github.retrooper.packetevents.util;
 
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+
 //PacketEvents is not a math library, we don't plan to have all quaternion functions in here.
 // We just store the 4 float components for you.
 public class Quaternion4f {
@@ -31,6 +33,18 @@ public class Quaternion4f {
         this.y = y;
         this.z = z;
         this.w = w;
+    }
+
+    public static Quaternion4f read(PacketWrapper<?> wrapper) {
+        return new Quaternion4f(wrapper.readFloat(), wrapper.readFloat(),
+                wrapper.readFloat(), wrapper.readFloat());
+    }
+
+    public static void write(PacketWrapper<?> wrapper, Quaternion4f quaternion) {
+        wrapper.writeFloat(quaternion.x);
+        wrapper.writeFloat(quaternion.y);
+        wrapper.writeFloat(quaternion.z);
+        wrapper.writeFloat(quaternion.w);
     }
 
     public float getX() {

@@ -18,6 +18,7 @@
 
 package com.github.retrooper.packetevents.protocol.world.painting;
 
+import com.github.retrooper.packetevents.manager.server.ServerVersion;
 import com.github.retrooper.packetevents.protocol.mapper.CopyableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.DeepComparableEntity;
 import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
@@ -27,8 +28,10 @@ import com.github.retrooper.packetevents.protocol.nbt.NBTInt;
 import com.github.retrooper.packetevents.protocol.nbt.NBTString;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
+import com.github.retrooper.packetevents.util.adventure.AdventureSerializer;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
 import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
 public interface PaintingVariant extends MappedEntity, CopyableEntity<PaintingVariant>, DeepComparableEntity {
@@ -39,17 +42,38 @@ public interface PaintingVariant extends MappedEntity, CopyableEntity<PaintingVa
 
     ResourceLocation getAssetId();
 
+    @Nullable Component getTitle();
+
+    @Nullable Component getAuthor();
+
+    static PaintingVariant read(PacketWrapper<?> wrapper) {
+        return wrapper.readMappedEntityOrDirect(PaintingVariants.getRegistry(), PaintingVariant::readDirect);
+    }
+
+    static void write(PacketWrapper<?> wrapper, PaintingVariant variant) {
+        wrapper.writeMappedEntityOrDirect(variant, PaintingVariant::writeDirect);
+    }
+
     static PaintingVariant readDirect(PacketWrapper<?> wrapper) {
         int width = wrapper.readVarInt();
         int height = wrapper.readVarInt();
         ResourceLocation assetId = wrapper.readIdentifier();
-        return new StaticPaintingVariant(width, height, assetId);
+        Component title = null, author = null;
+        if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_21_2)) {
+            title = wrapper.readOptional(PacketWrapper::readComponent);
+            author = wrapper.readOptional(PacketWrapper::readComponent);
+        }
+        return new StaticPaintingVariant(width, height, assetId, title, author);
     }
 
     static void writeDirect(PacketWrapper<?> wrapper, PaintingVariant variant) {
         wrapper.writeVarInt(variant.getWidth());
         wrapper.writeVarInt(variant.getHeight());
         wrapper.writeIdentifier(variant.getAssetId());
+        if (wrapper.getServerVersion().isNewerThanOrEquals(ServerVersion.V_1_21_2)) {
+            wrapper.writeOptional(variant.getTitle(), PacketWrapper::writeComponent);
+            wrapper.writeOptional(variant.getAuthor(), PacketWrapper::writeComponent);
+        }
     }
 
     static PaintingVariant decode(NBT nbt, ClientVersion version, @Nullable TypesBuilderData data) {
@@ -57,7 +81,18 @@ public interface PaintingVariant extends MappedEntity, CopyableEntity<PaintingVa
         int width = compound.getNumberTagOrThrow("width").getAsInt();
         int height = compound.getNumberTagOrThrow("height").getAsInt();
         ResourceLocation assetId = new ResourceLocation(compound.getStringTagValueOrThrow("asset_id"));
-        return new StaticPaintingVariant(data, width, height, assetId);
+        Component title = null, author = null;
+        if (version.isNewerThanOrEquals(ClientVersion.V_1_21_2)) {
+            NBT titleTag = compound.getTagOrNull("title");
+            if (titleTag != null) {
+                title = AdventureSerializer.fromNbt(titleTag);
+            }
+            NBT authorTag = compound.getTagOrNull("author");
+            if (authorTag != null) {
+                author = AdventureSerializer.fromNbt(authorTag);
+            }
+        }
+        return new StaticPaintingVariant(data, width, height, assetId, title, author);
     }
 
     static NBT encode(PaintingVariant variant, ClientVersion version) {
@@ -65,6 +100,14 @@ public interface PaintingVariant extends MappedEntity, CopyableEntity<PaintingVa
         compound.setTag("width", new NBTInt(variant.getWidth()));
         compound.setTag("height", new NBTInt(variant.getHeight()));
         compound.setTag("asset_id", new NBTString(variant.getAssetId().toString()));
+        if (version.isNewerThanOrEquals(ClientVersion.V_1_21_2)) {
+            if (variant.getTitle() != null) {
+                compound.setTag("title", AdventureSerializer.toNbt(variant.getTitle()));
+            }
+            if (variant.getAuthor() != null) {
+                compound.setTag("author", AdventureSerializer.toNbt(variant.getAuthor()));
+            }
+        }
         return compound;
     }
 }

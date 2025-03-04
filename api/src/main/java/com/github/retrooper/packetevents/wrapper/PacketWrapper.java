@@ -1434,6 +1434,21 @@ public class PacketWrapper<T extends PacketWrapper<T>> {
         }
     }
 
+    public <Z> Optional<Z> readRealOptional(Reader<Z> reader) {
+        if (this.readBoolean()) {
+            return Optional.of(reader.apply(this));
+        }
+        return Optional.empty();
+    }
+
+    public <Z> void writeRealOptional(Optional<Z> optional, Writer<Z> writer) {
+        if (optional.isPresent()) {
+            this.writeBoolean(true);
+            writer.accept(this, optional.get());
+        } else {
+            this.writeBoolean(false);
+        }
+    }
 
     public <K, C extends Collection<K>> C readCollection(IntFunction<C> function, Reader<K> reader) {
         int size = this.readVarInt();

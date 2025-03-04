@@ -1,6 +1,8 @@
 package com.github.retrooper.packetevents.test;
 
 import com.github.retrooper.packetevents.protocol.attribute.Attributes;
+import com.github.retrooper.packetevents.protocol.entity.data.EntityDataTypes;
+import com.github.retrooper.packetevents.protocol.entity.data.IEntityDataType;
 import com.github.retrooper.packetevents.protocol.item.enchantment.type.EnchantmentTypes;
 import com.github.retrooper.packetevents.protocol.player.ClientVersion;
 import com.github.retrooper.packetevents.protocol.world.biome.Biomes;
@@ -15,6 +17,9 @@ import com.github.retrooper.packetevents.protocol.world.states.type.StateTypes;
 import com.github.retrooper.packetevents.test.base.BaseDummyAPITest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -89,5 +94,22 @@ public class MappingIntegrityTest extends BaseDummyAPITest {
         WrappedBlockState state = StateTypes.PALE_OAK_LOG.createBlockState(ClientVersion.V_1_21_2);
         state.setAxis(Axis.Z);
         assertEquals(159, state.getGlobalId());
+    }
+
+    @Test
+    @DisplayName("Test entity data type mapping loading")
+    public void testEntityDataTypeMappingLoading() throws IllegalAccessException {
+        for (Field field : EntityDataTypes.class.getFields()) {
+            if (!Modifier.isStatic(field.getModifiers())
+                    || field.getDeclaredAnnotations().length != 0) {
+                continue;
+            }
+            IEntityDataType<?> type = (IEntityDataType<?>) field.get(null);
+            if (type == EntityDataTypes.TYPE_SHORT) {
+                continue; // ignore legacy types
+            }
+            assertEquals(type, EntityDataTypes.getRegistry().getByName(type.getName()), type.getName().toString());
+            assertEquals(type, EntityDataTypes.getRegistry().getById(ClientVersion.V_1_21_2, type.getId(ClientVersion.V_1_21_2)), type.getName().toString());
+        }
     }
 }

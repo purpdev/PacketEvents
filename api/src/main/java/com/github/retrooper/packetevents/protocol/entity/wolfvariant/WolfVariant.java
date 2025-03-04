@@ -30,6 +30,7 @@ import com.github.retrooper.packetevents.protocol.world.biome.Biome;
 import com.github.retrooper.packetevents.protocol.world.biome.Biomes;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.Nullable;
 
 public interface WolfVariant extends MappedEntity, CopyableEntity<WolfVariant>, DeepComparableEntity {
@@ -41,6 +42,29 @@ public interface WolfVariant extends MappedEntity, CopyableEntity<WolfVariant>, 
     ResourceLocation getAngryTexture();
 
     MappedEntitySet<Biome> getBiomes();
+
+    static WolfVariant read(PacketWrapper<?> wrapper) {
+        return wrapper.readMappedEntityOrDirect(WolfVariants.getRegistry(), WolfVariant::readDirect);
+    }
+
+    static void write(PacketWrapper<?> wrapper, WolfVariant variant) {
+        wrapper.writeMappedEntityOrDirect(variant, WolfVariant::writeDirect);
+    }
+
+    static WolfVariant readDirect(PacketWrapper<?> wrapper) {
+        ResourceLocation wildTexture = wrapper.readIdentifier();
+        ResourceLocation tameTexture = wrapper.readIdentifier();
+        ResourceLocation angryTexture = wrapper.readIdentifier();
+        MappedEntitySet<Biome> biomes = MappedEntitySet.read(wrapper, Biomes.getRegistry());
+        return new StaticWolfVariant(wildTexture, tameTexture, angryTexture, biomes);
+    }
+
+    static void writeDirect(PacketWrapper<?> wrapper, WolfVariant variant) {
+        wrapper.writeIdentifier(variant.getWildTexture());
+        wrapper.writeIdentifier(variant.getTameTexture());
+        wrapper.writeIdentifier(variant.getAngryTexture());
+        MappedEntitySet.write(wrapper, variant.getBiomes());
+    }
 
     static WolfVariant decode(NBT nbt, ClientVersion version, @Nullable TypesBuilderData data) {
         NBTCompound compound = (NBTCompound) nbt;

@@ -21,6 +21,7 @@ package com.github.retrooper.packetevents.protocol.world.painting;
 import com.github.retrooper.packetevents.protocol.mapper.AbstractMappedEntity;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.mappings.TypesBuilderData;
+import net.kyori.adventure.text.Component;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
@@ -30,16 +31,28 @@ public class StaticPaintingVariant extends AbstractMappedEntity implements Paint
     private final int width;
     private final int height;
     private final ResourceLocation assetId;
+    private final @Nullable Component title;
+    private final @Nullable Component author;
 
     public StaticPaintingVariant(int width, int height, ResourceLocation assetId) {
-        this(null, width, height, assetId);
+        this(null, width, height, assetId, null, null);
     }
 
     public StaticPaintingVariant(@Nullable TypesBuilderData data, int width, int height, ResourceLocation assetId) {
+        this(data, width, height, assetId, null, null);
+    }
+
+    public StaticPaintingVariant(int width, int height, ResourceLocation assetId, @Nullable Component title, @Nullable Component author) {
+        this(null, width, height, assetId, author, title);
+    }
+
+    public StaticPaintingVariant(@Nullable TypesBuilderData data, int width, int height, ResourceLocation assetId, @Nullable Component title, @Nullable Component author) {
         super(data);
         this.width = width;
         this.height = height;
         this.assetId = assetId;
+        this.title = title;
+        this.author = author;
     }
 
     @Override
@@ -63,6 +76,16 @@ public class StaticPaintingVariant extends AbstractMappedEntity implements Paint
     }
 
     @Override
+    public @Nullable Component getTitle() {
+        return this.title;
+    }
+
+    @Override
+    public @Nullable Component getAuthor() {
+        return this.author;
+    }
+
+    @Override
     public boolean deepEquals(Object obj) {
         if (this == obj) return true;
         if (!(obj instanceof StaticPaintingVariant)) return false;
@@ -70,16 +93,18 @@ public class StaticPaintingVariant extends AbstractMappedEntity implements Paint
         StaticPaintingVariant that = (StaticPaintingVariant) obj;
         if (this.width != that.width) return false;
         if (this.height != that.height) return false;
-        return this.assetId.equals(that.assetId);
+        if (!this.assetId.equals(that.assetId)) return false;
+        if (!Objects.equals(this.title, that.title)) return false;
+        return Objects.equals(this.author, that.author);
     }
 
     @Override
     public int deepHashCode() {
-        return Objects.hash(super.hashCode(), this.width, this.height, this.assetId);
+        return Objects.hash(super.hashCode(), this.width, this.height, this.assetId, this.title, this.author);
     }
 
     @Override
     public String toString() {
-        return "StaticPaintingVariant{width=" + this.width + ", height=" + this.height + ", assetId=" + this.assetId + '}';
+        return "StaticPaintingVariant{width=" + this.width + ", height=" + this.height + ", assetId=" + this.assetId + ", title=" + this.title + ", author=" + this.author + '}';
     }
 }

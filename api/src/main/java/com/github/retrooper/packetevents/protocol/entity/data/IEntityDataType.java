@@ -1,6 +1,6 @@
 /*
  * This file is part of packetevents - https://github.com/retrooper/packetevents
- * Copyright (C) 2022 retrooper and contributors
+ * Copyright (C) 2024 retrooper and contributors
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,39 +18,27 @@
 
 package com.github.retrooper.packetevents.protocol.entity.data;
 
-@Deprecated
-public class EntityData {
-    private int index;
-    private EntityDataType<?> type;
-    private Object value;
+import com.github.retrooper.packetevents.protocol.mapper.MappedEntity;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.Contract;
 
-    public EntityData(int index, EntityDataType<?> type, Object value) {
-        this.index = index;
-        this.type = type;
-        this.value = value;
-    }
+import java.util.function.Function;
 
-    public int getIndex() {
-        return index;
-    }
+public interface IEntityDataType<T> extends MappedEntity {
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
+    T deserialize(PacketWrapper<?> wrapper);
 
-    public EntityDataType<?> getType() {
-        return type;
-    }
+    void serialize(PacketWrapper<?> wrapper, T value);
 
-    public void setType(EntityDataType<?> type) {
-        this.type = type;
-    }
+    /**
+     * Used internally for backwards compatibility
+     * for a few datatypes, may be removed at any time.
+     */
+    @ApiStatus.Internal
+    @Contract("_, _ -> new")
+    <Z> IEntityDataType<Z> map(Function<T, Z> processor, Function<Z, T> unprocessor);
 
-    public Object getValue() {
-        return value;
-    }
-
-    public void setValue(Object value) {
-        this.value = value;
-    }
+    @Deprecated
+    EntityDataType<T> asLegacy();
 }

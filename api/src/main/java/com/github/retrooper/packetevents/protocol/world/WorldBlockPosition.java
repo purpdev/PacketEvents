@@ -21,9 +21,11 @@ package com.github.retrooper.packetevents.protocol.world;
 import com.github.retrooper.packetevents.protocol.world.dimension.DimensionType;
 import com.github.retrooper.packetevents.resources.ResourceLocation;
 import com.github.retrooper.packetevents.util.Vector3i;
+import com.github.retrooper.packetevents.wrapper.PacketWrapper;
 import org.jetbrains.annotations.NotNull;
 
 public class WorldBlockPosition {
+
     private ResourceLocation world;
     private Vector3i blockPosition;
 
@@ -42,8 +44,23 @@ public class WorldBlockPosition {
         this(new ResourceLocation(dimension.getDimensionName()), blockPosition);
     }
 
+    /**
+     * @deprecated Multiple dimensions can have the same dimension type, please reference the specific dimension using a {@link ResourceLocation}.
+     */
+    @Deprecated
     public WorldBlockPosition(@NotNull DimensionType dimensionType, @NotNull Vector3i blockPosition) {
         this(dimensionType.getName(), blockPosition);
+    }
+
+    public static WorldBlockPosition read(PacketWrapper<?> wrapper) {
+        ResourceLocation dimension = wrapper.readIdentifier();
+        Vector3i pos = wrapper.readBlockPosition();
+        return new WorldBlockPosition(dimension, pos);
+    }
+
+    public static void write(PacketWrapper<?> wrapper, WorldBlockPosition pos) {
+        wrapper.writeIdentifier(pos.world);
+        wrapper.writeBlockPosition(pos.blockPosition);
     }
 
     public ResourceLocation getWorld() {
